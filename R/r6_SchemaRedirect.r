@@ -97,6 +97,7 @@ censor_function_factory_everything <- function(
 #' censor 0-4 function factory
 #' @param column_name_to_be_censored Name of the column to be censored
 #' @param column_name_value Name of the column whose value is determining if something should be censored
+#' @param censored_value The value that censored data will be set to
 #' @param granularity_time Which granularity_times to use this function on
 #' @param granularity_time_not Which granularity_times to not use this function on
 #' @param granularity_geo Which granularity_geos to use this function on

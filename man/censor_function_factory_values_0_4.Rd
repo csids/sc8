@@ -19,6 +19,8 @@ censor_function_factory_values_0_4(
 
 \item{column_name_value}{Name of the column whose value is determining if something should be censored}
 
+\item{censored_value}{The value that censored data will be set to}
+
 \item{granularity_time}{Which granularity_times to use this function on}
 
 \item{granularity_time_not}{Which granularity_times to not use this function on}
