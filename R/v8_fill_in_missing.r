@@ -116,8 +116,11 @@ fill_in_missing_v8 <- function(d, border = 2020){
     }
   }
 
-  if(!"date" %in% names(d) & !"isoyearweek" %in% names(d)){
+  if(!"date" %in% names(d) & !"isoyearweek" %in% names(d) & !"calyear" %in% names(d)){
     d[,date:=as.Date("1900-01-01")]
+  }
+  if(!"date" %in% names(d) & !"isoyearweek" %in% names(d) & "calyear" %in% names(d)){
+    d[,date:=as.Date(paste0(calyear,"-01-01"))]
   }
   if(!"isoyearweek" %in% names(d)){
     dates <- unique(d[, "date"])
