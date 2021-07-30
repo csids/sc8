@@ -3,8 +3,9 @@
 #' @param ... Second level and beyond
 #' @param create_dir create directory if it does not exist
 #' @param trailing_slash do you want a trailing /?
+#' @param auto Is this running in auto (then the base directory is used) or interactive ("/test")?
 #' @export
-path <- function(type="output", ..., create_dir=FALSE, trailing_slash = FALSE) {
+path <- function(type="output", ..., create_dir=FALSE, trailing_slash = FALSE, auto = config$is_production) {
   stopifnot(type %in% c("input","output"))
 
   start_location <- dplyr::case_when(
@@ -15,7 +16,7 @@ path <- function(type="output", ..., create_dir=FALSE, trailing_slash = FALSE) {
   end_location <- glue::glue(fs::path(...), .envir = parent.frame(n=1))
   end_location <- stringr::str_split(end_location, "/")[[1]]
   end_location <- end_location[end_location!=""]
-  if(!config$is_production){
+  if(!auto){
     if(length(end_location)==1){
       end_location <- c(end_location[1], "test")
     } else if(length(end_location)>=2){

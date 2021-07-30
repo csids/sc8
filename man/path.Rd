@@ -4,7 +4,13 @@
 \alias{path}
 \title{This function gets the right folder for results}
 \usage{
-path(type = "output", ..., create_dir = FALSE, trailing_slash = FALSE)
+path(
+  type = "output",
+  ...,
+  create_dir = FALSE,
+  trailing_slash = FALSE,
+  auto = config$is_production
+)
 }
 \arguments{
 \item{type}{input, output}
@@ -14,6 +20,8 @@ path(type = "output", ..., create_dir = FALSE, trailing_slash = FALSE)
 \item{create_dir}{create directory if it does not exist}
 
 \item{trailing_slash}{do you want a trailing /?}
+
+\item{auto}{Is this running in auto (then the base directory is used) or interactive ("/test")?}
 }
 \description{
 This function gets the right folder for results
