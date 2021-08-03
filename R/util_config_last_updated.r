@@ -31,7 +31,7 @@ update_config_last_updated_internal <- function(type, tag, date = NULL, datetime
 #' @param datetime Datetime to set in config_last_updated
 #' @export
 update_config_last_updated <- function(type, tag, date = NULL, datetime = NULL){
-  if(!stringr::str_detect(tag, "^tmp") & !tag %in% c("config_datetime", "config_last_updated")) update_config_last_updated_internal(type = type, tag = tag)
+  if(!stringr::str_detect(tag, "^tmp") & !tag %in% c("config_datetime", "config_last_updated", "permission", "rundate")) update_config_last_updated_internal(type = type, tag = tag)
 }
 
 #' get_config_last_updated
