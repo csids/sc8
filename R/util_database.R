@@ -267,6 +267,7 @@ load_data_infile.default <- function(
   if(config$verbose) message(glue::glue("Uploaded {nrow(dt)} rows in {dif} seconds to {table}"))
 
   update_config_datetime(type = "data", tag = table)
+  update_config_last_updated(type = "data", tag = table)
 
   invisible()
 }
@@ -454,6 +455,7 @@ upsert_load_data_infile_internal.default <- function(
   if(config$verbose) message(glue::glue("Upserted {nrow(dt)} rows in {dif} seconds from {temp_name} to {table}"))
 
   update_config_datetime(type = "data", tag = table)
+  update_config_last_updated(type = "data", tag = table)
   invisible()
 }
 
@@ -600,6 +602,7 @@ copy_into_new_table_where <- function(
   if(config$verbose) message(glue::glue("Copied rows in {dif} seconds from {table_from} to {table_to}"))
 
   update_config_datetime(type = "data", tag = table_to)
+  update_config_last_updated(type = "data", tag = table_to)
 }
 
 #' drop_all_rows
@@ -620,6 +623,7 @@ drop_all_rows <- function(conn=NULL, table) {
   }))
 
   update_config_datetime(type = "data", tag = table)
+  update_config_last_updated(type = "data", tag = table)
 }
 
 #' Drops the rows where the condition is met
@@ -679,6 +683,7 @@ drop_rows_where <- function(conn=NULL, table, condition) {
   if(config$verbose) message(glue::glue("Deleted rows in {dif} seconds from {table}"))
 
   update_config_datetime(type = "data", tag = table)
+  update_config_last_updated(type = "data", tag = table)
 }
 
 #' keep_rows_where
@@ -710,6 +715,7 @@ keep_rows_where <- function(conn=NULL, table, condition) {
   if(config$verbose) message(glue::glue("Kept rows in {dif} seconds from {table}"))
 
   update_config_datetime(type = "data", tag = table)
+  update_config_last_updated(type = "data", tag = table)
 }
 
 

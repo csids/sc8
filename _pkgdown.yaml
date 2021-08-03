@@ -27,12 +27,10 @@ reference:
   - add_permission
   - add_schema_v8
   - fill_in_missing_v8
-  - get_config_datetime
   - get_config_last_updated
+  - update_config_last_updated
   - mandatory_db_filter
   - tbl
-  - update_config_datetime
-  - update_config_last_updated
 - subtitle: Censoring
 - contents:
   - censor_function_factory_everything
@@ -126,3 +124,5 @@ reference:
   - task_from_config_v2
   - task_from_config_v3
   - task_inline_v1
+  - update_config_datetime
+  - get_config_datetime
