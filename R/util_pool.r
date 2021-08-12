@@ -140,9 +140,6 @@ get_table_name_info <- function(table_name){
 
 }
 
-#' list_tables
-#' @param db db
-#' @export
 list_tables_int <- function(id) {
   retval <- DBI::dbListTables(pools$no_db, get_db_and_schema_from_id(id)$db, get_db_and_schema_from_id(id)$schema)
   if(length(retval)==0) return()

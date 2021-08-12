@@ -8,8 +8,6 @@ tbl(table)
 }
 \arguments{
 \item{table}{table}
-
-\item{db}{db}
 }
 \description{
 tbl

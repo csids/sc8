@@ -818,7 +818,6 @@ get_db_connection <- function(
 
 #' tbl
 #' @param table table
-#' @param db db
 #' @export
 tbl <- function(table) {
   x <- get_table_name_info(table)
