@@ -581,6 +581,9 @@ Schema <- R6Class(
       self$keys_with_length <- keys
       self$indexes <- indexes
 
+      self$table_name_fully_specified <- paste0("[", paste(db_config$db, db_config$schema, db_table,sep="].["), "]") |>
+        stringr::str_remove_all("\\[]\\.")
+
       # validators
       if(!is.null(validator_field_types)) if(!validator_field_types(self$db_field_types)) stop(glue::glue("db_field_types not validated in {db_table}"))
       self$validator_field_contents <- validator_field_contents
@@ -735,7 +738,7 @@ Schema <- R6Class(
 
       if (create_tab) {
         message(glue::glue("Creating table {self$db_table}"))
-        create_table(self$conn, self$db_table, self$db_field_types, self$keys)
+        create_table(self$conn, self$table_name_fully_specified, self$db_field_types, self$keys)
         self$db_add_constraint()
       }
     },
