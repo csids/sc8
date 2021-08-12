@@ -4,7 +4,7 @@
 \alias{tbl}
 \title{tbl}
 \usage{
-tbl(table, db = config$db_config$db)
+tbl(table)
 }
 \arguments{
 \item{table}{table}

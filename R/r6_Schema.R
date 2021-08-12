@@ -206,6 +206,7 @@ Schema_v8 <- R6Class(
     conn = NULL,
     db_config = NULL,
     table_name = NULL,
+    table_name_fully_specified = NULL,
     field_types = NULL,
     field_types_with_length = NULL,
     keys = NULL,
@@ -243,6 +244,9 @@ Schema_v8 <- R6Class(
 
       force(table_name)
       self$table_name <- table_name
+
+      self$table_name_fully_specified <- paste0("[", paste(db_config$db, db_config$schema, table_name,sep="].["), "]") |>
+        stringr::str_remove_all("\\[]\\.")
 
       force(field_types)
       self$field_types <- field_types
@@ -316,7 +320,7 @@ Schema_v8 <- R6Class(
     create_table = function() {
       self$connect()
       create_tab <- TRUE
-      if (DBI::dbExistsTable(self$conn, self$table_name)) {
+      if (DBI::dbExistsTable(pools[[self$db_config$id]], self$table_name)) {
         if (!private$check_fields_match()) {
           message(glue::glue("Dropping table {self$table_name} because fields dont match"))
           self$drop_table()
@@ -326,16 +330,16 @@ Schema_v8 <- R6Class(
       }
       if (create_tab) {
         message(glue::glue("Creating table {self$table_name}"))
-        create_table(self$conn, self$table_name, self$field_types, self$keys)
+        create_table(pools[[self$db_config$id]], self$table_name_fully_specified, self$field_types, self$keys)
         private$add_constraint()
       }
     },
 
     drop_table = function() {
       self$connect()
-      if (DBI::dbExistsTable(self$conn, self$table_name)) {
+      if (DBI::dbExistsTable(pools[[self$db_config$id]], self$table_name)) {
         message(glue::glue("Dropping table {self$table_name}"))
-        DBI::dbRemoveTable(self$conn, self$table_name)
+        DBI::dbRemoveTable(pools[[self$db_config$id]], self$table_name)
       }
     },
 
@@ -357,7 +361,7 @@ Schema_v8 <- R6Class(
 
       infile <- random_file(self$load_folder_fn())
       load_data_infile(
-        conn = self$conn,
+        conn = pools[[self$db_config$id]],
         db_config = self$db_config,
         table = self$table_name,
         dt = newdata,
@@ -395,17 +399,17 @@ Schema_v8 <- R6Class(
 
     drop_all_rows = function() {
       self$connect()
-      drop_all_rows(self$conn, self$table_name)
+      drop_all_rows(pools[[self$db_config$id]], self$table_name)
     },
 
     drop_rows_where = function(condition){
       self$connect()
-      drop_rows_where(self$conn, self$table_name, condition)
+      drop_rows_where(pools[[self$db_config$id]], self$table_name, condition)
     },
 
     keep_rows_where = function(condition){
       self$connect()
-      keep_rows_where(self$conn, self$table_name, condition)
+      keep_rows_where(pools[[self$db_config$id]], self$table_name, condition)
       private$add_constraint()
     },
 
@@ -428,7 +432,7 @@ Schema_v8 <- R6Class(
 
     tbl = function() {
       self$connect()
-      retval <- self$conn %>%
+      retval <- pools[[self$db_config$id]] %>%
         dplyr::tbl(self$table_name)
       return(retval)
     },
@@ -441,7 +445,7 @@ Schema_v8 <- R6Class(
 
     list_indexes_db = function(){
       list_indexes(
-        conn = self$conn,
+        conn = pools[[self$db_config$id]],
         table = self$table_name
       )
     },
@@ -452,7 +456,7 @@ Schema_v8 <- R6Class(
         message(glue::glue("Adding index {i}"))
 
         add_index(
-          conn = self$conn,
+          conn = pools[[self$db_config$id]],
           table = self$table_name,
           index = i,
           keys = self$indexes[[i]]
@@ -465,7 +469,7 @@ Schema_v8 <- R6Class(
       for(i in names(self$indexes)){
         message(glue::glue("Dropping index {i}"))
         drop_index(
-          conn= self$conn,
+          conn= pools[[self$db_config$id]],
           table = self$table_name,
           index = i
         )
@@ -486,7 +490,7 @@ Schema_v8 <- R6Class(
   # private ----
   private = list(
     check_fields_match = function() {
-      fields <- DBI::dbListFields(self$conn, self$table_name)
+      fields <- DBI::dbListFields(pools[[self$db_config$id]], self$table_name)
       retval <- identical(fields, names(self$field_types))
       if(retval == FALSE){
         message(glue::glue(
@@ -501,7 +505,7 @@ Schema_v8 <- R6Class(
     #' Add constraint to a db table
     add_constraint = function(){
       add_constraint(
-        conn = self$conn,
+        conn = pools[[self$db_config$id]],
         table = self$table_name,
         keys = self$keys
       )
@@ -511,7 +515,7 @@ Schema_v8 <- R6Class(
     #' Drop constraint from a db table
     drop_constraint = function(){
       drop_constraint(
-        conn = self$conn,
+        conn = pools[[self$db_config$id]],
         table = self$table_name
       )
     },

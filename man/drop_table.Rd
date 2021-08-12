@@ -4,12 +4,10 @@
 \alias{drop_table}
 \title{drop_table}
 \usage{
-drop_table(table, db = config$db_config$db)
+drop_table(table)
 }
 \arguments{
 \item{table}{table}
-
-\item{db}{db}
 }
 \description{
 drop_table

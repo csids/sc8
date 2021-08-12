@@ -3,11 +3,13 @@
 
   check_env_vars()
 
-  set_db()
   set_computer_type()
   set_progressr()
   set_path()
   set_plnr()
+
+  # we need to implement lazy loading when we have more time
+  try(set_db(), silent=T)
 
   invisible()
 }
@@ -28,112 +30,17 @@ check_env_vars <- function(){
     "SYKDOMSPULSEN_PATH_OUTPUT"
   )
 
-  for(i in needed){
-    getval <- Sys.getenv(i)
-    if(getval==""){
-      packageStartupMessage(crayon::red(glue::glue("{i}=''")))
-    } else {
-      if(stringr::str_detect(i,"PASSWORD")) getval <- "*****"
-      packageStartupMessage(crayon::blue(glue::glue("{i}='{getval}'")))
-    }
-  }
-  packageStartupMessage(glue::glue("spulscore: {utils::packageVersion('sc')}"))
+  # for(i in needed){
+  #   getval <- Sys.getenv(i)
+  #   if(getval==""){
+  #     packageStartupMessage(crayon::red(glue::glue("{i}=''")))
+  #   } else {
+  #     if(stringr::str_detect(i,"PASSWORD")) getval <- "*****"
+  #     packageStartupMessage(crayon::blue(glue::glue("{i}='{getval}'")))
+  #   }
+  # }
+  # packageStartupMessage(glue::glue("spulscore: {utils::packageVersion('sc')}"))
 
-}
-
-set_db <- function(){
-  config$db_config <- list(
-    driver = Sys.getenv("SYKDOMSPULSEN_DB_DRIVER", "MySQL"),
-    server = Sys.getenv("SYKDOMSPULSEN_DB_SERVER", "db"),
-    port = as.integer(Sys.getenv("SYKDOMSPULSEN_DB_PORT", 1433)),
-    user = Sys.getenv("SYKDOMSPULSEN_DB_USER", "root"),
-    password = Sys.getenv("SYKDOMSPULSEN_DB_PASSWORD", "example"),
-    db = Sys.getenv("SYKDOMSPULSEN_DB_DB", "sykdomspuls"),
-    trusted_connection = Sys.getenv("SYKDOMSPULSEN_DB_TRUSTED_CONNECTION")
-  )
-
-  config$db_configs <- list(
-    "restr" = config$db_config,
-    "anon" = config$db_config,
-    "config" = config$db_config
-  )
-  config$db_config_preferred <- "restr"
-
-  # config_last_updated ----
-  add_schema(
-    schema = Schema$new(
-      db_config = config$db_config,
-      db_table = "config_last_updated",
-      db_field_types = c(
-        "type" = "TEXT",
-        "tag" = "TEXT",
-        "date" = "DATE",
-        "datetime" = "DATETIME"
-      ),
-      db_load_folder = tempdir(check=T),
-      keys = c(
-        "type",
-        "tag"
-      )
-    )
-  )
-
-  # config_structure_time ----
-  add_schema(
-    schema = Schema$new(
-      db_config = config$db_config,
-      db_table = "config_structure_time",
-      db_field_types = c(
-        "granularity_time" = "TEXT",
-        "isoyear" = "TEXT",
-        "isoyearweek" = "TEXT",
-        "date" = "DATE"
-      ),
-      db_load_folder = tempdir(check=T),
-      keys = c(
-        "type",
-        "tag"
-      )
-    )
-  )
-
-  # rundate ----
-  add_schema(
-    name = "rundate",
-    schema = Schema$new(
-      db_config = config$db_config,
-      db_table = "rundate",
-      db_field_types = c(
-        "task" = "TEXT",
-        "date" = "DATE",
-        "datetime" = "DATETIME"
-      ),
-      db_load_folder = tempdir(check=T),
-      keys = c(
-        "task"
-      )
-    )
-  )
-
-  # config_datetime ----
-  add_schema(
-    name = "config_datetime",
-    schema = Schema$new(
-      db_config = config$db_config,
-      db_table = "config_datetime",
-      db_field_types = c(
-        "type" = "TEXT",
-        "tag" = "TEXT",
-        "date" = "DATE",
-        "datetime" = "DATETIME"
-      ),
-      db_load_folder = tempdir(check=T),
-      keys = c(
-        "type",
-        "tag"
-      )
-    )
-  )
 }
 
 set_computer_type <- function() {

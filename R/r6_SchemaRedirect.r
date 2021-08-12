@@ -236,7 +236,7 @@ SchemaRedirect_v8 <- R6Class(
           )
         }
         force(field_types_with_censoring)
-        schema <- sc::Schema_v8$new(
+        schema <- Schema_v8$new(
           db_config = db_configs[[name_access[i]]],
           table_name = table_name,
           field_types = field_types_with_censoring,

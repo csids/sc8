@@ -1,3 +1,8 @@
+# sc 8.0.2
+
+- Allows for multiple databases to be used for different access levels
+- Starts using pool to control a few database connections instead of many
+
 # sc 8.0.1
 
 - When using `sc::add_task_from_config_v8` the schema list is checked to make sure they are actually schemas. This will solve the issue where people incorrectly add non-existent schemas to the task.

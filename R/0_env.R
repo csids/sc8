@@ -5,6 +5,11 @@ connections <- new.env()
 #' Flags/values to be used in the 'dashboards' scene
 #' @export config
 config <- new.env()
+config$db_loaded <- FALSE
+
+#' Flags/values to be used in the 'dashboards' scene
+#' @export pools
+pools <- new.env()
 
 config$is_production <- FALSE
 config$verbose <- FALSE

@@ -479,13 +479,17 @@ create_table.default <- function(conn, table, fields, keys=NULL) {
   fields_new[fields == "BOOLEAN"] <- "BIT"
 
   if(!is.null(keys)) fields_new[names(fields_new) %in% keys] <- paste0(fields_new[names(fields_new) %in% keys], " NOT NULL")
+
   sql <- DBI::sqlCreateTable(
     conn,
     table,
     fields_new,
     row.names = F,
     temporary = F
-  )
+  ) |>
+    stringr::str_replace("\\\\", "\\") |>
+    stringr::str_replace("\"", "") |>
+    stringr::str_replace("\"", "")
   DBI::dbExecute(conn, sql)
 }
 
@@ -587,16 +591,24 @@ copy_into_new_table_where <- function(
     conn <- get_db_connection()
     on.exit(DBI::dbDisconnect(conn))
   }
+
+  info_from = get_table_name_info(table_from)
+  info_to = get_table_name_info(table_to)
+
+  if(info_from$db != info_to$db){
+    stop("Cannot copy directly between databases because they are of different levels of data sensitivity.")
+  }
+
   t0 <- Sys.time()
   temp_name <- paste0("tmp",random_uuid())
 
   sql <- glue::glue("SELECT {columns} INTO {temp_name} FROM {table_from} WHERE {condition}")
-  DBI::dbExecute(conn, sql)
+  DBI::dbExecute(info_from$pool, sql)
 
-  try(DBI::dbRemoveTable(conn, name = table_to), TRUE)
+  try(DBI::dbRemoveTable(info_from$pool, name = table_to), TRUE)
 
   sql <- glue::glue("EXEC sp_rename '{temp_name}', '{table_to}'")
-  DBI::dbExecute(conn, sql)
+  DBI::dbExecute(info_from$pool, sql)
   t1 <- Sys.time()
   dif <- round(as.numeric(difftime(t1, t0, units = "secs")), 1)
   if(config$verbose) message(glue::glue("Copied rows in {dif} seconds from {table_from} to {table_to}"))
@@ -618,7 +630,10 @@ drop_all_rows <- function(conn=NULL, table) {
     conn <- get_db_connection()
     on.exit(DBI::dbDisconnect(conn))
   }
-  a <- DBI::dbExecute(conn, glue::glue({
+
+  info = get_table_name_info(table)
+
+  a <- DBI::dbExecute(info$pool, glue::glue({
     "TRUNCATE TABLE {table};"
   }))
 
@@ -805,12 +820,10 @@ get_db_connection <- function(
 #' @param table table
 #' @param db db
 #' @export
-tbl <- function(table, db = config$db_config$db) {
-  #if (is.null(connections[[db]])) {
-    connections[[db]] <- get_db_connection()
-    use_db(connections[[db]], db)
-  #}
-  return(dplyr::tbl(connections[[db]], table))
+tbl <- function(table) {
+  x <- get_table_name_info(table)
+
+  return(dplyr::tbl(x$pool, x$table_name))
 }
 
 #' list_indexes
@@ -833,62 +846,15 @@ list_indexes <- function(table, conn=NULL){
   return(retval)
 }
 
-#' list_tables
-#' @param db db
-#' @export
-list_tables <- function(db = config$db_config$db) {
-  if (is.null(connections[[db]])) {
-    connections[[db]] <- get_db_connection(db = db)
-    use_db(connections[[db]], db)
-  }
-  retval <- DBI::dbListTables(connections[[db]])
-  last_val <- which(retval == "trace_xe_action_map") - 1
-  retval <- retval[1:last_val]
 
-  # remove airflow tables
-  if (db == "Sykdomspulsen_surv") {
-    retval <- retval[
-      which(!retval %in% c(
-        "alembic_version",
-        "chart",
-        "connection",
-        "dag",
-        "dag_pickle",
-        "dag_run",
-        "dag_tag",
-        "import_error",
-        "job",
-        "known_event",
-        "known_event_type",
-        "kube_resource_version",
-        "kube_worker_uuid",
-        "log",
-        "serialized_dag",
-        "sla_miss",
-        "slot_pool",
-        "task_fail",
-        "task_instance",
-        "task_reschedule",
-        "users",
-        "variable",
-        "xcom"
-      ))
-      ]
-  }
-  return(retval)
-}
 
 
 #' drop_table
 #' @param table table
-#' @param db db
 #' @export
-drop_table <- function(table, db = config$db_config$db) {
-  if (is.null(connections[[db]])) {
-    connections[[db]] <- get_db_connection()
-    use_db(connections[[db]], db)
-  }
-  return(try(DBI::dbRemoveTable(connections[[db]], name = table), TRUE))
+drop_table <- function(table) {
+  id <- get_pool_id(table)
+  return(try(DBI::dbRemoveTable(pools[[id]], name = table), TRUE))
 }
 
 
