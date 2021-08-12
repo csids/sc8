@@ -548,6 +548,7 @@ Schema <- R6Class(
     conn = NULL,
     db_config = NULL,
     db_table = NULL,
+    table_name_fully_specified = NULL,
     db_field_types = NULL,
     db_field_types_with_length = NULL,
     db_load_folder = NULL,
