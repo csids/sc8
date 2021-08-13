@@ -1,7 +1,7 @@
 # sc 8.0.2
 
 - Allows for multiple databases to be used for different access levels
-- Starts using pool to control a few database connections instead of many
+- copy_into_new_table_where now also copies indexes
 
 # sc 8.0.1
 

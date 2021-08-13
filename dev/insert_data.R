@@ -61,6 +61,11 @@ DBI::dbGetQuery(pools$`dm-prod/sykdomspulsen_interactive_anon`, sql)
 sql <- glue::glue("SELECT TOP 1 * FROM [sykdomspulsen_interactive_anon].[].[anon_test]")
 DBI::dbGetQuery(pools$`dm-prod/sykdomspulsen_interactive_anon`, sql)
 
+sql <- glue::glue("ALTER SCHEMA dbo TRANSFER [FHI\\AK_Sykdomspulsen].[datar_weather]")
+DBI::dbGetQuery(get_db_connection(), sql)
+
+sql <- glue::glue("SELECT TOP 1 * FROM [FHI\\AK_Sykdomspulsen].[datar_weather]")
+DBI::dbGetQuery(get_db_connection(), sql)
 
 
 try(DBI::dbRemoveTable(conn, name = table_to), TRUE)

@@ -613,6 +613,20 @@ copy_into_new_table_where <- function(
   dif <- round(as.numeric(difftime(t1, t0, units = "secs")), 1)
   if(config$verbose) message(glue::glue("Copied rows in {dif} seconds from {table_from} to {table_to}"))
 
+  # applying indexes if possible
+  if(table_from %in% names(sc::config$schemas)){
+    for(i in names(sc::config$schemas[[table_from]]$indexes)){
+      if(config$verbose) message(glue::glue("Adding index {i}"))
+
+      add_index(
+        conn = conn,
+        table = table_to,
+        index = i,
+        keys = sc::config$schemas[[table_from]]$indexes[[i]]
+      )
+    }
+  }
+
   update_config_datetime(type = "data", tag = table_to)
   update_config_last_updated(type = "data", tag = table_to)
 }
