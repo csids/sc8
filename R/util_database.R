@@ -594,7 +594,10 @@ copy_into_new_table_where <- function(
 
   info_from = get_table_name_info(table_from)
   info_to = get_table_name_info(table_to)
-
+  print("from")
+  print(info_from)
+  print("to")
+  print(info_to)
   if(info_from$db != info_to$db){
     stop("Cannot copy directly between databases because they are of different levels of data sensitivity.")
   }
