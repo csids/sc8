@@ -329,22 +329,57 @@ Schema_v8 <- R6Class(
             stringr::str_detect(var, "^tag_") |
             stringr::str_detect(var, "^_status$")
           ){
+            # config$schemas$config_last_updated$connect(); var <- "tag";  details <- dplyr::tbl(config$schemas$config_last_updated$conn, config$schemas$config_last_updated$table_name) |>  dplyr::select(val = !!var) |> dplyr::group_by(val) |> dplyr::summarize(n = n()) |>  dplyr::distinct() |> dplyr::collect() |> setDT() |> setorder(val)
+            # library(sykdomspulsen); sc::config$schemas$anon_covid19_autoreport_vaccination_by_time_age_sex_location_data$connect(); sc::config$schemas$anon_covid19_autoreport_vaccination_by_time_age_sex_location_data
             details <- dplyr::tbl(self$conn, self$table_name) |>
               dplyr::select(val = !!var) |>
-              dplyr::distinct() |>
-              dplyr::collect()
-            details <- details$val |> sort()
-            if(length(details) < 10){
-              details <- paste0(": ",paste0(details, collapse = ", "))
-            } else {
-              for(j in seq_along(details)) details[j] <- paste0("\n\t- ",paste0(details[j], collapse = ""))
-              details <- paste0(details, collapse = "")
-              details <- paste0(":", details)
-            }
+              dplyr::group_by(val) |>
+              dplyr::summarize(n=n()) |>
+              dplyr::collect() |>
+              setDT()
+
+            # manually specify some ordering requirements
+            levels <- sort(details$val)
+            extra_levels <- c(
+              "nation",
+              "county",
+              "notmainlandcounty",
+              "missingcounty",
+              "municip",
+              "notmainlandmunicip",
+              "missingmunicip",
+              "wardoslo",
+              "wardbergen",
+              "wardstavanger",
+              "wardtrondheim",
+              "extrawardoslo",
+              "missingwardbergen",
+              "missingwardoslo",
+              "missingwardstavanger",
+              "missingwardtrondheim",
+              "baregion",
+              "region",
+              "faregion"
+            )
+            reordered_levels <- unique(c(extra_levels, levels))
+            reordered_levels <- reordered_levels[reordered_levels %in% levels]
+            details[, val := factor(val, levels = reordered_levels)]
+            setorder(details, val)
+
+            # create display (n + padding)
+            details[, len := stringr::str_length(val)]
+            details[, max_len := max(len)]
+            details[, display := paste0(stringr::str_pad(val, max_len, side = "right"), " (n = ",fhiplot::format_nor(n),")")]
+            details <- details$display
+
+            for(j in seq_along(details)) details[j] <- paste0("\n\t- ",paste0(details[j], collapse = ""))
+            details <- paste0(details, collapse = "")
+            details <- paste0(":", details)
           }
           cat(names(self$field_types)[i], " (", self$field_types[i],")", details, "\n", sep = "")
         }
       }
+      cat("\n")
 
       invisible(self)
     },
@@ -683,6 +718,100 @@ Schema <- R6Class(
     #' @param db_config db_config
     connect = function(db_config = self$db_config) {
       self$db_connect(db_config)
+    },
+
+    print = function(...) {
+      needs_to_connect <- FALSE
+      if(is.null(self$conn)){
+        needs_to_connect <- TRUE
+      } else if(!DBI::dbIsValid(self$conn)){
+        needs_to_connect <- TRUE
+      }
+
+      if(needs_to_connect){
+        cat(crayon::bgYellow(self$table_name_fully_specified), " (disconnected)\n\n")
+        for(i in seq_along(self$field_types)){
+          cat(names(self$field_types)[i], " (", self$field_types[i],")", "\n", sep = "")
+        }
+      } else {
+        cat(crayon::bgCyan(self$table_name_fully_specified), " (connected)\n\n")
+        for(i in seq_along(self$field_types)){
+          var <- names(self$field_types)[i]
+          details <- ""
+          if(
+            var %in% c(
+              "granularity_time",
+              "granularity_geo",
+              "country_iso3",
+              # "location_code",
+              "border",
+              "age",
+              "sex",
+
+              "isoyear",
+              #"isoweek",
+              #"isoyearweek",
+              "season",
+
+              "tag",
+              "type"
+            ) |
+            stringr::str_detect(var, "^tag_") |
+            stringr::str_detect(var, "^_status$")
+          ){
+            # config$schemas$config_last_updated$connect(); var <- "tag";  details <- dplyr::tbl(config$schemas$config_last_updated$conn, config$schemas$config_last_updated$table_name) |>  dplyr::select(val = !!var) |> dplyr::group_by(val) |> dplyr::summarize(n = n()) |>  dplyr::distinct() |> dplyr::collect() |> setDT() |> setorder(val)
+            # library(sykdomspulsen); sc::config$schemas$anon_covid19_autoreport_vaccination_by_time_age_sex_location_data$connect(); sc::config$schemas$anon_covid19_autoreport_vaccination_by_time_age_sex_location_data
+            details <- dplyr::tbl(self$conn, self$table_name) |>
+              dplyr::select(val = !!var) |>
+              dplyr::group_by(val) |>
+              dplyr::summarize(n=n()) |>
+              dplyr::collect() |>
+              setDT()
+
+            # manually specify some ordering requirements
+            levels <- sort(details$val)
+            extra_levels <- c(
+              "nation",
+              "county",
+              "notmainlandcounty",
+              "missingcounty",
+              "municip",
+              "notmainlandmunicip",
+              "missingmunicip",
+              "wardoslo",
+              "wardbergen",
+              "wardstavanger",
+              "wardtrondheim",
+              "extrawardoslo",
+              "missingwardbergen",
+              "missingwardoslo",
+              "missingwardstavanger",
+              "missingwardtrondheim",
+              "baregion",
+              "region",
+              "faregion"
+            )
+            reordered_levels <- unique(c(extra_levels, levels))
+            reordered_levels <- reordered_levels[reordered_levels %in% levels]
+            details[, val := factor(val, levels = reordered_levels)]
+            setorder(details, val)
+
+            # create display (n + padding)
+            details[, len := stringr::str_length(val)]
+            details[, max_len := max(len)]
+            details[, display := paste0(stringr::str_pad(val, max_len, side = "right"), " (n = ",fhiplot::format_nor(n),")")]
+            details <- details$display
+
+            for(j in seq_along(details)) details[j] <- paste0("\n\t- ",paste0(details[j], collapse = ""))
+            details <- paste0(details, collapse = "")
+            details <- paste0(":", details)
+          }
+          cat(names(self$field_types)[i], " (", self$field_types[i],")", details, "\n", sep = "")
+        }
+      }
+      cat("\n")
+
+      invisible(self)
     },
 
     #' @description
