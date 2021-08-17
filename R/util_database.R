@@ -837,11 +837,11 @@ tbl <- function(table) {
   x <- get_table_name_info(table)
 
   if(!DBI::dbIsValid(x$pool) | config$in_parallel){
-    message("sc::tbl connection was not valid, or is being run in parallel. Recreating.")
+    # message("sc::tbl connection was not valid, or is being run in parallel. Recreating.")
     create_pool_connection(config$db_configs[[x$access]], use_db = T)
     x <- get_table_name_info(table)
   } else {
-    message("sc::tbl connection is valid.")
+    # message("sc::tbl connection is valid.")
   }
 
   return(dplyr::tbl(x$pool, x$table_name))
