@@ -837,8 +837,11 @@ tbl <- function(table) {
   x <- get_table_name_info(table)
 
   if(!DBI::dbIsValid(x$pool)){
+    message("sc::tbl connection was not valid. Recreating.")
     create_pool_connection(config$db_configs[[x$access]], use_db = T)
     x <- get_table_name_info(table)
+  } else {
+    message("sc::tbl connection is valid.")
   }
 
   return(dplyr::tbl(x$pool, x$table_name))
