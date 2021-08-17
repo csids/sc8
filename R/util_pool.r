@@ -131,6 +131,7 @@ get_table_name_info <- function(table_name){
     stringr::str_remove_all("\\[]\\.")
 
   return(list(
+    access = get_access_level_from_table_name(table_name),
     db = db_schema$db,
     schema = db_schema$schema,
     table_name_fully_specified = x_table,

@@ -836,6 +836,11 @@ get_db_connection <- function(
 tbl <- function(table) {
   x <- get_table_name_info(table)
 
+  if(!DBI::dbIsValid(x$pool)){
+    create_pool_connection(config$db_configs[[x$access]], use_db = T)
+    x <- get_table_name_info(table)
+  }
+
   return(dplyr::tbl(x$pool, x$table_name))
 }
 
