@@ -290,6 +290,65 @@ Schema_v8 <- R6Class(
       if (!is.null(self$conn)) self$create_table()
     },
 
+    print = function(...) {
+      needs_to_connect <- FALSE
+      if(is.null(self$conn)){
+        needs_to_connect <- TRUE
+      } else if(!DBI::dbIsValid(self$conn)){
+        needs_to_connect <- TRUE
+      }
+
+      if(needs_to_connect){
+        cat(crayon::bgYellow(self$table_name_fully_specified), " (disconnected)\n\n")
+        for(i in seq_along(self$field_types)){
+          cat(names(self$field_types)[i], " (", self$field_types[i],")", "\n", sep = "")
+        }
+      } else {
+        cat(crayon::bgCyan(self$table_name_fully_specified), " (connected)\n\n")
+        for(i in seq_along(self$field_types)){
+          var <- names(self$field_types)[i]
+          details <- ""
+          if(
+            var %in% c(
+              "granularity_time",
+              "granularity_geo",
+              "country_iso3",
+              # "location_code",
+              "border",
+              "age",
+              "sex",
+
+              "isoyear",
+              #"isoweek",
+              #"isoyearweek",
+              "season",
+
+              "tag",
+              "type"
+            ) |
+            stringr::str_detect(var, "^tag_") |
+            stringr::str_detect(var, "^_status$")
+          ){
+            details <- dplyr::tbl(self$conn, self$table_name) |>
+              dplyr::select(val = !!var) |>
+              dplyr::distinct() |>
+              dplyr::collect()
+            details <- details$val |> sort()
+            if(length(details) < 10){
+              details <- paste0(": ",paste0(details, collapse = ", "))
+            } else {
+              for(j in seq_along(details)) details[j] <- paste0("\n\t- ",paste0(details[j], collapse = ""))
+              details <- paste0(details, collapse = "")
+              details <- paste0(":", details)
+            }
+          }
+          cat(names(self$field_types)[i], " (", self$field_types[i],")", details, "\n", sep = "")
+        }
+      }
+
+      invisible(self)
+    },
+
     #' @description
     #' Connect to a db
     #' @param db_config db_config

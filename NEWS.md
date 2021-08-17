@@ -2,7 +2,7 @@
 
 - Allows for multiple databases to be used for different access levels
 - copy_into_new_table_where now also copies indexes
-- sc::tbl is now (slightly) useable in parallel (not recommended)
+- V8 schemas now have a nice print function
 
 # sc 8.0.1
 
