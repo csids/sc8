@@ -730,8 +730,8 @@ Schema <- R6Class(
 
       if(needs_to_connect){
         cat(self$table_name_fully_specified, " ", crayon::bgRed(crayon::white("(disconnected)\n\n")))
-        for(i in seq_along(self$field_types)){
-          cat(names(self$field_types)[i], " (", self$field_types[i],")", "\n", sep = "")
+        for(i in seq_along(self$db_field_types)){
+          cat(names(self$db_field_types)[i], " (", self$db_field_types[i],")", "\n", sep = "")
         }
       } else {
         cat(self$table_name_fully_specified, " ", crayon::bgCyan(crayon::white("(connected)\n\n")))
