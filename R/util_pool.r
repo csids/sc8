@@ -4,7 +4,7 @@ create_pool_connection <- function(db_config, use_db = TRUE){
   if(!is.null(db_config$trusted_connection)) if(db_config$trusted_connection=="yes") use_trusted <- TRUE
 
   if(use_trusted & db_config$driver %in% c("ODBC Driver 17 for SQL Server")){
-    pool <- DBI::dbConnect(
+    pool <- pool::dbPool(
       odbc::odbc(),
       driver = db_config$driver,
       server = db_config$server,
@@ -12,7 +12,7 @@ create_pool_connection <- function(db_config, use_db = TRUE){
       trusted_connection = "yes"
     )
   } else if(db_config$driver %in% c("ODBC Driver 17 for SQL Server")){
-    pool <- DBI::dbConnect(
+    pool <- pool::dbPool(
       odbc::odbc(),
       driver = db_config$driver,
       server = db_config$server,
@@ -22,7 +22,7 @@ create_pool_connection <- function(db_config, use_db = TRUE){
       encoding = "utf8"
     )
   } else {
-    pool <- DBI::dbConnect(
+    pool <- pool::dbPool(
       odbc::odbc(),
       driver = db_config$driver,
       server = db_config$server,
@@ -142,7 +142,10 @@ get_table_name_info <- function(table_name){
 }
 
 list_tables_int <- function(id) {
-  retval <- DBI::dbListTables(pools$no_db, get_db_and_schema_from_id(id)$db, get_db_and_schema_from_id(id)$schema)
+  sql <- glue::glue("select * from [{get_db_and_schema_from_id(id)$db}].information_schema.tables")
+  retval <- DBI::dbGetQuery(pools$no_db, sql) |> setDT()
+  retval <- retval[TABLE_SCHEMA == get_db_and_schema_from_id(id)$schema]
+  retval <- retval$TABLE_NAME
   if(length(retval)==0) return()
 
   # remove airflow tables
