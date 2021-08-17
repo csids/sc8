@@ -34,6 +34,7 @@ Imports:
   parallel,
   pbmcapply,
   plnr (>= 2021.5.4),
+  pool,
   processx,
   progress,
   progressr,
