@@ -299,12 +299,12 @@ Schema_v8 <- R6Class(
       }
 
       if(needs_to_connect){
-        cat(crayon::bgYellow(self$table_name_fully_specified), " (disconnected)\n\n")
+        cat(self$table_name_fully_specified, " ", crayon::bgRed(crayon::white("(disconnected)\n\n")))
         for(i in seq_along(self$field_types)){
           cat(names(self$field_types)[i], " (", self$field_types[i],")", "\n", sep = "")
         }
       } else {
-        cat(crayon::bgCyan(self$table_name_fully_specified), " (connected)\n\n")
+        cat(self$table_name_fully_specified, " ", crayon::bgCyan(crayon::white("(connected)\n\n")))
         for(i in seq_along(self$field_types)){
           var <- names(self$field_types)[i]
           details <- ""
