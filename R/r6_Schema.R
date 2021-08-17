@@ -729,14 +729,14 @@ Schema <- R6Class(
       }
 
       if(needs_to_connect){
-        cat(crayon::bgYellow(self$table_name_fully_specified), " (disconnected)\n\n")
+        cat(self$table_name_fully_specified, " ", crayon::bgRed(crayon::white("(disconnected)\n\n")))
         for(i in seq_along(self$field_types)){
           cat(names(self$field_types)[i], " (", self$field_types[i],")", "\n", sep = "")
         }
       } else {
-        cat(crayon::bgCyan(self$table_name_fully_specified), " (connected)\n\n")
-        for(i in seq_along(self$field_types)){
-          var <- names(self$field_types)[i]
+        cat(self$table_name_fully_specified, " ", crayon::bgCyan(crayon::white("(connected)\n\n")))
+        for(i in seq_along(self$db_field_types)){
+          var <- names(self$db_field_types)[i]
           details <- ""
           if(
             var %in% c(
@@ -760,7 +760,6 @@ Schema <- R6Class(
             stringr::str_detect(var, "^_status$")
           ){
             # config$schemas$config_last_updated$connect(); var <- "tag";  details <- dplyr::tbl(config$schemas$config_last_updated$conn, config$schemas$config_last_updated$table_name) |>  dplyr::select(val = !!var) |> dplyr::group_by(val) |> dplyr::summarize(n = n()) |>  dplyr::distinct() |> dplyr::collect() |> setDT() |> setorder(val)
-            # library(sykdomspulsen); sc::config$schemas$anon_covid19_autoreport_vaccination_by_time_age_sex_location_data$connect(); sc::config$schemas$anon_covid19_autoreport_vaccination_by_time_age_sex_location_data
             details <- dplyr::tbl(self$conn, self$table_name) |>
               dplyr::select(val = !!var) |>
               dplyr::group_by(val) |>
@@ -806,7 +805,7 @@ Schema <- R6Class(
             details <- paste0(details, collapse = "")
             details <- paste0(":", details)
           }
-          cat(names(self$field_types)[i], " (", self$field_types[i],")", details, "\n", sep = "")
+          cat(names(self$db_field_types)[i], " (", self$db_field_types[i],")", details, "\n", sep = "")
         }
       }
       cat("\n")
