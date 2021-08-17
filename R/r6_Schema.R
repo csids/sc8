@@ -369,7 +369,14 @@ Schema_v8 <- R6Class(
             # create display (n + padding)
             details[, len := stringr::str_length(val)]
             details[, max_len := max(len)]
-            details[, display := paste0(stringr::str_pad(val, max_len, side = "right"), " (n = ",fhiplot::format_nor(n),")")]
+            details[, val := stringr::str_pad(val, max_len, side = "right")]
+
+            details[, n := fhiplot::format_nor(n)]
+            details[, len := stringr::str_length(n)]
+            details[, max_len := max(len)]
+            details[, n := stringr::str_pad(n, max_len, side = "left")]
+
+            details[, display := paste0(val, " (n = ",n ,")")]
             details <- details$display
 
             for(j in seq_along(details)) details[j] <- paste0("\n\t- ",paste0(details[j], collapse = ""))
