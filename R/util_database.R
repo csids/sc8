@@ -836,8 +836,8 @@ get_db_connection <- function(
 tbl <- function(table) {
   x <- get_table_name_info(table)
 
-  if(!DBI::dbIsValid(x$pool)){
-    message("sc::tbl connection was not valid. Recreating.")
+  if(!DBI::dbIsValid(x$pool) | config$in_parallel){
+    message("sc::tbl connection was not valid, or is being run in parallel. Recreating.")
     create_pool_connection(config$db_configs[[x$access]], use_db = T)
     x <- get_table_name_info(table)
   } else {
