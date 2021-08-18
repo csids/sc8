@@ -391,6 +391,24 @@ Schema_v8 <- R6Class(
       invisible(self)
     },
 
+    cat_status <- function(){
+      if(self$is_connected()){
+        cat(self$table_name_fully_specified, " ", crayon::bgRed(crayon::white("(disconnected)")))
+      } else {
+        cat(self$table_name_fully_specified, " ", crayon::bgCyan(crayon::white("(connected)")))
+      }
+    },
+
+    is_connected = function(){
+      is_connected <- FALSE
+      if(is.null(self$conn)){
+        is_connected <- TRUE
+      } else if(!DBI::dbIsValid(self$conn)){
+        is_connected <- TRUE
+      }
+      return(is_connected)
+    },
+
     #' @description
     #' Connect to a db
     #' @param db_config db_config
