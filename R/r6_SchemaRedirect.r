@@ -261,7 +261,11 @@ SchemaRedirect_v8 <- R6Class(
       cat("\nRedirecting to:\n")
       for(i in self$schemas){
         cat("\t-")
-        i$cat_status()
+        if(i$table_name==self$preferred_table_name){
+          i$cat_status()
+        } else {
+          cat(i$table_name_fully_specified)
+        }
         cat("\n")
       }
       cat("\n")
