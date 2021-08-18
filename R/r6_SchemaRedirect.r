@@ -258,7 +258,7 @@ SchemaRedirect_v8 <- R6Class(
     },
 
     print = function(...) {
-      cat("\Redirecting to:\n")
+      cat("\nRedirecting to:\n")
       for(i in self$table_names){
         cat("\t-",i)
       }
