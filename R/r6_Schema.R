@@ -391,7 +391,7 @@ Schema_v8 <- R6Class(
       invisible(self)
     },
 
-    cat_status <- function(){
+    cat_status = function(){
       if(self$is_connected()){
         cat(self$table_name_fully_specified, " ", crayon::bgRed(crayon::white("(disconnected)")))
       } else {
