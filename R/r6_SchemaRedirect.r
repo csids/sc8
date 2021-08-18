@@ -260,7 +260,11 @@ SchemaRedirect_v8 <- R6Class(
     print = function(...) {
       cat("\nRedirecting to:\n")
       for(i in self$table_names){
-        cat("\t-",i)
+        if(i==self$preferred_table_name){
+          cat("\t- ->",crayon::bold(i),"<-\n")
+        } else {
+          cat("\t-",i,"\n")
+        }
       }
       cat("\n")
       print(self$schemas[[self$preferred_table_name]])
