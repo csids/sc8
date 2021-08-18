@@ -767,13 +767,13 @@ Schema <- R6Class(
             stringr::str_detect(var, "^_status$")
           ){
             # config$schemas$config_last_updated$connect(); var <- "tag";  details <- dplyr::tbl(config$schemas$config_last_updated$conn, config$schemas$config_last_updated$table_name) |>  dplyr::select(val = !!var) |> dplyr::group_by(val) |> dplyr::summarize(n = n()) |>  dplyr::distinct() |> dplyr::collect() |> setDT() |> setorder(val)
-            details <- self$tbl() |>
+            details <- dplyr::tbl(self$conn, self$db_table) |>
               dplyr::select(val = !!var) |>
               dplyr::group_by(val) |>
               dplyr::summarize(n=n()) |>
               dplyr::collect() |>
               setDT()
-print(details)
+
             # manually specify some ordering requirements
             levels <- sort(details$val)
             extra_levels <- c(
