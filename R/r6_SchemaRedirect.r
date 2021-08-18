@@ -256,6 +256,17 @@ SchemaRedirect_v8 <- R6Class(
         if(name_access[i] == config$db_config_preferred) self$preferred_table_name <- schema$table_name
       }
     },
+
+    print = function(...) {
+      cat("\Redirecting to:\n")
+      for(i in self$table_names){
+        cat("\t-",i)
+      }
+      cat("\n")
+      print(self$schemas[[self$preferred_table_name]])
+      invisible(self)
+    },
+
     #' @description
     #' Connect to a db
     connect = function() {
