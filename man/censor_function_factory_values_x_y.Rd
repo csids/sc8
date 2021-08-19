@@ -23,6 +23,10 @@ censor_function_factory_values_x_y(
 
 \item{censored_value}{The value that censored data will be set to}
 
+\item{lower_value}{censor if value is equal or greater than lower_value & if}
+
+\item{upper_value}{value is equal or lower than upper_value}
+
 \item{granularity_time}{Which granularity_times to use this function on}
 
 \item{granularity_time_not}{Which granularity_times to not use this function on}
