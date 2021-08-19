@@ -98,6 +98,8 @@ censor_function_factory_everything <- function(
 #' @param column_name_to_be_censored Name of the column to be censored
 #' @param column_name_value Name of the column whose value is determining if something should be censored
 #' @param censored_value The value that censored data will be set to
+#' @param lower_value censor if value is equal or greater than lower_value & if
+#' @param upper_value value is equal or lower than upper_value
 #' @param granularity_time Which granularity_times to use this function on
 #' @param granularity_time_not Which granularity_times to not use this function on
 #' @param granularity_geo Which granularity_geos to use this function on
@@ -120,6 +122,9 @@ censor_function_factory_values_x_y <- function(
   force(granularity_geo_not)
   force(granularity_time)
   force(granularity_time_not)
+  force(lower_value)
+  force(upper_value)
+
   if(!is.null(granularity_time) & !is.null(granularity_time_not)) stop("you can't use both granularity_time and granularity_time_not")
   if(!is.null(granularity_geo) & !is.null(granularity_geo_not)) stop("you can't use both granularity_geo and granularity_geo_not")
   function(d){
@@ -181,41 +186,18 @@ censor_function_factory_values_0_4 <- function(
   force(granularity_geo_not)
   force(granularity_time)
   force(granularity_time_not)
-  if(!is.null(granularity_time) & !is.null(granularity_time_not)) stop("you can't use both granularity_time and granularity_time_not")
-  if(!is.null(granularity_geo) & !is.null(granularity_geo_not)) stop("you can't use both granularity_geo and granularity_geo_not")
-  function(d){
-    censored_column_name <- paste0(column_name_to_be_censored, "_censored")
-    if(!censored_column_name %in% names(d)) d[, (censored_column_name) := FALSE]
 
-    if(is.null(granularity_time) & is.null(granularity_time_not)){
-      x_granularity_time <- unique(d$granularity_time)
-    } else if(!is.null(granularity_time)){
-      x_granularity_time <- granularity_time
-    } else if(!is.null(granularity_time_not)){
-      x_granularity_time <- unique(d$granularity_time)[!unique(d$granularity_time) %in% granularity_time_not]
-    }
+  censor_function_factory_values_x_y(
+    column_name_value = column_name_value ,
+    censored_value = censored_value ,
+    lower_value = 0,
+    upper_value = 4,
+    granularity_time = granularity_time ,
+    granularity_time_not = granularity_time_not ,
+    granularity_geo = granularity_geo ,
+    granularity_geo_not = granularity_geo_not
 
-    if(is.null(granularity_geo) & is.null(granularity_geo_not)){
-      x_granularity_geo <- unique(d$granularity_geo)
-    } else if(!is.null(granularity_geo)){
-      x_granularity_geo <- granularity_geo
-    } else if(!is.null(granularity_geo_not)){
-      x_granularity_geo <- unique(d$granularity_geo)[!unique(d$granularity_geo) %in% granularity_geo_not]
-    }
-
-    d[
-      granularity_time %in% x_granularity_time &
-        granularity_geo %in% x_granularity_geo &
-        get(column_name_value) >= 0 & get(column_name_value) <= 4,
-      c(
-        censored_column_name,
-        column_name_to_be_censored
-      ) := list(
-        TRUE,
-        censored_value
-      )
-    ]
-  }
+  )
 }
 
 #' censor 0-4 function factory

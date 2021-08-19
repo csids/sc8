@@ -20,6 +20,9 @@ schema class description
 \itemize{
 \item \href{#method-load_folder_fn}{\code{Schema_v8$load_folder_fn()}}
 \item \href{#method-new}{\code{Schema_v8$new()}}
+\item \href{#method-print}{\code{Schema_v8$print()}}
+\item \href{#method-cat_status}{\code{Schema_v8$cat_status()}}
+\item \href{#method-is_connected}{\code{Schema_v8$is_connected()}}
 \item \href{#method-connect}{\code{Schema_v8$connect()}}
 \item \href{#method-disconnect}{\code{Schema_v8$disconnect()}}
 \item \href{#method-create_table}{\code{Schema_v8$create_table()}}
@@ -82,6 +85,33 @@ Create a new Schema_v3 object.
 \subsection{Returns}{
 A new `Schema_v3` object.
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-print"></a>}}
+\if{latex}{\out{\hypertarget{method-print}{}}}
+\subsection{Method \code{print()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Schema_v8$print(...)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-cat_status"></a>}}
+\if{latex}{\out{\hypertarget{method-cat_status}{}}}
+\subsection{Method \code{cat_status()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Schema_v8$cat_status()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-is_connected"></a>}}
+\if{latex}{\out{\hypertarget{method-is_connected}{}}}
+\subsection{Method \code{is_connected()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Schema_v8$is_connected()}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-connect"></a>}}
