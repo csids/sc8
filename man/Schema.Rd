@@ -14,6 +14,7 @@ schema class description
 \item \href{#method-load_folder_fn}{\code{Schema$load_folder_fn()}}
 \item \href{#method-new}{\code{Schema$new()}}
 \item \href{#method-connect}{\code{Schema$connect()}}
+\item \href{#method-print}{\code{Schema$print()}}
 \item \href{#method-disconnect}{\code{Schema$disconnect()}}
 \item \href{#method-create_table}{\code{Schema$create_table()}}
 \item \href{#method-drop_table}{\code{Schema$drop_table()}}
@@ -97,6 +98,15 @@ Connect to a db
 }
 \if{html}{\out{</div>}}
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-print"></a>}}
+\if{latex}{\out{\hypertarget{method-print}{}}}
+\subsection{Method \code{print()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Schema$print(...)}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-disconnect"></a>}}

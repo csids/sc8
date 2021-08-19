@@ -12,6 +12,7 @@ SchemaRedirect class description
 \subsection{Public methods}{
 \itemize{
 \item \href{#method-new}{\code{SchemaRedirect_v8$new()}}
+\item \href{#method-print}{\code{SchemaRedirect_v8$print()}}
 \item \href{#method-connect}{\code{SchemaRedirect_v8$connect()}}
 \item \href{#method-disconnect}{\code{SchemaRedirect_v8$disconnect()}}
 \item \href{#method-create_table}{\code{SchemaRedirect_v8$create_table()}}
@@ -49,6 +50,15 @@ SchemaRedirect class description
   validator_field_contents = validator_field_contents_blank,
   info = NULL
 )}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-print"></a>}}
+\if{latex}{\out{\hypertarget{method-print}{}}}
+\subsection{Method \code{print()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{SchemaRedirect_v8$print(...)}\if{html}{\out{</div>}}
 }
 
 }
