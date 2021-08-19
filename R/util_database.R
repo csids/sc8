@@ -600,7 +600,7 @@ copy_into_new_table_where <- function(
   }
 
   t0 <- Sys.time()
-  temp_name <- paste0("tmp",random_uuid())
+  temp_name <- paste0("[",info_to$db,"].[",info_to$schema,"].[tmp",random_uuid(),"]")
 
   # create the table first (needs to be created or we cant use tablock)
   sql <- glue::glue("SELECT {columns} INTO {temp_name} FROM {table_from} WHERE 0=1")

@@ -142,6 +142,7 @@ get_table_name_info <- function(table_name){
 }
 
 list_tables_int <- function(id) {
+  # id = config$db_configs[["anon"]]$id
   sql <- glue::glue("select * from [{get_db_and_schema_from_id(id)$db}].information_schema.tables")
   retval <- DBI::dbGetQuery(pools$no_db, sql) |> setDT()
   retval <- retval[TABLE_SCHEMA == get_db_and_schema_from_id(id)$schema]
