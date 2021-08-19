@@ -9,26 +9,24 @@
 #' @param granularity_geo Which granularity_geos to use this function on
 #' @param granularity_geo_not Which granularity_geos to not use this function on
 #' @export
-censor_function_factory_nothing <- function(
-  column_name_to_be_censored,
-  column_name_value = column_name_to_be_censored,
-  censored_value = 0,
-  granularity_time = NULL,
-  granularity_time_not = NULL,
-  granularity_geo = NULL,
-  granularity_geo_not = NULL
-){
+censor_function_factory_nothing <- function(column_name_to_be_censored,
+                                            column_name_value = column_name_to_be_censored,
+                                            censored_value = 0,
+                                            granularity_time = NULL,
+                                            granularity_time_not = NULL,
+                                            granularity_geo = NULL,
+                                            granularity_geo_not = NULL) {
   force(column_name_to_be_censored)
   force(column_name_value)
   force(granularity_time)
   force(granularity_time_not)
   force(granularity_geo)
   force(granularity_geo_not)
-  if(!is.null(granularity_time) & !is.null(granularity_time_not)) stop("you can't use both granularity_time and granularity_time_not")
-  if(!is.null(granularity_geo) & !is.null(granularity_geo_not)) stop("you can't use both granularity_geo and granularity_geo_not")
-  function(d){
+  if (!is.null(granularity_time) & !is.null(granularity_time_not)) stop("you can't use both granularity_time and granularity_time_not")
+  if (!is.null(granularity_geo) & !is.null(granularity_geo_not)) stop("you can't use both granularity_geo and granularity_geo_not")
+  function(d) {
     censored_column_name <- paste0(column_name_to_be_censored, "_censored")
-    if(!censored_column_name %in% names(d)) d[, (censored_column_name) := FALSE]
+    if (!censored_column_name %in% names(d)) d[, (censored_column_name) := FALSE]
   }
 }
 
@@ -43,46 +41,44 @@ censor_function_factory_nothing <- function(
 #' @param granularity_geo Which granularity_geos to use this function on
 #' @param granularity_geo_not Which granularity_geos to not use this function on
 #' @export
-censor_function_factory_everything <- function(
-  column_name_to_be_censored,
-  column_name_value = column_name_to_be_censored,
-  censored_value = 0,
-  granularity_time = NULL,
-  granularity_time_not = NULL,
-  granularity_geo = NULL,
-  granularity_geo_not = NULL
-){
+censor_function_factory_everything <- function(column_name_to_be_censored,
+                                               column_name_value = column_name_to_be_censored,
+                                               censored_value = 0,
+                                               granularity_time = NULL,
+                                               granularity_time_not = NULL,
+                                               granularity_geo = NULL,
+                                               granularity_geo_not = NULL) {
   force(column_name_to_be_censored)
   force(column_name_value)
   force(granularity_geo)
   force(granularity_geo_not)
   force(granularity_time)
   force(granularity_time_not)
-  if(!is.null(granularity_time) & !is.null(granularity_time_not)) stop("you can't use both granularity_time and granularity_time_not")
-  if(!is.null(granularity_geo) & !is.null(granularity_geo_not)) stop("you can't use both granularity_geo and granularity_geo_not")
-  function(d){
+  if (!is.null(granularity_time) & !is.null(granularity_time_not)) stop("you can't use both granularity_time and granularity_time_not")
+  if (!is.null(granularity_geo) & !is.null(granularity_geo_not)) stop("you can't use both granularity_geo and granularity_geo_not")
+  function(d) {
     censored_column_name <- paste0(column_name_to_be_censored, "_censored")
-    if(!censored_column_name %in% names(d)) d[, (censored_column_name) := FALSE]
+    if (!censored_column_name %in% names(d)) d[, (censored_column_name) := FALSE]
 
-    if(is.null(granularity_time) & is.null(granularity_time_not)){
+    if (is.null(granularity_time) & is.null(granularity_time_not)) {
       x_granularity_time <- unique(d$granularity_time)
-    } else if(!is.null(granularity_time)){
+    } else if (!is.null(granularity_time)) {
       x_granularity_time <- granularity_time
-    } else if(!is.null(granularity_time_not)){
+    } else if (!is.null(granularity_time_not)) {
       x_granularity_time <- unique(d$granularity_time)[!unique(d$granularity_time) %in% granularity_time_not]
     }
 
-    if(is.null(granularity_geo) & is.null(granularity_geo_not)){
+    if (is.null(granularity_geo) & is.null(granularity_geo_not)) {
       x_granularity_geo <- unique(d$granularity_geo)
-    } else if(!is.null(granularity_geo)){
+    } else if (!is.null(granularity_geo)) {
       x_granularity_geo <- granularity_geo
-    } else if(!is.null(granularity_geo_not)){
+    } else if (!is.null(granularity_geo_not)) {
       x_granularity_geo <- unique(d$granularity_geo)[!unique(d$granularity_geo) %in% granularity_geo_not]
     }
 
     d[
       granularity_time %in% x_granularity_time &
-      granularity_geo %in% x_granularity_geo,
+        granularity_geo %in% x_granularity_geo,
       c(
         censored_column_name,
         column_name_to_be_censored
@@ -105,17 +101,15 @@ censor_function_factory_everything <- function(
 #' @param granularity_geo Which granularity_geos to use this function on
 #' @param granularity_geo_not Which granularity_geos to not use this function on
 #' @export
-censor_function_factory_values_x_y <- function(
-  column_name_to_be_censored,
-  column_name_value = column_name_to_be_censored,
-  censored_value = 0,
-  lower_value = 0,
-  upper_value = 4,
-  granularity_time = NULL,
-  granularity_time_not = NULL,
-  granularity_geo = NULL,
-  granularity_geo_not = NULL
-){
+censor_function_factory_values_x_y <- function(column_name_to_be_censored,
+                                               column_name_value = column_name_to_be_censored,
+                                               censored_value = 0,
+                                               lower_value = 0,
+                                               upper_value = 4,
+                                               granularity_time = NULL,
+                                               granularity_time_not = NULL,
+                                               granularity_geo = NULL,
+                                               granularity_geo_not = NULL) {
   force(column_name_to_be_censored)
   force(column_name_value)
   force(granularity_geo)
@@ -125,25 +119,25 @@ censor_function_factory_values_x_y <- function(
   force(lower_value)
   force(upper_value)
 
-  if(!is.null(granularity_time) & !is.null(granularity_time_not)) stop("you can't use both granularity_time and granularity_time_not")
-  if(!is.null(granularity_geo) & !is.null(granularity_geo_not)) stop("you can't use both granularity_geo and granularity_geo_not")
-  function(d){
+  if (!is.null(granularity_time) & !is.null(granularity_time_not)) stop("you can't use both granularity_time and granularity_time_not")
+  if (!is.null(granularity_geo) & !is.null(granularity_geo_not)) stop("you can't use both granularity_geo and granularity_geo_not")
+  function(d) {
     censored_column_name <- paste0(column_name_to_be_censored, "_censored")
-    if(!censored_column_name %in% names(d)) d[, (censored_column_name) := FALSE]
+    if (!censored_column_name %in% names(d)) d[, (censored_column_name) := FALSE]
 
-    if(is.null(granularity_time) & is.null(granularity_time_not)){
+    if (is.null(granularity_time) & is.null(granularity_time_not)) {
       x_granularity_time <- unique(d$granularity_time)
-    } else if(!is.null(granularity_time)){
+    } else if (!is.null(granularity_time)) {
       x_granularity_time <- granularity_time
-    } else if(!is.null(granularity_time_not)){
+    } else if (!is.null(granularity_time_not)) {
       x_granularity_time <- unique(d$granularity_time)[!unique(d$granularity_time) %in% granularity_time_not]
     }
 
-    if(is.null(granularity_geo) & is.null(granularity_geo_not)){
+    if (is.null(granularity_geo) & is.null(granularity_geo_not)) {
       x_granularity_geo <- unique(d$granularity_geo)
-    } else if(!is.null(granularity_geo)){
+    } else if (!is.null(granularity_geo)) {
       x_granularity_geo <- granularity_geo
-    } else if(!is.null(granularity_geo_not)){
+    } else if (!is.null(granularity_geo_not)) {
       x_granularity_geo <- unique(d$granularity_geo)[!unique(d$granularity_geo) %in% granularity_geo_not]
     }
 
@@ -171,15 +165,13 @@ censor_function_factory_values_x_y <- function(
 #' @param granularity_geo Which granularity_geos to use this function on
 #' @param granularity_geo_not Which granularity_geos to not use this function on
 #' @export
-censor_function_factory_values_0_4 <- function(
-  column_name_to_be_censored,
-  column_name_value = column_name_to_be_censored,
-  censored_value = 0,
-  granularity_time = NULL,
-  granularity_time_not = NULL,
-  granularity_geo = NULL,
-  granularity_geo_not = NULL
-){
+censor_function_factory_values_0_4 <- function(column_name_to_be_censored,
+                                               column_name_value = column_name_to_be_censored,
+                                               censored_value = 0,
+                                               granularity_time = NULL,
+                                               granularity_time_not = NULL,
+                                               granularity_geo = NULL,
+                                               granularity_geo_not = NULL) {
   force(column_name_to_be_censored)
   force(column_name_value)
   force(granularity_geo)
@@ -188,27 +180,25 @@ censor_function_factory_values_0_4 <- function(
   force(granularity_time_not)
 
   censor_function_factory_values_x_y(
-    column_name_value = column_name_value ,
-    censored_value = censored_value ,
+    column_name_to_be_censored = column_name_to_be_censored,
+    column_name_value = column_name_value,
+    censored_value = censored_value,
     lower_value = 0,
     upper_value = 4,
-    granularity_time = granularity_time ,
-    granularity_time_not = granularity_time_not ,
-    granularity_geo = granularity_geo ,
+    granularity_time = granularity_time,
+    granularity_time_not = granularity_time_not,
+    granularity_geo = granularity_geo,
     granularity_geo_not = granularity_geo_not
-
   )
 }
 
 #' censor 0-4 function factory
 #' @param list_of_censors List of censors
 #' @export
-censor_list_function_factory <- function(
-  list_of_censors
-){
+censor_list_function_factory <- function(list_of_censors) {
   force(list_of_censors)
-  function(d){
-    for(i in list_of_censors) i(d)
+  function(d) {
+    for (i in list_of_censors) i(d)
   }
 }
 
@@ -219,27 +209,23 @@ censor_list_function_factory <- function(
 #' @export SchemaRedirect_v8
 SchemaRedirect_v8 <- R6Class(
   "SchemaRedirect_v8",
-
   public = list(
     table_names = NULL,
     table_accesses = NULL,
     preferred_table_name = NULL,
     censors = NULL,
     schemas = NULL,
-
-    initialize = function(
-      name_access = NULL,
-      name_grouping = NULL,
-      name_variant = NULL,
-      db_configs = NULL,
-      field_types,
-      keys,
-      censors = NULL,
-      indexes=NULL,
-      validator_field_types=validator_field_types_blank,
-      validator_field_contents=validator_field_contents_blank,
-      info = NULL
-    ) {
+    initialize = function(name_access = NULL,
+                          name_grouping = NULL,
+                          name_variant = NULL,
+                          db_configs = NULL,
+                          field_types,
+                          keys,
+                          censors = NULL,
+                          indexes = NULL,
+                          validator_field_types = validator_field_types_blank,
+                          validator_field_contents = validator_field_contents_blank,
+                          info = NULL) {
       force(name_access)
       force(name_grouping)
       force(name_variant)
@@ -255,19 +241,19 @@ SchemaRedirect_v8 <- R6Class(
       self$censors <- censors
       self$schemas <- list()
 
-      if(sum(!names(censors) %in% name_access)>0) stop("censors are not listed in name_access")
-      if(sum(!name_access %in% names(censors))>0) stop("missing censors")
-      for(i in seq_along(name_access)) if(sum(!names(censors[[i]]) %in% names(field_types))>0) stop("censor[[",i,"]] has columns that are not listed in field_types")
+      if (sum(!names(censors) %in% name_access) > 0) stop("censors are not listed in name_access")
+      if (sum(!name_access %in% names(censors)) > 0) stop("missing censors")
+      for (i in seq_along(name_access)) if (sum(!names(censors[[i]]) %in% names(field_types)) > 0) stop("censor[[", i, "]] has columns that are not listed in field_types")
 
       self$table_names <- c()
       self$table_accesses <- c()
-      for(i in seq_along(name_access)){
+      for (i in seq_along(name_access)) {
         stopifnot(name_access[i] %in% c("restr", "anon", "config"))
         table_name <- paste0(c(name_access[i], name_grouping, name_variant), collapse = "_")
         force(table_name)
 
-        censored_field_names <- paste0(names(censors[[i]]),"_censored")
-        if(censored_field_names[1] != "_censored"){
+        censored_field_names <- paste0(names(censors[[i]]), "_censored")
+        if (censored_field_names[1] != "_censored") {
           censored_field_types <- rep("BOOLEAN", length = length(censored_field_names))
           names(censored_field_types) <- censored_field_names
 
@@ -298,14 +284,13 @@ SchemaRedirect_v8 <- R6Class(
         self$table_names <- c(self$table_names, table_name)
         self$table_accesses <- c(self$table_accesses, name_access[i])
 
-        if(name_access[i] == config$db_config_preferred) self$preferred_table_name <- schema$table_name
+        if (name_access[i] == config$db_config_preferred) self$preferred_table_name <- schema$table_name
       }
     },
-
     print = function(...) {
       cat("\nRedirecting to:\n")
-      for(i in self$schemas){
-        if(i$table_name==self$preferred_table_name){
+      for (i in self$schemas) {
+        if (i$table_name == self$preferred_table_name) {
           cat("  --> ")
           i$cat_status()
         } else {
@@ -322,29 +307,28 @@ SchemaRedirect_v8 <- R6Class(
     #' @description
     #' Connect to a db
     connect = function() {
-      for(i in self$table_names) self$schemas[[i]]$connect()
+      for (i in self$table_names) self$schemas[[i]]$connect()
     },
 
     #' @description
     #' Disconnect from a db
     disconnect = function() {
-      for(i in self$table_names) self$schemas[[i]]$disconnect()
+      for (i in self$table_names) self$schemas[[i]]$disconnect()
     },
 
     #' @description
     #' Create db table
     create_table = function() {
-      for(i in self$table_names) self$schemas[[i]]$create_table()
+      for (i in self$table_names) self$schemas[[i]]$create_table()
     },
-
     drop_table = function() {
-      for(i in self$table_names) self$schemas[[i]]$drop_table()
+      for (i in self$table_names) self$schemas[[i]]$drop_table()
     },
 
     #' @description
     #' Inserts data into db table
     insert_data = function(newdata, verbose = TRUE) {
-      for(i in seq_along(self$table_names)){
+      for (i in seq_along(self$table_names)) {
         table_name <- self$table_names[i]
         table_access <- self$table_accesses[i]
         self$schemas[[table_name]]$insert_data(
@@ -357,7 +341,7 @@ SchemaRedirect_v8 <- R6Class(
     #' @description
     #' Upserts data into db table
     upsert_data = function(newdata, drop_indexes = names(self$indexes), verbose = TRUE) {
-      for(i in seq_along(self$table_names)){
+      for (i in seq_along(self$table_names)) {
         table_name <- self$table_names[i]
         table_access <- self$table_accesses[i]
 
@@ -368,31 +352,27 @@ SchemaRedirect_v8 <- R6Class(
         )
       }
     },
-
     drop_all_rows = function() {
-      for(i in self$table_names) self$schemas[[i]]$drop_all_rows()
+      for (i in self$table_names) self$schemas[[i]]$drop_all_rows()
     },
-
-    drop_rows_where = function(condition, cores = 1){
+    drop_rows_where = function(condition, cores = 1) {
       stopifnot(cores == 1)
-      if(cores == 1){
-        for(i in self$table_names) self$schemas[[i]]$drop_rows_where(condition = condition)
+      if (cores == 1) {
+        for (i in self$table_names) self$schemas[[i]]$drop_rows_where(condition = condition)
       } else {
         parallel::mclapply(self$schemas, function(x, condition) drop_rows_where(condition = condition), mc.cores = 3, condition = condition)
       }
     },
-
-    keep_rows_where = function(condition, cores = 1){
+    keep_rows_where = function(condition, cores = 1) {
       stopifnot(cores == 1)
-      if(cores == 1){
-        for(i in self$table_names) self$schemas[[i]]$keep_rows_where(condition = condition)
+      if (cores == 1) {
+        for (i in self$table_names) self$schemas[[i]]$keep_rows_where(condition = condition)
       } else {
         parallel::mclapply(self$schemas, function(x, condition) keep_rows_where(condition = condition), mc.cores = 3, condition = condition)
       }
     },
-
-    drop_all_rows_and_then_upsert_data =  function(newdata, drop_indexes = names(self$indexes), verbose = TRUE) {
-      for(i in seq_along(self$table_names)){
+    drop_all_rows_and_then_upsert_data = function(newdata, drop_indexes = names(self$indexes), verbose = TRUE) {
+      for (i in seq_along(self$table_names)) {
         table_name <- self$table_names[i]
         table_access <- self$table_accesses[i]
 
@@ -403,9 +383,8 @@ SchemaRedirect_v8 <- R6Class(
         )
       }
     },
-
-    drop_all_rows_and_then_insert_data =  function(newdata, verbose = TRUE) {
-      for(i in seq_along(self$table_names)){
+    drop_all_rows_and_then_insert_data = function(newdata, verbose = TRUE) {
+      for (i in seq_along(self$table_names)) {
         table_name <- self$table_names[i]
         table_access <- self$table_accesses[i]
 
@@ -415,25 +394,20 @@ SchemaRedirect_v8 <- R6Class(
         )
       }
     },
-
     tbl = function() {
       self$schemas[[self$preferred_table_name]]$tbl()
     },
-
     print_dplyr_select = function() {
       self$schemas[[self$preferred_table_name]]$print_dplyr_select()
     },
-
-    list_indexes_db = function(){
+    list_indexes_db = function() {
       self$schemas[[self$preferred_table_name]]$list_indexes_db()
     },
-
     add_indexes = function() {
-      for(i in self$table_names) self$schemas[[i]]$add_indexes()
+      for (i in self$table_names) self$schemas[[i]]$add_indexes()
     },
-
     drop_indexes = function() {
-      for(i in self$table_names) self$schemas[[i]]$drop_indexes()
+      for (i in self$table_names) self$schemas[[i]]$drop_indexes()
     }
   ),
   private = list(
