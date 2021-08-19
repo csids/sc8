@@ -602,7 +602,11 @@ copy_into_new_table_where <- function(
   t0 <- Sys.time()
   temp_name <- paste0("tmp",random_uuid())
 
-  sql <- glue::glue("SELECT {columns} INTO {temp_name} FROM {table_from} WHERE {condition}")
+  # create the table first (needs to be created or we cant use tablock)
+  sql <- glue::glue("SELECT {columns} INTO {temp_name} FROM {table_from} WHERE 0=1")
+  DBI::dbExecute(info_from$pool, sql)
+  # then insert (using tablock to make it faster)
+  sql <- glue::glue("INSERT INTO {temp_name} WITH (tablock) SELECT {columns} FROM {table_from} WHERE {condition}")
   DBI::dbExecute(info_from$pool, sql)
 
   try(DBI::dbRemoveTable(info_from$pool, name = table_to), TRUE)

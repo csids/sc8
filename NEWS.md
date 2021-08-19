@@ -3,6 +3,8 @@
 - Allows for multiple databases to be used for different access levels
 - copy_into_new_table_where now also copies indexes
 - V8 schemas now have a nice print function
+- V8 redirects now have a nice print function
+- copy_into_new_table_where uses tablock
 
 # sc 8.0.1
 
