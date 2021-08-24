@@ -539,6 +539,9 @@ Schema_v8 <- R6Class(
         drop_indexes = drop_indexes,
         verbose = verbose
       )
+      n <- self$tbl() |> dplyr::summarize(n=n()) |> dplyr::collect()
+      n <- n$n
+      if(n != nrow(newdata)) stop("You wanted to upsert",nrow(newdata), "rows but only upserted",n)
     },
 
     drop_all_rows_and_then_insert_data =  function(newdata, verbose = TRUE) {
@@ -547,6 +550,9 @@ Schema_v8 <- R6Class(
         newdata = newdata,
         verbose = verbose
       )
+      n <- self$tbl() |> dplyr::summarize(n=n()) |> dplyr::collect()
+      n <- n$n
+      if(n != nrow(newdata)) stop("You wanted to insert",nrow(newdata), "rows but only inserted",n)
     },
 
     tbl = function() {

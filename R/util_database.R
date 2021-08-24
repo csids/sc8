@@ -171,6 +171,9 @@ load_data_infile.default <- function(
     on.exit(DBI::dbDisconnect(conn))
   }
 
+  sql <- glue::glue("SELECT COUNT(*) FROM {table};")
+  n_before <- DBI::dbGetQuery(conn, sql)[1,1]
+
   correct_order <- DBI::dbListFields(conn, table)
   if(length(correct_order)>0) dt <- dt[,correct_order,with=F]
   write_data_infile(
@@ -261,6 +264,12 @@ load_data_infile.default <- function(
     args=args,
     stdout=NULL
   )
+
+  sql <- glue::glue("SELECT COUNT(*) FROM {table};")
+  n_after <- DBI::dbGetQuery(conn, sql)[1,1]
+  n_inserted <- n_after - n_before
+
+  if(n_inserted != nrow(dt)) stop("Wanted to insert ", nrow(dt), " rows but only inserted ",n_inserted)
 
   b <- Sys.time()
   dif <- round(as.numeric(difftime(b, a, units = "secs")), 1)

@@ -25,6 +25,8 @@ sc::add_schema_v8(
 
 d = data.table(uuid = 1:10000)
 d$n = 1
+d[, n:=as.character(n)]
+d[10, n := "a"]
 
 sc::config$schemas$anon_test$tbl()
 sc::tbl("anon_test")
@@ -35,6 +37,9 @@ sc::config$schemas$anon_test$drop_all_rows_and_then_insert_data(d)
 b <- Sys.time()
 
 b - a
+
+sc::config$schemas$anon_test$tbl() %>%dplyr::collect() |> setDT() -> f
+
 
 sc::config$schemas$anon_test$tbl()
 sc::tbl("anon_test")
