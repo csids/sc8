@@ -248,7 +248,7 @@ SchemaRedirect_v8 <- R6Class(
       self$table_names <- c()
       self$table_accesses <- c()
       for (i in seq_along(name_access)) {
-        stopifnot(name_access[i] %in% c("restr", "anon", "config"))
+        stopifnot(name_access[i] %in% c("restr", "anon", "config") | stringr::str_detect(name_access[i], "^specific_"))
         table_name <- paste0(c(name_access[i], name_grouping, name_variant), collapse = "_")
         force(table_name)
 
