@@ -174,7 +174,7 @@ load_data_infile.default <- function(
   # dont do a validation check if running in parallel
   # because there will be race conditions with different
   # instances competing
-  if(!config$in_parallel){
+  if(!config$in_parallel & interactive()){
     sql <- glue::glue("SELECT COUNT(*) FROM {table};")
     n_before <- DBI::dbGetQuery(conn, sql)[1,1]
   }
@@ -275,7 +275,7 @@ load_data_infile.default <- function(
   # dont do a validation check if running in parallel
   # because there will be race conditions with different
   # instances competing
-  if(!config$in_parallel){
+  if(!config$in_parallel & interactive()){
     sql <- glue::glue("SELECT COUNT(*) FROM {table};")
     n_after <- DBI::dbGetQuery(conn, sql)[1,1]
     n_inserted <- n_after - n_before
