@@ -356,6 +356,11 @@ Task <- R6::R6Class(
 
               if (insert_at_end_of_each_plan) {
                 retval <- rbindlist(retval, use.names = T, fill = T)
+
+                folder <- sc::path("output", "\sykdomspulsen_covid19_skuhr_output")
+                file <- glue::glue("data_{lubridate::now()}_{tries}.rds")
+                saveRDS(retval, fs::path(folder, file))
+
                 schema$output$insert_data(retval, verbose = F)
               }
               rm("retval")
