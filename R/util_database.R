@@ -171,8 +171,13 @@ load_data_infile.default <- function(
     on.exit(DBI::dbDisconnect(conn))
   }
 
-  sql <- glue::glue("SELECT COUNT(*) FROM {table};")
-  n_before <- DBI::dbGetQuery(conn, sql)[1,1]
+  # dont do a validation check if running in parallel
+  # because there will be race conditions with different
+  # instances competing
+  if(!config$in_parallel){
+    sql <- glue::glue("SELECT COUNT(*) FROM {table};")
+    n_before <- DBI::dbGetQuery(conn, sql)[1,1]
+  }
 
   correct_order <- DBI::dbListFields(conn, table)
   if(length(correct_order)>0) dt <- dt[,correct_order,with=F]
@@ -253,7 +258,9 @@ load_data_infile.default <- function(
     "-P",
     db_config$password,
     "-f",
-    format_file
+    format_file,
+    "-m",
+    0
   )
   if(db_config$trusted_connection=="yes"){
     args <- c(args,"-T")
@@ -265,12 +272,16 @@ load_data_infile.default <- function(
     stdout=NULL
   )
 
-  sql <- glue::glue("SELECT COUNT(*) FROM {table};")
-  n_after <- DBI::dbGetQuery(conn, sql)[1,1]
-  n_inserted <- n_after - n_before
+  # dont do a validation check if running in parallel
+  # because there will be race conditions with different
+  # instances competing
+  if(!config$in_parallel){
+    sql <- glue::glue("SELECT COUNT(*) FROM {table};")
+    n_after <- DBI::dbGetQuery(conn, sql)[1,1]
+    n_inserted <- n_after - n_before
 
-  if(n_inserted != nrow(dt)) stop("Wanted to insert ", nrow(dt), " rows but only inserted ",n_inserted)
-
+    if(n_inserted != nrow(dt)) stop("Wanted to insert ", nrow(dt), " rows but only inserted ",n_inserted)
+  }
   b <- Sys.time()
   dif <- round(as.numeric(difftime(b, a, units = "secs")), 1)
   if(config$verbose) message(glue::glue("Uploaded {nrow(dt)} rows in {dif} seconds to {table}"))
