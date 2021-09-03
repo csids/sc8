@@ -103,8 +103,8 @@ get_access_level_from_table_name <- function(table_name){
   if(is.na(retval)) return("anon")
 
   if(retval=="specific"){
-    retval <- stringr::str_extract(table_name, "^[A-Za-zA-Za-z]+_") |>
-      stringr::str_sub(1, -2)
+    retval <- stringr::str_extract(table_name, "^[A-Za-zA-Za-z]+_[A-Za-zA-Za-z]+") |>
+      stringr::str_sub(1, -1)
   }
 
   if(!retval %in% access_levels) return("anon")
