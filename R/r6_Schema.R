@@ -518,7 +518,7 @@ Schema_v8 <- R6Class(
 
     drop_all_rows = function() {
       self$connect()
-      drop_all_rows(self$conn, self$table_name)
+      drop_all_rows(self$conn, self$table_name_fully_specified)
     },
 
     drop_rows_where = function(condition){
