@@ -84,6 +84,12 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
   observer <- getOption("connectionObserver")
   if (is.null(observer)) return(data)
 
+  # close observer
+  observer$connectionClosed(
+    type = "sc data",
+    host = "sc_data"
+  )
+
   # let observer know that connection has opened
   observer$connectionOpened(
     # connection type
