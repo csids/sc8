@@ -93,7 +93,7 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
     displayName = paste0("Data (", task_name, ")"),
 
     # host key
-    host = paste0("data_", task_name),
+    host = "sc_data",
 
     # icon for connection
     # icon = icon,
