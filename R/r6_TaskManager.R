@@ -188,13 +188,14 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
     # actions = odbcConnectionActions(connection),
 
     # raw connection object
-    connectionObject = data
+    connectionObject = NULL
   )
 
   observer$connectionUpdated(
     type = "sc data",
     host = paste0("data_", task_name),
-    hint = as.character(index_plan)
+    hint = as.character(index_plan),
+    data = data
   )
 
   return(data)
