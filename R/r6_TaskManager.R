@@ -194,7 +194,7 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
   observer$connectionUpdated(
     type = "sc data",
     host = paste0("data_", task_name),
-    hint = index_plan
+    hint = as.character(index_plan)
   )
 
   return(data)
