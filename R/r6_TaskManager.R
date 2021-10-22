@@ -84,119 +84,119 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
   observer <- getOption("connectionObserver")
   if (is.null(observer)) return(data)
 
-  # let observer know that connection has opened
-  observer$connectionOpened(
-    # connection type
-    type = "sc data",
-
-    # name displayed in connection pane
-    displayName = paste0("Data (", task_name, ")"),
-
-    # host key
-    host = "sc_data",
-
-    # icon for connection
-    # icon = icon,
-
-    # connection code
-    connectCode = paste0('data <- sc::tm_get_data("',task_name,'", index_plan = ',index_plan,')'),
-
-    # disconnection code
-    disconnect = function() {
-      rm("data")
-      gc()
-    },
-
-    listObjectTypes = function () {
-      list(
-        schema = list(
-          # icon = "path/to/schema.png",
-          contains = list(
-            table = list(
-              contains = "data"
-            )
-          )
-        )
-      )
-    },
-
-    # table enumeration code
-    listObjects = function(...) {
-      data.frame(name = names(data), type = "table")
-    },
-
-    # column enumeration code
-    listColumns = function(table) {
-      x <- data.frame(name = names(data[[table]]), type=sapply(data[[table]],class))
-      for(i in seq_len(nrow(x))){
-        var <- x$name[i]
-        if(x$name[i] %in% c("granularity_geo")){
-          unique_vals <- data[[table]][,.(N=.N),keyby=var]
-          setnames(unique_vals, c("val", "N"))
-          ordering <- unique(c(
-            "nation",
-            "county",
-            "notmainlandcounty",
-            "missingcounty",
-            "municip",
-            "notmainlandmunicip",
-            "missingmunicip",
-            "wardoslo",
-            "wardbergen",
-            "wardstavanger",
-            "wardtrondheim",
-            "extrawardoslo",
-            "missingwardbergen",
-            "missingwardoslo",
-            "missingwardstavanger",
-            "missingwardtrondheim",
-            "baregion",
-            "region",
-            "faregion",
-            unique_vals$val
-          ))
-          unique_vals[, val := factor(val, levels=ordering)]
-          setorder(unique_vals, val)
-          unique_vals[, lab := paste0(val," (",N,")")]
-          x$type[i] <- paste0(unique_vals$lab, collapse = " / ")
-        } else if(
-          x$name[i] %in% c("granularity_time", "border", "age", "sex", "isoyear", "season") |
-          (x$type[i] %in% c("character") & length(unique(data[[table]][[i]])) <= 10)
-        ){
-          unique_vals <- data[[table]][,.(N=.N),keyby=var]
-          setnames(unique_vals, c("val", "N"))
-
-          unique_vals[, lab := paste0(val," (",N,")")]
-          x$type[i] <- paste0(unique_vals$lab, collapse = " / ")
-
-        } else if(x$type[i] %in% c("character", "integer", "Date")){
-          x$type[i] <- paste0(min(data[[table]][[i]], na.rm=T), " to ", max(data[[table]][[i]], na.rm=T))
-        } else if(x$type[i] %in% c("numeric")){
-          x$type[i] <- paste0(round(min(data[[table]][[i]], na.rm=T),3), " to ", round(max(data[[table]][[i]], na.rm=T),3))
-        }
-      }
-      x
-    },
-
-    # table preview code
-    previewObject = function(rowLimit, table, ...) {
-      print(data[[table]])
-      data[[table]][1:rowLimit,]
-    },
-
-    # other actions that can be executed on this connection
-    # actions = odbcConnectionActions(connection),
-
-    # raw connection object
-    connectionObject = NULL
-  )
-
-  observer$connectionUpdated(
-    type = "sc data",
-    host = paste0("data_", task_name),
-    hint = as.character(index_plan),
-    data = data
-  )
+  # # let observer know that connection has opened
+  # observer$connectionOpened(
+  #   # connection type
+  #   type = "sc data",
+  #
+  #   # name displayed in connection pane
+  #   displayName = paste0("Data (", task_name, ")"),
+  #
+  #   # host key
+  #   host = "sc_data",
+  #
+  #   # icon for connection
+  #   # icon = icon,
+  #
+  #   # connection code
+  #   connectCode = paste0('data <- sc::tm_get_data("',task_name,'", index_plan = ',index_plan,')'),
+  #
+  #   # disconnection code
+  #   disconnect = function() {
+  #     rm("data")
+  #     gc()
+  #   },
+  #
+  #   listObjectTypes = function () {
+  #     list(
+  #       schema = list(
+  #         # icon = "path/to/schema.png",
+  #         contains = list(
+  #           table = list(
+  #             contains = "data"
+  #           )
+  #         )
+  #       )
+  #     )
+  #   },
+  #
+  #   # table enumeration code
+  #   listObjects = function(...) {
+  #     data.frame(name = names(data), type = "table")
+  #   },
+  #
+  #   # column enumeration code
+  #   listColumns = function(table) {
+  #     x <- data.frame(name = names(data[[table]]), type=sapply(data[[table]],class))
+  #     for(i in seq_len(nrow(x))){
+  #       var <- x$name[i]
+  #       if(x$name[i] %in% c("granularity_geo")){
+  #         unique_vals <- data[[table]][,.(N=.N),keyby=var]
+  #         setnames(unique_vals, c("val", "N"))
+  #         ordering <- unique(c(
+  #           "nation",
+  #           "county",
+  #           "notmainlandcounty",
+  #           "missingcounty",
+  #           "municip",
+  #           "notmainlandmunicip",
+  #           "missingmunicip",
+  #           "wardoslo",
+  #           "wardbergen",
+  #           "wardstavanger",
+  #           "wardtrondheim",
+  #           "extrawardoslo",
+  #           "missingwardbergen",
+  #           "missingwardoslo",
+  #           "missingwardstavanger",
+  #           "missingwardtrondheim",
+  #           "baregion",
+  #           "region",
+  #           "faregion",
+  #           unique_vals$val
+  #         ))
+  #         unique_vals[, val := factor(val, levels=ordering)]
+  #         setorder(unique_vals, val)
+  #         unique_vals[, lab := paste0(val," (",N,")")]
+  #         x$type[i] <- paste0(unique_vals$lab, collapse = " / ")
+  #       } else if(
+  #         x$name[i] %in% c("granularity_time", "border", "age", "sex", "isoyear", "season") |
+  #         (x$type[i] %in% c("character") & length(unique(data[[table]][[i]])) <= 10)
+  #       ){
+  #         unique_vals <- data[[table]][,.(N=.N),keyby=var]
+  #         setnames(unique_vals, c("val", "N"))
+  #
+  #         unique_vals[, lab := paste0(val," (",N,")")]
+  #         x$type[i] <- paste0(unique_vals$lab, collapse = " / ")
+  #
+  #       } else if(x$type[i] %in% c("character", "integer", "Date")){
+  #         x$type[i] <- paste0(min(data[[table]][[i]], na.rm=T), " to ", max(data[[table]][[i]], na.rm=T))
+  #       } else if(x$type[i] %in% c("numeric")){
+  #         x$type[i] <- paste0(round(min(data[[table]][[i]], na.rm=T),3), " to ", round(max(data[[table]][[i]], na.rm=T),3))
+  #       }
+  #     }
+  #     x
+  #   },
+  #
+  #   # table preview code
+  #   previewObject = function(rowLimit, table, ...) {
+  #     data[[table]][1:rowLimit,]
+  #   },
+  #
+  #   # other actions that can be executed on this connection
+  #   # actions = odbcConnectionActions(connection),
+  #
+  #   # raw connection object
+  #   connectionObject = NULL
+  # )
+  #
+  # observer$connectionUpdated(
+  #   type = "sc data",
+  #   host = paste0("data_", task_name),
+  #   hint = as.character(index_plan),
+  #   connectionObject = data,
+  #   data = data
+  # )
 
   return(data)
 }
