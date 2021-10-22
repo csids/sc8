@@ -179,7 +179,7 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
     },
 
     # table preview code
-    previewObject = function(rowLimit, ...) {
+    previewObject = function(rowLimit, table, ...) {
       print(data[[table]])
       data[[table]][1:rowLimit,]
     },
@@ -189,6 +189,11 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
 
     # raw connection object
     connectionObject = data
+  )
+
+  observer$connectionUpdated(
+    type = "sc data",
+    host = paste0("data_", task_name)
   )
 
   return(data)
