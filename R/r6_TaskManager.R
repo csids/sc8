@@ -100,7 +100,8 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
 
   # https://rstudio.github.io/rstudio-extensions/connections-contract.html?_ga=2.130285583.1223674375.1634876289-790799150.1584566635
   observer <- getOption("connectionObserver")
-  if (is.null(observer)) return(data)
+  # if no observer, or data is empty, just return the data
+  if (is.null(observer) | length(data) == 0) return(data)
 
   # close observer
   observer$connectionClosed(
