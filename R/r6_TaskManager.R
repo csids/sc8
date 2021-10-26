@@ -36,16 +36,34 @@ tm_update_plans <- function(task_name, index_plan = NULL, index_analysis = NULL,
 #' @param index_plan Not used
 #' @param index_analysis Not used
 #' @param index_argset Deprecated
+#' @param run_as_rstudio_job_loading_from_devtools Run the task as an rstudio job, loading from devtools
 #' @export
-tm_run_task <- function(task_name, index_plan = NULL, index_analysis = NULL, index_argset = NULL) {
+tm_run_task <- function(
+  task_name,
+  index_plan = NULL,
+  index_analysis = NULL,
+  index_argset = NULL,
+  run_as_rstudio_job_loading_from_devtools = FALSE
+  ) {
   # message(glue::glue("spulscore {utils::packageVersion('sc')}"))
 
-  task <- tm_get_task(
-    task_name = task_name,
-    index_plan = index_plan,
-    index_analysis = index_analysis
-  )
-  task$run(log=FALSE)
+  if(!run_as_rstudio_job_loading_from_devtools){
+    task <- tm_get_task(
+      task_name = task_name,
+      index_plan = index_plan,
+      index_analysis = index_analysis
+    )
+    task$run(log=FALSE)
+  } else {
+    tempfile <- fs::path(tempdir(check = T), paste0(task_name,".r"))
+    cat(glue::glue(
+      "
+        devtools::load_all('.')
+        tm_run_task('{task_name}')
+      "
+    ), file = tempfile)
+    rstudioapi::jobRunScript(tempfile, workingDir = getwd())
+  }
 }
 
 #' Shortcut to plan within task

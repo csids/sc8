@@ -8,7 +8,8 @@ tm_run_task(
   task_name,
   index_plan = NULL,
   index_analysis = NULL,
-  index_argset = NULL
+  index_argset = NULL,
+  run_as_rstudio_job_loading_from_devtools = FALSE
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ tm_run_task(
 \item{index_analysis}{Not used}
 
 \item{index_argset}{Deprecated}
+
+\item{run_as_rstudio_job_loading_from_devtools}{Run the task as an rstudio job, loading from devtools}
 }
 \description{
 Shortcut to run task
