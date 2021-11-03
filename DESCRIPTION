@@ -38,6 +38,7 @@ Imports:
   processx,
   progress,
   progressr,
+  pryr,
   qs,
   R6,
   rlang,
