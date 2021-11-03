@@ -147,7 +147,11 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
 
     # table enumeration code
     listObjects = function(...) {
-      data.frame(name = names(data), type = "table")
+      retval <- data.frame(name = names(data), type = "table")
+      for(i in seq_len(nrow(retval))){
+        retval[i,1] <- paste0(retval[i,1], " (", pryr::object_size(data[[i]]),")")
+      }
+      return(retval)
     },
 
     # column enumeration code
