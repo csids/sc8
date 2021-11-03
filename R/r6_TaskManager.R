@@ -164,7 +164,7 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
       for(i in seq_len(nrow(x))){
         var <- x$name[i]
         if(x$name[i] %in% c("granularity_geo")){
-          unique_vals <- data[[table]][,.(N=.N),keyby=var]
+          unique_vals <- data[[x_table]][,.(N=.N),keyby=var]
           setnames(unique_vals, c("val", "N"))
           ordering <- unique(c(
             "nation",
@@ -194,18 +194,18 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
           x$type[i] <- paste0(unique_vals$lab, collapse = " / ")
         } else if(
           x$name[i] %in% c("granularity_time", "border", "age", "sex", "isoyear", "season") |
-          (x$type[i] %in% c("character") & length(unique(data[[table]][[i]])) <= 10)
+          (x$type[i] %in% c("character") & length(unique(data[[x_table]][[i]])) <= 10)
         ){
-          unique_vals <- data[[table]][,.(N=.N),keyby=var]
+          unique_vals <- data[[x_table]][,.(N=.N),keyby=var]
           setnames(unique_vals, c("val", "N"))
 
           unique_vals[, lab := paste0(val," (",N,")")]
           x$type[i] <- paste0(unique_vals$lab, collapse = " / ")
 
         } else if(x$type[i] %in% c("character", "integer", "Date")){
-          x$type[i] <- paste0(min(data[[table]][[i]], na.rm=T), " to ", max(data[[table]][[i]], na.rm=T))
+          x$type[i] <- paste0(min(data[[x_table]][[i]], na.rm=T), " to ", max(data[[x_table]][[i]], na.rm=T))
         } else if(x$type[i] %in% c("numeric")){
-          x$type[i] <- paste0(round(min(data[[table]][[i]], na.rm=T),3), " to ", round(max(data[[table]][[i]], na.rm=T),3))
+          x$type[i] <- paste0(round(min(data[[x_table]][[i]], na.rm=T),3), " to ", round(max(data[[x_table]][[i]], na.rm=T),3))
         }
       }
       x
@@ -213,7 +213,8 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
 
     # table preview code
     previewObject = function(rowLimit, table, ...) {
-      data[[table]][1:rowLimit,]
+      x_table <- stringr::str_remove(table, " \\(.*$")
+      data[[x_table]][1:rowLimit,]
     },
 
     # other actions that can be executed on this connection
