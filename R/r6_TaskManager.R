@@ -149,14 +149,18 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
     listObjects = function(...) {
       retval <- data.frame(name = names(data), type = "table")
       for(i in seq_len(nrow(retval))){
-        retval[i,1] <- paste0(retval[i,1], " (", pryr::object_size(data[[i]]),")")
+        size <- pryr::object_size(data[[i]])
+        size <- size/(1000^2)
+        size <- round(size)
+        retval[i,1] <- paste0(retval[i,1], " (", size, " MB)")
       }
       return(retval)
     },
 
     # column enumeration code
     listColumns = function(table) {
-      x <- data.frame(name = names(data[[table]]), type=sapply(data[[table]],class))
+      x_table <- stringr::str_remove(table, " \\(.*$")
+      x <- data.frame(name = names(data[[x_table]]), type=sapply(data[[x_table]],class))
       for(i in seq_len(nrow(x))){
         var <- x$name[i]
         if(x$name[i] %in% c("granularity_geo")){
