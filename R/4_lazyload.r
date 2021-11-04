@@ -68,8 +68,9 @@ set_db <- function(){
 
   # which db is preferred?
   sql <- glue::glue("SELECT name, has_dbaccess(name) FROM sys.databases")
-  db_names <- DBI::dbGetQuery(pools$no_db, sql)$name
-  db_names <- db_names[db_names[,2]==1,1]
+  db_names <- DBI::dbGetQuery(pools$no_db, sql)
+  names(db_names) <- c("name", "access")
+  db_names <- db_names$name[db_names$access==1]
   if(config$db_configs$restr$db %in% db_names){
     config$db_config_preferred <- "restr"
   } else {
