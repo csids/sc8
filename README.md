@@ -1,6 +1,6 @@
 # sykdomspulsen core
 
-Sykdomspulsen core is a free and open-source health surveillance system designed and developed by the Norwegian Institute of Public Health. You can find out more information at https://sykdomspulsen-dokumentasjon.no/
+Sykdomspulsen core is a free and open-source health surveillance system designed and developed by the Norwegian Institute of Public Health. You can find out more information at https://docs.sykdomspulsen.no/
 
 The R package `sc` contains `Sykdomspulsen Core`, which is a generic infrastructure that can be used to implement new surveillance systems.
 
