@@ -53,6 +53,7 @@ fill_in_missing_v8 <- function(d, border = 2020){
       stringr::str_detect(location_code,"^missingmunicip[0-9]") ~ "missingmunicip",
       stringr::str_detect(location_code,"^notmainlandcounty[0-9]") ~ "notmainlandcounty",
       stringr::str_detect(location_code,"^notmainlandmunicip[0-9]") ~ "notmainlandmunicip",
+      stringr::str_detect(location_code,"^lab[0-9]") ~ "lab",
 
       location_code=="IS" ~ "nation",
 
