@@ -26,7 +26,7 @@ path <- function(type="output", ..., create_dir=FALSE, trailing_slash = FALSE, a
 
   retval <- paste0(c(start_location,end_location),collapse="/")
   if(create_dir){
-    if(!fs::dir_exists(retval)) fs::dir_create(retval)
+    if(!fs::dir_exists(retval)) dir.create(retval, showWarnings = FALSE, recursive = TRUE)
   }
   if(trailing_slash) retval <- paste0(retval,"/")
   return(retval)
@@ -37,7 +37,7 @@ path <- function(type="output", ..., create_dir=FALSE, trailing_slash = FALSE, a
 #' @export
 create_folder_if_doesnt_exist <- function(path){
   retval <- glue::glue(path, .envir = parent.frame(n=1))
-  if(!fs::dir_exists(retval)) fs::dir_create(retval)
+  if(!fs::dir_exists(retval)) dir.create(retval, showWarnings = FALSE, recursive = TRUE)
   return(retval)
 }
 
