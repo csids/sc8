@@ -1,33 +1,34 @@
-# sykdomspulsen core
+# sc <a href="https://docs.sykdomspulsen.no/sc"><img src="man/figures/logo.png" align="right" width="120" /></a>
 
-Sykdomspulsen core is a free and open-source health surveillance system designed and developed by the Norwegian Institute of Public Health. You can find out more information at https://docs.sykdomspulsen.no/
+## Overview 
 
-The R package `sc` contains `Sykdomspulsen Core`, which is a generic infrastructure that can be used to implement new surveillance systems.
+[sc](https://docs.sykdomspulsen.no/sc) ("Sykdomspulsen Core") is a free and open-source framework for real-time analysis and disease surveillance.
 
-## fhiverse
+Read the introduction vignette [here](https://docs.sykdomspulsen.no/sc/articles/sc.html) or run `help(package="sc")`.
 
-The `fhiverse` is a set of R packages developed by the Norwegian Institute of Public Health to help solve problems that frequently occur when performing infectious disease surveillance.
+## splverse
 
-If you want to install the dev versions (or access packages that haven't been released on CRAN), run `usethis::edit_r_profile()` to edit your `.Rprofile`. Then write in:
+<a href="https://docs.sykdomspulsen.no/packages"><img src="https://docs.sykdomspulsen.no/packages/splverse.png" align="right" width="120" /></a>
+
+The [splverse](https://docs.sykdomspulsen.no/packages) is a set of R packages developed to help solve problems that frequently occur when performing infectious disease surveillance.
+
+If you want to install the dev versions (or access packages that haven't been released on CRAN), run `usethis::edit_r_profile()` to edit your `.Rprofile`. 
+
+Then write in:
 
 ```
-options(repos=structure(c(
-  FHI="https://folkehelseinstituttet.github.io/drat/",
-  CRAN="https://cran.rstudio.com"
-)))
+options(
+  repos = structure(c(
+    SPLVERSE  = "https://docs.sykdomspulsen.no/drat/",
+    CRAN      = "https://cran.rstudio.com"
+  ))
+)
 ```
 
-Save the file and restart R. This will allow you to install `fhiverse` packages from the FHI registry.
+Save the file and restart R.
 
-Current `fhiverse` packages are:
+You can now install [splverse](https://docs.sykdomspulsen.no/packages) packages from our [drat repository](https://docs.sykdomspulsen.no/drat).
 
-| Name    	| Info                                                             	|
-|---------	|------------------------------------------------------------------	|
-| [org](https://folkehelseinstituttet.github.io/org)         	| A system to help you organize projects.  |
-| [plnr](https://folkehelseinstituttet.github.io/plnr)    	  | A system to help you plan analyses.  |
-| [attrib](https://folkehelseinstituttet.github.io/attrib)  	| Calculating attributable mortalities and incident risk ratios.  |
-| [spread](https://folkehelseinstituttet.github.io/spread)  	| Different infectious disease spread models.  |
-| [fhidata](https://folkehelseinstituttet.github.io/fhidata) 	| Preformatted structural data for Norway.  |
-| [fhimaps](https://folkehelseinstituttet.github.io/fhimaps) 	| Preformatted maps of Norway that generally don't need geolibraries.  |
-| [fhiplot](https://folkehelseinstituttet.github.io/fhiplot) 	| Helpful functions for creating outputs in the style used by FHI.  |
-
+```
+install.packages("attrib")
+```
