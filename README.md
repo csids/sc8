@@ -1,4 +1,4 @@
-# sc <a href="https://docs.sykdomspulsen.no/sc"><img src="man/figures/logo.png" align="right" width="120" /></a>
+# sc (Sykdomspulsen Core) <a href="https://docs.sykdomspulsen.no/sc"><img src="man/figures/logo.png" align="right" width="120" /></a>
 
 ## Overview 
 
