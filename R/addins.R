@@ -104,6 +104,9 @@ sc::add_schema_v8(
       XXXX_pr = sc::censor_function_factory_values_0_4(column_name_to_be_censored = "XXXX_pr", column_name_value = "XXXX_n")
     )
   ),
+  indexes = list(
+    "ind1" = c("granularity_time", "granularity_geo", "country_iso3", "location_code", "border", "age", "sex", "date", "isoyear", "isoweek", "isoyearweek")
+  ),
   validator_field_types = sc::validator_field_types_sykdomspulsen,
   validator_field_contents = sc::validator_field_contents_sykdomspulsen,
   info = "This db table is used for..."
@@ -163,6 +166,9 @@ sc::add_schema_v8(
       XXXX_n = sc::censor_function_factory_values_0_4(column_name_to_be_censored = "XXXX_n", column_name_value = "XXXX_n"),
       XXXX_pr = sc::censor_function_factory_values_0_4(column_name_to_be_censored = "XXXX_pr", column_name_value = "XXXX_n")
     )
+  ),
+  indexes = list(
+    "ind1" = c("granularity_time", "granularity_geo", "country_iso3", "location_code", "border", "age", "sex", "date", "isoyear", "isoweek", "isoyearweek")
   ),
   validator_field_types = sc::validator_field_types_sykdomspulsen,
   validator_field_contents = sc::validator_field_contents_sykdomspulsen,
