@@ -236,7 +236,7 @@ Schema_v8 <- R6Class(
     db_config = NULL,
     #' @field table_name Name of the table in the database.
     table_name = NULL,
-    #' @field table_name_fully_specified Fully specified name of the table in the database (e.g. [db].[dbo].[table_name]).
+    #' @field table_name_fully_specified Fully specified name of the table in the database (e.g. \[db\].\[dbo\].\[table_name\]).
     table_name_fully_specified = NULL,
     #' @field field_types The types of each column in the database table (INTEGER, DOUBLE, TEXT, BOOLEAN, DATE, DATETIME).
     field_types = NULL,

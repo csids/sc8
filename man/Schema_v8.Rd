@@ -20,7 +20,7 @@ and manipulate structural aspects of the database table (e.g. \code{add_indexes}
 
 \item{\code{table_name}}{Name of the table in the database.}
 
-\item{\code{table_name_fully_specified}}{Fully specified name of the table in the database (e.g. \link{db}.\link{dbo}.\link{table_name}).}
+\item{\code{table_name_fully_specified}}{Fully specified name of the table in the database (e.g. [db].[dbo].[table_name]).}
 
 \item{\code{field_types}}{The types of each column in the database table (INTEGER, DOUBLE, TEXT, BOOLEAN, DATE, DATETIME).}
 
