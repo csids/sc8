@@ -5,28 +5,36 @@
 \title{TaskManager}
 \description{
 An R6 Action class contains a function called 'run' that takes three arguments:
-- data (list)
-- arg (list)
-- schema (list)
+\itemize{
+\item data (list)
+\item arg (list)
+\item schema (list)
+}
 }
 \details{
 An action is (note: we dont explicitly create these):
-- one R6 Action class
-- A plnr::Plan that provide
-  a) data (from the plan -- `get_data`)
-  b) arguments (from the plan -- `get_argset`)
+\itemize{
+\item one R6 Action class
+\item A plnr::Plan that provide
+a) data (from the plan -- \code{get_data})
+b) arguments (from the plan -- \code{get_argset})
 to the R6 action class
+}
 
 A task is:
-- one R6 Action class
-- A plnr::Plan that provide
-  a) data (from the plan -- `get_data`)
-  b) arguments (from the plan -- `get_argset`)
+\itemize{
+\item one R6 Action class
+\item A plnr::Plan that provide
+a) data (from the plan -- \code{get_data})
+b) arguments (from the plan -- \code{get_argset})
 to the R6 action class
+}
 
 A TaskManager is:
-- one R6 Action class
-- A list of plnr::Plan's
+\itemize{
+\item one R6 Action class
+\item A list of plnr::Plan's
+}
 }
 \section{Methods}{
 \subsection{Public methods}{

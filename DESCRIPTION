@@ -1,5 +1,5 @@
 Package: sc
-Title: Sykdomspulsen Core - NIPH Infectious Diseases Surveillance System
+Title: Real-time analysis and disease surveillance system
 Version: 8.0.2
 Authors@R: c(
   person(c("Richard","Aubrey"), "White", email = "hello@rwhite.no", role = c("aut", "cre"),
@@ -10,9 +10,9 @@ Authors@R: c(
   ),
   person("Gunnar", "R\u00F8", email = "GunnarOyvindIsaksson.Ro@fhi.no", role = c("aut"))
   )
-Description: Sykdomspulsen is a free and open-source health surveillance system designed and developed by the Norwegian Institute of Public Health. `sc` contains `Sykdomspulsen Core` the generic infrastructure that can be used to implement new surveillance systems.
-URL: https://sykdomspulsen-dokumentasjon.no
-BugReports: https://github.com/folkehelseinstituttet/sc/issues
+Description: The generic infrastructure that can be used to implement new real-time analysis and disease surveillance systems.
+URL: https://docs.sykdomspulsen.no/sc, https://github.com/sykdomspulsen-org/sc
+BugReports: https://github.com/sykdomspulsen-org/sc/issues
 Depends:
   R (>= 4.1.0)
 Imports:
@@ -52,6 +52,7 @@ Suggests: testthat,
     usethis
 License: GPL-3 + file LICENSE
 LazyData: true
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 VignetteBuilder: knitr
 Encoding: UTF-8

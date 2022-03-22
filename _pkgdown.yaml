@@ -36,22 +36,23 @@ reference:
     These functions relate to data and databases.
 - subtitle: R6 classes
   desc: >
-    R6 classes that are used.
+    R6 classes and their helper functions.
 - contents:
-  - SchemaRedirect_v8
   - Schema_v8
+  - SchemaRedirect_v8
+  - add_schema_v8
   - Permission
+  - add_permission
 - subtitle: Functions to access datasets
   desc: >
     These functions access datasets.
 - contents:
-  - add_permission
-  - add_schema_v8
   - fill_in_missing_v8
   - get_config_last_updated
   - update_config_last_updated
   - mandatory_db_filter
   - tbl
+  - copy_into_new_table_where
 - subtitle: Censoring
 - contents:
   - censor_function_factory_everything
@@ -83,15 +84,15 @@ reference:
     A task is the basic operational unit of Sykdomspulsen Core.
 - subtitle: R6 classes
   desc: >
-    R6 classes that are used.
+    R6 classes and their helper functions.
 - contents:
   - Task
+  - add_task_from_config_v8
   - TaskManager
 - subtitle: Functions
   desc: >
     These functions access datasets.
 - contents:
-  - add_task_from_config_v8
   - tm_get_argset
   - tm_get_data
   - tm_get_plan
@@ -112,7 +113,6 @@ reference:
   desc: >
     Utility functions.
 - contents:
-  - copy_into_new_table_where
   - create_folder_if_doesnt_exist
   - create_latest_folder
   - describe_schemas

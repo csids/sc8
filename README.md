@@ -1,8 +1,8 @@
-# sc (Sykdomspulsen Core) <a href="https://docs.sykdomspulsen.no/sc"><img src="man/figures/logo.png" align="right" width="120" /></a>
+# Sykdomspulsen Core (sc)) <a href="https://docs.sykdomspulsen.no/sc"><img src="man/figures/logo.png" align="right" width="120" /></a>
 
 ## Overview 
 
-[sc](https://docs.sykdomspulsen.no/sc) ("Sykdomspulsen Core") is a free and open-source framework for real-time analysis and disease surveillance.
+[Sykdomspulsen Core](https://docs.sykdomspulsen.no/sc) ("sc") is a free and open-source framework for real-time analysis and disease surveillance.
 
 Read the introduction vignette [here](https://docs.sykdomspulsen.no/sc/articles/sc.html) or run `help(package="sc")`.
 

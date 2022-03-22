@@ -4,6 +4,7 @@
 #' @param x A Schema_v8 object
 #' @param col The column to be hashed
 #' @param ... Unused
+#' @method hash_data_structure Schema_v8
 #' @export
 hash_data_structure.Schema_v8 <- function(x, col, ...) {
   spltidy::hash_data_structure(x$tbl(), col)
@@ -252,8 +253,6 @@ Schema_v8 <- R6Class(
     info = "No information given in schema definition",
     #' @field load_folder A temporary folder that is used to write data to before inserting into the database.
     load_folder = tempdir(check = T),
-    #' @field load_folder_fn A function that generates \code{load_folder}.
-    load_folder_fn = function() tempdir(check = T),
     #' @field censors A named list of censors.
     censors = NULL,
 
@@ -333,6 +332,9 @@ Schema_v8 <- R6Class(
       self$keys_with_length <- self$field_types_with_length[self$keys]
       if (!is.null(self$conn)) self$create_table()
     },
+
+    #' @field load_folder_fn A function that generates \code{load_folder}.
+    load_folder_fn = function() tempdir(check = T),
 
     #' @description
     #' Class-specific print function.

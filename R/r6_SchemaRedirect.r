@@ -4,6 +4,7 @@
 #' @param x A SchemaRedirect_v8 object
 #' @param col The column to be hashed
 #' @param ... Unused
+#' @method hash_data_structure SchemaRedirect_v8
 #' @export
 hash_data_structure.SchemaRedirect_v8 <- function(x, col, ...) {
   spltidy::hash_data_structure(x$tbl(), col)
@@ -411,6 +412,9 @@ SchemaRedirect_v8 <- R6Class(
     },
     print_dplyr_select = function() {
       self$schemas[[self$preferred_table_name]]$print_dplyr_select()
+    },
+    get_config_last_updated = function() {
+      get_config_last_updated(type = "data", tag = self$preferred_table_name)
     },
     add_indexes = function() {
       for (i in self$table_names) self$schemas[[i]]$add_indexes()

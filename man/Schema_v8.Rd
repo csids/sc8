@@ -8,8 +8,8 @@ The fundamental way to communicate with database tables.
 }
 \details{
 This class is a representation of a database table. It is the way that you can
-access data (e.g. `tbl()`), manipulate data (e.g. `insert_data`, `upsert_data`),
-and manipulate structural aspects of the database table (e.g. `add_indexes`, `drop_indexes`).
+access data (e.g. \code{tbl()}), manipulate data (e.g. \code{insert_data}, \code{upsert_data}),
+and manipulate structural aspects of the database table (e.g. \code{add_indexes}, \code{drop_indexes}).
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
@@ -20,7 +20,7 @@ and manipulate structural aspects of the database table (e.g. `add_indexes`, `dr
 
 \item{\code{table_name}}{Name of the table in the database.}
 
-\item{\code{table_name_fully_specified}}{Fully specified name of the table in the database (e.g. [db].[dbo].[table_name]).}
+\item{\code{table_name_fully_specified}}{Fully specified name of the table in the database (e.g. \link{db}.\link{dbo}.\link{table_name}).}
 
 \item{\code{field_types}}{The types of each column in the database table (INTEGER, DOUBLE, TEXT, BOOLEAN, DATE, DATETIME).}
 
@@ -38,9 +38,9 @@ and manipulate structural aspects of the database table (e.g. `add_indexes`, `dr
 
 \item{\code{load_folder}}{A temporary folder that is used to write data to before inserting into the database.}
 
-\item{\code{load_folder_fn}}{A function that generates \code{load_folder}.}
-
 \item{\code{censors}}{A named list of censors.}
+
+\item{\code{load_folder_fn}}{A function that generates \code{load_folder}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -54,8 +54,8 @@ and manipulate structural aspects of the database table (e.g. `add_indexes`, `dr
 \section{Methods}{
 \subsection{Public methods}{
 \itemize{
-\item \href{#method-load_folder_fn}{\code{Schema_v8$load_folder_fn()}}
 \item \href{#method-new}{\code{Schema_v8$new()}}
+\item \href{#method-load_folder_fn}{\code{Schema_v8$load_folder_fn()}}
 \item \href{#method-print}{\code{Schema_v8$print()}}
 \item \href{#method-cat_status}{\code{Schema_v8$cat_status()}}
 \item \href{#method-is_connected}{\code{Schema_v8$is_connected()}}
@@ -79,15 +79,6 @@ and manipulate structural aspects of the database table (e.g. `add_indexes`, `dr
 \item \href{#method-db_disconnect}{\code{Schema_v8$db_disconnect()}}
 \item \href{#method-clone}{\code{Schema_v8$clone()}}
 }
-}
-\if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-load_folder_fn"></a>}}
-\if{latex}{\out{\hypertarget{method-load_folder_fn}{}}}
-\subsection{Method \code{load_folder_fn()}}{
-\subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Schema_v8$load_folder_fn()}\if{html}{\out{</div>}}
-}
-
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-new"></a>}}
@@ -133,8 +124,17 @@ This function is not used directly. You should use \code{\link{add_schema_v8}} i
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A new `Schema_v8` object.
+A new \code{Schema_v8} object.
 }
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-load_folder_fn"></a>}}
+\if{latex}{\out{\hypertarget{method-load_folder_fn}{}}}
+\subsection{Method \code{load_folder_fn()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{Schema_v8$load_folder_fn()}\if{html}{\out{</div>}}
+}
+
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-print"></a>}}
@@ -382,7 +382,7 @@ Extracts the corresponding row of data from \code{\link{get_config_last_updated}
 \if{html}{\out{<a id="method-add_indexes"></a>}}
 \if{latex}{\out{\hypertarget{method-add_indexes}{}}}
 \subsection{Method \code{add_indexes()}}{
-Adds indexes to the database table from `self$indexes`
+Adds indexes to the database table from \code{self$indexes}
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$add_indexes()}\if{html}{\out{</div>}}
 }

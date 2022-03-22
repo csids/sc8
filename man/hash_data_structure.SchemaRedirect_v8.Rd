@@ -4,7 +4,7 @@
 \alias{hash_data_structure.SchemaRedirect_v8}
 \title{Hashing data structure (SchemaRedirect_v8)}
 \usage{
-hash_data_structure.SchemaRedirect_v8(x, col, ...)
+\method{hash_data_structure}{SchemaRedirect_v8}(x, col, ...)
 }
 \arguments{
 \item{x}{A SchemaRedirect_v8 object}
