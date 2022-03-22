@@ -291,7 +291,6 @@ load_data_infile.default <- function(conn = NULL,
   dif <- round(as.numeric(difftime(b, a, units = "secs")), 1)
   if (config$verbose) message(glue::glue("Uploaded {nrow(dt)} rows in {dif} seconds to {table}"))
 
-  update_config_datetime(type = "data", tag = table)
   update_config_last_updated(type = "data", tag = table)
 
   invisible()
@@ -472,7 +471,6 @@ upsert_load_data_infile_internal.default <- function(conn = NULL,
   dif <- round(as.numeric(difftime(b, a, units = "secs")), 1)
   if (config$verbose) message(glue::glue("Upserted {nrow(dt)} rows in {dif} seconds from {temp_name} to {table}"))
 
-  update_config_datetime(type = "data", tag = table)
   update_config_last_updated(type = "data", tag = table)
   invisible()
 }
@@ -647,7 +645,6 @@ copy_into_new_table_where <- function(conn = NULL,
     }
   }
 
-  update_config_datetime(type = "data", tag = table_to)
   update_config_last_updated(type = "data", tag = table_to)
 }
 
@@ -671,7 +668,6 @@ drop_all_rows <- function(conn = NULL, table) {
     "TRUNCATE TABLE {table};"
   }))
 
-  update_config_datetime(type = "data", tag = table)
   update_config_last_updated(type = "data", tag = table)
 }
 
@@ -731,7 +727,6 @@ drop_rows_where <- function(conn = NULL, table, condition) {
   dif <- round(as.numeric(difftime(t1, t0, units = "secs")), 1)
   if (config$verbose) message(glue::glue("Deleted rows in {dif} seconds from {table}"))
 
-  update_config_datetime(type = "data", tag = table)
   update_config_last_updated(type = "data", tag = table)
 }
 
@@ -763,7 +758,6 @@ keep_rows_where <- function(conn = NULL, table, condition) {
   dif <- round(as.numeric(difftime(t1, t0, units = "secs")), 1)
   if (config$verbose) message(glue::glue("Kept rows in {dif} seconds from {table}"))
 
-  update_config_datetime(type = "data", tag = table)
   update_config_last_updated(type = "data", tag = table)
 }
 
