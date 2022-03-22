@@ -4,7 +4,7 @@
 #' @param index_analysis Not used
 #' @param index_argset Not used
 #' @export
-tm_shortcut_task <- function(task_name, index_plan = NULL, index_analysis = NULL, index_argset = NULL){
+tm_shortcut_task <- function(task_name, index_plan = NULL, index_analysis = NULL, index_argset = NULL) {
   config$tasks$task_get(task_name)
 }
 
@@ -14,7 +14,7 @@ tm_shortcut_task <- function(task_name, index_plan = NULL, index_analysis = NULL
 #' @param index_analysis Not used
 #' @param index_argset Not used
 #' @export
-tm_shortcut_plan <- function(task_name, index_plan = 1, index_analysis = NULL, index_argset = NULL){
+tm_shortcut_plan <- function(task_name, index_plan = 1, index_analysis = NULL, index_argset = NULL) {
   tm_shortcut_task(task_name = task_name)$list_plan[[index_plan]]
 }
 
@@ -24,7 +24,7 @@ tm_shortcut_plan <- function(task_name, index_plan = 1, index_analysis = NULL, i
 #' @param index_analysis Not used
 #' @param index_argset Not used
 #' @export
-tm_shortcut_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_argset = NULL){
+tm_shortcut_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_argset = NULL) {
   tm_shortcut_plan(
     task_name = task_name,
     index_plan = index_plan
@@ -37,7 +37,7 @@ tm_shortcut_data <- function(task_name, index_plan = 1, index_analysis = NULL, i
 #' @param index_analysis Not used
 #' @param index_argset Argset within plan
 #' @export
-tm_shortcut_argset <- function(task_name, index_plan = 1, index_analysis = 1, index_argset = NULL){
+tm_shortcut_argset <- function(task_name, index_plan = 1, index_analysis = 1, index_argset = NULL) {
   tm_shortcut_plan(
     task_name = task_name,
     index_plan = index_plan
@@ -50,10 +50,8 @@ tm_shortcut_argset <- function(task_name, index_plan = 1, index_analysis = 1, in
 #' @param index_analysis Not used
 #' @param index_argset Not used
 #' @export
-tm_shortcut_schema <- function(task_name, index_plan = NULL, index_analysis = NULL, index_argset = NULL){
+tm_shortcut_schema <- function(task_name, index_plan = NULL, index_analysis = NULL, index_argset = NULL) {
   tm_shortcut_task(
     task_name = task_name
   )$schema
 }
-
-

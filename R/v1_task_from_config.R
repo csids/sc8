@@ -12,26 +12,23 @@
 #' @param schema List of schema mappings
 #' @param args List of args
 #' @export
-task_from_config <- function(
-  name,
-  type,
-  cores = 1,
-  db_table=NULL,
-  filter = "",
-  for_each_plan=NULL,
-  for_each_argset=NULL,
-  upsert_at_end_of_each_plan = FALSE,
-  insert_at_end_of_each_plan = FALSE,
-  action,
-  schema=NULL,
-  args=NULL
-) {
-
-  stopifnot(type %in% c("data","single", "analysis", "ui"))
+task_from_config <- function(name,
+                             type,
+                             cores = 1,
+                             db_table = NULL,
+                             filter = "",
+                             for_each_plan = NULL,
+                             for_each_argset = NULL,
+                             upsert_at_end_of_each_plan = FALSE,
+                             insert_at_end_of_each_plan = FALSE,
+                             action,
+                             schema = NULL,
+                             args = NULL) {
+  stopifnot(type %in% c("data", "single", "analysis", "ui"))
   stopifnot(cores %in% 1:parallel::detectCores())
-  stopifnot(upsert_at_end_of_each_plan %in% c(T,F))
-  stopifnot(insert_at_end_of_each_plan %in% c(T,F))
-  if(upsert_at_end_of_each_plan & insert_at_end_of_each_plan) stop("upsert_at_end_of_each_plan & insert_at_end_of_each_plan")
+  stopifnot(upsert_at_end_of_each_plan %in% c(T, F))
+  stopifnot(insert_at_end_of_each_plan %in% c(T, F))
+  if (upsert_at_end_of_each_plan & insert_at_end_of_each_plan) stop("upsert_at_end_of_each_plan & insert_at_end_of_each_plan")
 
   plans <- list()
 

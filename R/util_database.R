@@ -1,5 +1,5 @@
-is_mssql <- function(conn){
-  return(conn@info$dbms.name=="Microsoft SQL Server")
+is_mssql <- function(conn) {
+  return(conn@info$dbms.name == "Microsoft SQL Server")
 }
 
 #' use_db
@@ -7,23 +7,25 @@ is_mssql <- function(conn){
 #' @param db a
 #' @export
 use_db <- function(conn, db) {
-  tryCatch({
-    a <- DBI::dbExecute(conn, glue::glue({
-      "USE {db};"
-    }))
-  }, error = function(e){
-
-    a <- DBI::dbExecute(conn, glue::glue({
-      "CREATE DATABASE {db};"
-    }))
-    a <- DBI::dbExecute(conn, glue::glue({
-      "USE {db};"
-    }))
-  })
+  tryCatch(
+    {
+      a <- DBI::dbExecute(conn, glue::glue({
+        "USE {db};"
+      }))
+    },
+    error = function(e) {
+      a <- DBI::dbExecute(conn, glue::glue({
+        "CREATE DATABASE {db};"
+      }))
+      a <- DBI::dbExecute(conn, glue::glue({
+        "USE {db};"
+      }))
+    }
+  )
 }
 
 set_db_recovery_simple <- function(conn = get_db_connection(), db = config$db_config$db, i_am_sure_i_want_to_do_this = FALSE) {
-  stopifnot(i_am_sure_i_want_to_do_this==T)
+  stopifnot(i_am_sure_i_want_to_do_this == T)
 
   a <- DBI::dbExecute(conn, glue::glue({
     "ALTER DATABASE  {db} SET RECOVERY SIMPLE;"
@@ -53,53 +55,53 @@ random_file <- function(folder, extension = ".csv") {
   fs::path(folder, paste0(random_uuid(), extension))
 }
 
-write_data_infile <- function(
-  dt,
-  file = paste0(tempfile(),".csv"),
-  colnames=T,
-  eol="\n",
-  quote = "auto",
-  na = "\\N",
-  sep=","
-  ) {
+write_data_infile <- function(dt,
+                              file = paste0(tempfile(), ".csv"),
+                              colnames = T,
+                              eol = "\n",
+                              quote = "auto",
+                              na = "\\N",
+                              sep = ",") {
   # infinites and NANs get written as text
   # which destroys the upload
   # we need to set them to NA
-  for(i in names(dt)){
+  for (i in names(dt)) {
     dt[is.infinite(get(i)), (i) := NA]
     dt[is.nan(get(i)), (i) := NA]
-    if(inherits(dt[[i]],"POSIXt")) dt[, (i) := as.character(get(i))]
+    if (inherits(dt[[i]], "POSIXt")) dt[, (i) := as.character(get(i))]
   }
   fwrite(dt,
     file = file,
     logical01 = T,
     na = na,
-    col.names=colnames,
-    eol=eol,
+    col.names = colnames,
+    eol = eol,
     quote = quote,
     sep = sep
   )
 }
 
-load_data_infile <- function(
-  conn,
-  db_config,
-  table,
-  dt,
-  file,
-  force_tablock
-) UseMethod("load_data_infile")
+load_data_infile <- function(conn,
+                             db_config,
+                             table,
+                             dt,
+                             file,
+                             force_tablock) {
+  UseMethod("load_data_infile")
+}
 
-load_data_infile.default <- function(
-  conn = NULL,
-  db_config = NULL,
-  table,
-  dt = NULL,
-  file = "/xtmp/x123.csv",
-  force_tablock = FALSE
-  ) {
-  if(is.null(dt)) return()
-  if(nrow(dt)==0) return()
+load_data_infile.default <- function(conn = NULL,
+                                     db_config = NULL,
+                                     table,
+                                     dt = NULL,
+                                     file = "/xtmp/x123.csv",
+                                     force_tablock = FALSE) {
+  if (is.null(dt)) {
+    return()
+  }
+  if (nrow(dt) == 0) {
+    return()
+  }
 
   t0 <- Sys.time()
 
@@ -113,7 +115,7 @@ load_data_infile.default <- function(
   }
 
   correct_order <- DBI::dbListFields(conn, table)
-  if(length(correct_order)>0) dt <- dt[,correct_order,with=F]
+  if (length(correct_order) > 0) dt <- dt[, correct_order, with = F]
   write_data_infile(dt = dt, file = file)
   on.exit(unlink(file), add = T)
 
@@ -138,25 +140,27 @@ load_data_infile.default <- function(
 
   t1 <- Sys.time()
   dif <- round(as.numeric(difftime(t1, t0, units = "secs")), 1)
-  if(config$verbose) message(glue::glue("Uploaded {nrow(dt)} rows in {dif} seconds to {table}"))
+  if (config$verbose) message(glue::glue("Uploaded {nrow(dt)} rows in {dif} seconds to {table}"))
 
   invisible()
 }
 
-`load_data_infile.Microsoft SQL Server` <- function(
-  conn = NULL,
-  db_config = NULL,
-  table,
-  dt,
-  file = tempfile(),
-  force_tablock = FALSE
-  ) {
-  if(is.null(dt)) return()
-  if(nrow(dt)==0) return()
-  if(is.null(conn)){
+`load_data_infile.Microsoft SQL Server` <- function(conn = NULL,
+                                                    db_config = NULL,
+                                                    table,
+                                                    dt,
+                                                    file = tempfile(),
+                                                    force_tablock = FALSE) {
+  if (is.null(dt)) {
+    return()
+  }
+  if (nrow(dt) == 0) {
+    return()
+  }
+  if (is.null(conn)) {
     conn <- get_db_connection()
     on.exit(DBI::dbDisconnect(conn))
-  } else if(!DBI::dbIsValid(conn)){
+  } else if (!DBI::dbIsValid(conn)) {
     conn <- get_db_connection()
     on.exit(DBI::dbDisconnect(conn))
   }
@@ -174,33 +178,34 @@ load_data_infile.default <- function(
   # dont do a validation check if running in parallel
   # because there will be race conditions with different
   # instances competing
-  if(!config$in_parallel & interactive()){
+  if (!config$in_parallel & interactive()) {
     sql <- glue::glue("SELECT COUNT(*) FROM {table};")
-    n_before <- DBI::dbGetQuery(conn, sql)[1,1]
+    n_before <- DBI::dbGetQuery(conn, sql)[1, 1]
   }
 
   correct_order <- DBI::dbListFields(conn, table)
-  if(length(correct_order)>0) dt <- dt[,correct_order,with=F]
+  if (length(correct_order) > 0) dt <- dt[, correct_order, with = F]
   write_data_infile(
     dt = dt,
     file = file,
-    colnames=F,
+    colnames = F,
     eol = "\n",
     quote = FALSE,
-    na="",
-    sep="\t")
+    na = "",
+    sep = "\t"
+  )
   on.exit(unlink(file), add = T)
 
-  format_file <- tempfile(tmpdir = tempdir(check=TRUE))
+  format_file <- tempfile(tmpdir = tempdir(check = TRUE))
   on.exit(unlink(format_file), add = T)
 
   args <- c(
     table,
-    "format" ,
+    "format",
     "nul",
     "-q",
     "-c",
-    #"-t,",
+    # "-t,",
     "-f",
     format_file,
     "-S",
@@ -212,20 +217,20 @@ load_data_infile.default <- function(
     "-P",
     db_config$password
   )
-  if(db_config$trusted_connection=="yes"){
-    args <- c(args,"-T")
+  if (db_config$trusted_connection == "yes") {
+    args <- c(args, "-T")
   }
   system2(
     "bcp",
-    args=args,
-    stdout=NULL
+    args = args,
+    stdout = NULL
   )
 
   # TABLOCK is used by bcp by default. It is disabled when performing inserts in parallel.
   # Upserts can use TABLOCK in parallel, because they initially insert to a random table
   # before merging. This random db table will therefore not be in use by multiple processes
   # simultaneously
-  if(!config$in_parallel | force_tablock){
+  if (!config$in_parallel | force_tablock) {
     # sometimes this results in the data not being
     # uploaded at all, so for the moment I am disabling this
     # until we can spend more time on it
@@ -235,17 +240,17 @@ load_data_infile.default <- function(
     hint_arg <- NULL
   }
 
-  if(!is.null(key(dt))){
-    hint_arg <- c(hint_arg, paste0("ORDER(", paste0(key(dt), " ASC", collapse=", "), ")"))
+  if (!is.null(key(dt))) {
+    hint_arg <- c(hint_arg, paste0("ORDER(", paste0(key(dt), " ASC", collapse = ", "), ")"))
   }
-  if(length(hint_arg) > 0){
+  if (length(hint_arg) > 0) {
     hint_arg <- paste0(hint_arg, collapse = ", ")
     hint_arg <- paste0("-h '", hint_arg, "'")
   }
 
   args <- c(
     table,
-    "in" ,
+    "in",
     file,
     "-a 16384",
     hint_arg,
@@ -262,29 +267,29 @@ load_data_infile.default <- function(
     "-m",
     0
   )
-  if(db_config$trusted_connection=="yes"){
-    args <- c(args,"-T")
+  if (db_config$trusted_connection == "yes") {
+    args <- c(args, "-T")
   }
   # print(args)
   system2(
     "bcp",
-    args=args,
-    stdout=NULL
+    args = args,
+    stdout = NULL
   )
 
   # dont do a validation check if running in parallel
   # because there will be race conditions with different
   # instances competing
-  if(!config$in_parallel & interactive()){
+  if (!config$in_parallel & interactive()) {
     sql <- glue::glue("SELECT COUNT(*) FROM {table};")
-    n_after <- DBI::dbGetQuery(conn, sql)[1,1]
+    n_after <- DBI::dbGetQuery(conn, sql)[1, 1]
     n_inserted <- n_after - n_before
 
-    if(n_inserted != nrow(dt)) stop("Wanted to insert ", nrow(dt), " rows but only inserted ",n_inserted)
+    if (n_inserted != nrow(dt)) stop("Wanted to insert ", nrow(dt), " rows but only inserted ", n_inserted)
   }
   b <- Sys.time()
   dif <- round(as.numeric(difftime(b, a, units = "secs")), 1)
-  if(config$verbose) message(glue::glue("Uploaded {nrow(dt)} rows in {dif} seconds to {table}"))
+  if (config$verbose) message(glue::glue("Uploaded {nrow(dt)} rows in {dif} seconds to {table}"))
 
   update_config_datetime(type = "data", tag = table)
   update_config_last_updated(type = "data", tag = table)
@@ -294,16 +299,14 @@ load_data_infile.default <- function(
 
 ######### upsert_load_data_infile
 
-upsert_load_data_infile <- function(
-  conn = NULL,
-  db_config,
-  table,
-  dt,
-  file,
-  fields,
-  keys,
-  drop_indexes
-){
+upsert_load_data_infile <- function(conn = NULL,
+                                    db_config,
+                                    table,
+                                    dt,
+                                    file,
+                                    fields,
+                                    keys,
+                                    drop_indexes) {
   if (is.null(conn) & is.null(db_config)) {
     stop("conn and db_config both have error")
   } else if (is.null(conn) & !is.null(db_config)) {
@@ -322,30 +325,27 @@ upsert_load_data_infile <- function(
     keys = keys,
     drop_indexes = drop_indexes
   )
-
 }
 
-upsert_load_data_infile_internal <- function(
-  conn,
-  db_config,
-  table,
-  dt,
-  file,
-  fields,
-  keys,
-  drop_indexes
-  ) UseMethod("upsert_load_data_infile_internal")
+upsert_load_data_infile_internal <- function(conn,
+                                             db_config,
+                                             table,
+                                             dt,
+                                             file,
+                                             fields,
+                                             keys,
+                                             drop_indexes) {
+  UseMethod("upsert_load_data_infile_internal")
+}
 
-upsert_load_data_infile_internal.default <- function(
-  conn = NULL,
-  db_config = NULL,
-  table,
-  dt,
-  file = "/tmp/x123.csv",
-  fields,
-  keys = NULL,
-  drop_indexes = NULL
-) {
+upsert_load_data_infile_internal.default <- function(conn = NULL,
+                                                     db_config = NULL,
+                                                     table,
+                                                     dt,
+                                                     file = "/tmp/x123.csv",
+                                                     fields,
+                                                     keys = NULL,
+                                                     drop_indexes = NULL) {
   temp_name <- random_uuid()
   # ensure that the table is removed **FIRST** (before deleting the connection)
   on.exit(DBI::dbRemoveTable(conn, temp_name), add = TRUE, after = FALSE)
@@ -372,7 +372,7 @@ upsert_load_data_infile_internal.default <- function(
     table = temp_name,
     dt = dt,
     file = file
-    )
+  )
 
   t0 <- Sys.time()
 
@@ -388,21 +388,19 @@ upsert_load_data_infile_internal.default <- function(
 
   t1 <- Sys.time()
   dif <- round(as.numeric(difftime(t1, t0, units = "secs")), 1)
-  if(config$verbose) message(glue::glue("Upserted {nrow(dt)} rows in {dif} seconds from {temp_name} to {table}"))
+  if (config$verbose) message(glue::glue("Upserted {nrow(dt)} rows in {dif} seconds from {temp_name} to {table}"))
 
   invisible()
 }
 
-`upsert_load_data_infile_internal.Microsoft SQL Server` <- function(
-  conn = NULL,
-  db_config = NULL,
-  table,
-  dt,
-  file = tempfile(),
-  fields,
-  keys,
-  drop_indexes = NULL
-) {
+`upsert_load_data_infile_internal.Microsoft SQL Server` <- function(conn = NULL,
+                                                                    db_config = NULL,
+                                                                    table,
+                                                                    dt,
+                                                                    file = tempfile(),
+                                                                    fields,
+                                                                    keys,
+                                                                    drop_indexes = NULL) {
   # conn <- schema$output$conn
   # db_config <- config$db_config
   # table <- schema$output$db_table
@@ -411,15 +409,15 @@ upsert_load_data_infile_internal.default <- function(
   # fields <- schema$output$db_fields
   # keys <- schema$output$keys
   # drop_indexes <- NULL
-  if(is.null(conn)){
+  if (is.null(conn)) {
     conn <- get_db_connection()
     on.exit(DBI::dbDisconnect(conn))
-  } else if(!DBI::dbIsValid(conn)){
+  } else if (!DBI::dbIsValid(conn)) {
     conn <- get_db_connection()
     on.exit(DBI::dbDisconnect(conn))
   }
 
-  temp_name <- paste0("tmp",random_uuid())
+  temp_name <- paste0("tmp", random_uuid())
 
   # ensure that the table is removed **FIRST** (before deleting the connection)
   on.exit(DBI::dbRemoveTable(conn, temp_name), add = TRUE, after = FALSE)
@@ -434,7 +432,7 @@ upsert_load_data_infile_internal.default <- function(
     dt = dt,
     file = file,
     force_tablock = TRUE
-    )
+  )
 
   a <- Sys.time()
   add_index(
@@ -447,14 +445,14 @@ upsert_load_data_infile_internal.default <- function(
   vals <- glue::glue("{fields} = VALUES({fields})")
   vals <- glue::glue_collapse(vals, sep = ", ")
 
-  sql_on_keys <- glue::glue("{t} = {s}", t=paste0("t.",keys), s=paste0("s.",keys))
+  sql_on_keys <- glue::glue("{t} = {s}", t = paste0("t.", keys), s = paste0("s.", keys))
   sql_on_keys <- paste0(sql_on_keys, collapse = " and ")
 
-  sql_update_set <- glue::glue("{t} = {s}", t=paste0("t.",fields), s=paste0("s.",fields))
+  sql_update_set <- glue::glue("{t} = {s}", t = paste0("t.", fields), s = paste0("s.", fields))
   sql_update_set <- paste0(sql_update_set, collapse = ", ")
 
-  sql_insert_fields <- paste0(fields, collapse=", ")
-  sql_insert_s_fields <- paste0(paste0("s.",fields), collapse=", ")
+  sql_insert_fields <- paste0(fields, collapse = ", ")
+  sql_insert_s_fields <- paste0(paste0("s.", fields), collapse = ", ")
 
   sql <- glue::glue("
   MERGE {table} t
@@ -472,7 +470,7 @@ upsert_load_data_infile_internal.default <- function(
 
   b <- Sys.time()
   dif <- round(as.numeric(difftime(b, a, units = "secs")), 1)
-  if(config$verbose) message(glue::glue("Upserted {nrow(dt)} rows in {dif} seconds from {temp_name} to {table}"))
+  if (config$verbose) message(glue::glue("Upserted {nrow(dt)} rows in {dif} seconds from {temp_name} to {table}"))
 
   update_config_datetime(type = "data", tag = table)
   update_config_last_updated(type = "data", tag = table)
@@ -482,23 +480,23 @@ upsert_load_data_infile_internal.default <- function(
 ######### create_table
 create_table <- function(conn, table, fields, keys) UseMethod("create_table")
 
-create_table.default <- function(conn, table, fields, keys=NULL) {
+create_table.default <- function(conn, table, fields, keys = NULL) {
   fields_new <- fields
   fields_new[fields == "TEXT"] <- "TEXT CHARACTER SET utf8 COLLATE utf8_unicode_ci"
 
   sql <- DBI::sqlCreateTable(conn, table, fields_new,
-                             row.names = F, temporary = F
+    row.names = F, temporary = F
   )
   DBI::dbExecute(conn, sql)
 }
 
-`create_table.Microsoft SQL Server` <- function(conn, table, fields, keys=NULL) {
+`create_table.Microsoft SQL Server` <- function(conn, table, fields, keys = NULL) {
   fields_new <- fields
   fields_new[fields == "TEXT"] <- "NVARCHAR (1000)"
   fields_new[fields == "DOUBLE"] <- "FLOAT"
   fields_new[fields == "BOOLEAN"] <- "BIT"
 
-  if(!is.null(keys)) fields_new[names(fields_new) %in% keys] <- paste0(fields_new[names(fields_new) %in% keys], " NOT NULL")
+  if (!is.null(keys)) fields_new[names(fields_new) %in% keys] <- paste0(fields_new[names(fields_new) %in% keys], " NOT NULL")
 
   sql <- DBI::sqlCreateTable(
     conn,
@@ -524,12 +522,12 @@ add_constraint.default <- function(conn, table, keys) {
   sql <- glue::glue("
           ALTER table {table}
           ADD CONSTRAINT {constraint} PRIMARY KEY CLUSTERED ({primary_keys});")
-  #print(sql)
+  # print(sql)
   a <- DBI::dbExecute(conn, sql)
   # DBI::dbExecute(conn, "SHOW INDEX FROM x");
   t1 <- Sys.time()
   dif <- round(as.numeric(difftime(t1, t0, units = "secs")), 1)
-  if(config$verbose) message(glue::glue("Added constraint {constraint} in {dif} seconds to {table}"))
+  if (config$verbose) message(glue::glue("Added constraint {constraint} in {dif} seconds to {table}"))
 }
 
 ######### drop_constraint
@@ -540,13 +538,13 @@ drop_constraint.default <- function(conn, table) {
   sql <- glue::glue("
           ALTER table {table}
           DROP CONSTRAINT {constraint};")
-  #print(sql)
-  try(a <- DBI::dbExecute(conn, sql),TRUE)
+  # print(sql)
+  try(a <- DBI::dbExecute(conn, sql), TRUE)
 }
 
 drop_index <- function(conn, table, index) UseMethod("drop_index")
 
-drop_index.default <- function(conn, table, index){
+drop_index.default <- function(conn, table, index) {
   try(
     DBI::dbExecute(
       conn,
@@ -556,7 +554,7 @@ drop_index.default <- function(conn, table, index){
   )
 }
 
-`drop_index.Microsoft SQL Server` <- function(conn, table, index){
+`drop_index.Microsoft SQL Server` <- function(conn, table, index) {
   try(
     DBI::dbExecute(
       conn,
@@ -574,11 +572,11 @@ add_index.default <- function(conn, table, keys, index) {
   sql <- glue::glue("
     ALTER TABLE `{table}` ADD INDEX `{index}` ({keys})
     ;")
-  #print(sql)
-  try(a <- DBI::dbExecute(conn, sql),T)
+  # print(sql)
+  try(a <- DBI::dbExecute(conn, sql), T)
 }
 
-`add_index.Microsoft SQL Server` <- function(conn, table, keys, index){
+`add_index.Microsoft SQL Server` <- function(conn, table, keys, index) {
   keys <- glue::glue_collapse(keys, sep = ", ")
 
   try(
@@ -597,30 +595,28 @@ add_index.default <- function(conn, table, keys, index) {
 #' @param condition A string SQL condition
 #' @param columns The columns to be copied
 #' @export
-copy_into_new_table_where <- function(
-  conn=NULL,
-  table_from,
-  table_to,
-  condition = "1=1",
-  columns = "*"
-  ) {
-  if(is.null(conn)){
+copy_into_new_table_where <- function(conn = NULL,
+                                      table_from,
+                                      table_to,
+                                      condition = "1=1",
+                                      columns = "*") {
+  if (is.null(conn)) {
     conn <- get_db_connection()
     on.exit(DBI::dbDisconnect(conn))
-  } else if(!DBI::dbIsValid(conn)){
+  } else if (!DBI::dbIsValid(conn)) {
     conn <- get_db_connection()
     on.exit(DBI::dbDisconnect(conn))
   }
 
-  info_from = get_table_name_info(table_from)
-  info_to = get_table_name_info(table_to)
+  info_from <- get_table_name_info(table_from)
+  info_to <- get_table_name_info(table_to)
 
-  if(info_from$db != info_to$db){
+  if (info_from$db != info_to$db) {
     stop("Cannot copy directly between databases because they are of different levels of data sensitivity.")
   }
 
   t0 <- Sys.time()
-  temp_name <- paste0("[",info_to$db,"].[",info_to$schema,"].[tmp",random_uuid(),"]")
+  temp_name <- paste0("[", info_to$db, "].[", info_to$schema, "].[tmp", random_uuid(), "]")
 
   # create the table first (needs to be created or we cant use tablock)
   sql <- glue::glue("SELECT {columns} INTO {temp_name} FROM {table_from} WHERE 0=1")
@@ -635,12 +631,12 @@ copy_into_new_table_where <- function(
   DBI::dbExecute(info_from$pool, sql)
   t1 <- Sys.time()
   dif <- round(as.numeric(difftime(t1, t0, units = "secs")), 1)
-  if(config$verbose) message(glue::glue("Copied rows in {dif} seconds from {table_from} to {table_to}"))
+  if (config$verbose) message(glue::glue("Copied rows in {dif} seconds from {table_from} to {table_to}"))
 
   # applying indexes if possible
-  if(table_from %in% names(sc::config$schemas)){
-    for(i in names(sc::config$schemas[[table_from]]$indexes)){
-      if(config$verbose) message(glue::glue("Adding index {i}"))
+  if (table_from %in% names(sc::config$schemas)) {
+    for (i in names(sc::config$schemas[[table_from]]$indexes)) {
+      if (config$verbose) message(glue::glue("Adding index {i}"))
 
       add_index(
         conn = conn,
@@ -660,16 +656,16 @@ copy_into_new_table_where <- function(
 #' @param conn A db connection
 #' @param table Table name
 #' @export
-drop_all_rows <- function(conn=NULL, table) {
-  if(is.null(conn)){
+drop_all_rows <- function(conn = NULL, table) {
+  if (is.null(conn)) {
     conn <- get_db_connection()
     on.exit(DBI::dbDisconnect(conn))
-  } else if(!DBI::dbIsValid(conn)){
+  } else if (!DBI::dbIsValid(conn)) {
     conn <- get_db_connection()
     on.exit(DBI::dbDisconnect(conn))
   }
 
-  info = get_table_name_info(table)
+  info <- get_table_name_info(table)
 
   a <- DBI::dbExecute(info$pool, glue::glue({
     "TRUNCATE TABLE {table};"
@@ -684,8 +680,8 @@ drop_all_rows <- function(conn=NULL, table) {
 #' @param table Table name
 #' @param condition A string SQL condition
 #' @export
-drop_rows_where <- function(conn=NULL, table, condition) {
-  if(is.null(conn)){
+drop_rows_where <- function(conn = NULL, table, condition) {
+  if (is.null(conn)) {
     conn <- get_db_connection()
     on.exit(DBI::dbDisconnect(conn))
   }
@@ -700,15 +696,15 @@ drop_rows_where <- function(conn=NULL, table, condition) {
 
   num_deleting <- 100000
   # need to do this, so that we dont get scientific format in the SQL command
-  num_deleting_character <- formatC(num_deleting, format="f", drop0trailing = T)
-  num_delete_calls <- ceiling(numrows/num_deleting)
+  num_deleting_character <- formatC(num_deleting, format = "f", drop0trailing = T)
+  num_delete_calls <- ceiling(numrows / num_deleting)
   message("We will need to perform ", num_delete_calls, " delete calls of ", num_deleting_character, " rows each.")
 
   indexes <- plnr::easy_split(1:num_delete_calls, number_of_groups = 10)
   notify_indexes <- unlist(lapply(indexes, max))
 
   i <- 0
-  while (numrows > 0){
+  while (numrows > 0) {
 
     # delete a large number of rows
     # database must be in SIMPLE recovery mode
@@ -719,8 +715,8 @@ drop_rows_where <- function(conn=NULL, table, condition) {
     #
 
     b <- DBI::dbExecute(conn, glue::glue(
-      'DELETE TOP ({num_deleting_character}) FROM {table} WHERE {condition}; ',
-      'CHECKPOINT; '
+      "DELETE TOP ({num_deleting_character}) FROM {table} WHERE {condition}; ",
+      "CHECKPOINT; "
     ))
 
     numrows <- DBI::dbGetQuery(conn, glue::glue(
@@ -728,12 +724,12 @@ drop_rows_where <- function(conn=NULL, table, condition) {
     )) %>%
       as.numeric()
     i <- i + 1
-    if(i %in% notify_indexes) message(i, "/", num_delete_calls, " delete calls performed. ", numrows, " rows remaining to be deleted")
+    if (i %in% notify_indexes) message(i, "/", num_delete_calls, " delete calls performed. ", numrows, " rows remaining to be deleted")
   }
 
   t1 <- Sys.time()
   dif <- round(as.numeric(difftime(t1, t0, units = "secs")), 1)
-  if(config$verbose) message(glue::glue("Deleted rows in {dif} seconds from {table}"))
+  if (config$verbose) message(glue::glue("Deleted rows in {dif} seconds from {table}"))
 
   update_config_datetime(type = "data", tag = table)
   update_config_last_updated(type = "data", tag = table)
@@ -745,16 +741,16 @@ drop_rows_where <- function(conn=NULL, table, condition) {
 #' @param table Table name
 #' @param condition A string SQL condition
 #' @export
-keep_rows_where <- function(conn=NULL, table, condition) {
-  if(is.null(conn)){
+keep_rows_where <- function(conn = NULL, table, condition) {
+  if (is.null(conn)) {
     conn <- get_db_connection()
     on.exit(DBI::dbDisconnect(conn))
-  } else if(!DBI::dbIsValid(conn)){
+  } else if (!DBI::dbIsValid(conn)) {
     conn <- get_db_connection()
     on.exit(DBI::dbDisconnect(conn))
   }
   t0 <- Sys.time()
-  temp_name <- paste0("tmp",random_uuid())
+  temp_name <- paste0("tmp", random_uuid())
 
   sql <- glue::glue("SELECT * INTO {temp_name} FROM {table} WHERE {condition}")
   DBI::dbExecute(conn, sql)
@@ -765,7 +761,7 @@ keep_rows_where <- function(conn=NULL, table, condition) {
   DBI::dbExecute(conn, sql)
   t1 <- Sys.time()
   dif <- round(as.numeric(difftime(t1, t0, units = "secs")), 1)
-  if(config$verbose) message(glue::glue("Kept rows in {dif} seconds from {table}"))
+  if (config$verbose) message(glue::glue("Kept rows in {dif} seconds from {table}"))
 
   update_config_datetime(type = "data", tag = table)
   update_config_last_updated(type = "data", tag = table)
@@ -784,52 +780,49 @@ keep_rows_where <- function(conn=NULL, table, condition) {
 #' @param trusted_connection trusted connection yes/no
 #' @param db_config A list containing driver, server, port, user, password
 #' @export get_db_connection
-get_db_connection <- function(
-                              driver = NULL,
+get_db_connection <- function(driver = NULL,
                               server = NULL,
                               port = NULL,
                               user = NULL,
                               password = NULL,
                               db = NULL,
                               trusted_connection = NULL,
-                              db_config = config$db_config
-                              ) {
-
-  if(!is.null(db_config) & is.null(driver)){
+                              db_config = config$db_config) {
+  if (!is.null(db_config) & is.null(driver)) {
     driver <- db_config$driver
   }
-  if(!is.null(db_config) & is.null(server)){
+  if (!is.null(db_config) & is.null(server)) {
     server <- db_config$server
   }
-  if(!is.null(db_config) & is.null(port)){
+  if (!is.null(db_config) & is.null(port)) {
     port <- db_config$port
   }
-  if(!is.null(db_config) & is.null(user)){
+  if (!is.null(db_config) & is.null(user)) {
     user <- db_config$user
   }
-  if(!is.null(db_config) & is.null(password)){
+  if (!is.null(db_config) & is.null(password)) {
     password <- db_config$password
   }
-  if(!is.null(db_config) & is.null(db)){
+  if (!is.null(db_config) & is.null(db)) {
     db <- db_config$db
   }
 
-  if(!is.null(db_config) & is.null(trusted_connection)){
+  if (!is.null(db_config) & is.null(trusted_connection)) {
     trusted_connection <- db_config$trusted_connection
   }
 
   use_trusted <- FALSE
-  if(!is.null(trusted_connection)) if(trusted_connection=="yes") use_trusted <- TRUE
+  if (!is.null(trusted_connection)) if (trusted_connection == "yes") use_trusted <- TRUE
 
-  if(use_trusted & driver %in% c("ODBC Driver 17 for SQL Server")){
+  if (use_trusted & driver %in% c("ODBC Driver 17 for SQL Server")) {
     conn <- DBI::dbConnect(
-        odbc::odbc(),
-        driver = driver,
-        server = server,
-        port = port,
-        trusted_connection = "yes"
-      )
-  } else if(driver %in% c("ODBC Driver 17 for SQL Server")){
+      odbc::odbc(),
+      driver = driver,
+      server = server,
+      port = port,
+      trusted_connection = "yes"
+    )
+  } else if (driver %in% c("ODBC Driver 17 for SQL Server")) {
     conn <- DBI::dbConnect(
       odbc::odbc(),
       driver = driver,
@@ -850,7 +843,7 @@ get_db_connection <- function(
       encoding = "utf8"
     )
   }
-  if(!is.null(db)) use_db(conn, db)
+  if (!is.null(db)) use_db(conn, db)
   return(conn)
 }
 
@@ -860,7 +853,7 @@ get_db_connection <- function(
 tbl <- function(table) {
   x <- get_table_name_info(table)
 
-  if(!DBI::dbIsValid(x$pool) | config$in_parallel){
+  if (!DBI::dbIsValid(x$pool) | config$in_parallel) {
     # message("sc::tbl connection was not valid, or is being run in parallel. Recreating.")
     create_pool_connection(config$db_configs[[x$access]], use_db = T)
     x <- get_table_name_info(table)
@@ -875,8 +868,8 @@ tbl <- function(table) {
 #' @param table tbl
 #' @param conn conn
 #' @export
-list_indexes <- function(table, conn=NULL){
-  if(is.null(conn)){
+list_indexes <- function(table, conn = NULL) {
+  if (is.null(conn)) {
     db <- config$db_config$db
     if (is.null(connections[[db]])) {
       connections[[db]] <- get_db_connection(db = db)
@@ -901,5 +894,3 @@ drop_table <- function(table) {
   id <- get_pool_id(table)
   return(try(DBI::dbRemoveTable(pools[[id]], name = table), TRUE))
 }
-
-

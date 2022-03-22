@@ -71,7 +71,7 @@ task_from_config_v2(
     "results_normomo_attrib_irr" = sc::config$schemas$results_normomo_attrib_irr
   ),
   # for each plan, this is the default for how the data will be extracted for each of the database tables listed above
-  data_selector_fn_default = function(schema, argset){
+  data_selector_fn_default = function(schema, argset) {
     schema$dplyr_tbl() \%>\%
       mandatory_db_filter(
         granularity_time = "week",
@@ -80,24 +80,24 @@ task_from_config_v2(
         sex = "total"
       ) \%>\%
       dplyr::filter(location_code == !!argset$location_code) \%>\%
-      dplyr::filter(year>=2020) \%>\%
+      dplyr::filter(year >= 2020) \%>\%
       dplyr::collect() \%>\%
       as.data.table()
   },
   # for each plan, specific data extractor functions can be given for each database tables listed above
   data_selector_fn_specific = list(
-  results_normomo_attrib_irr = function(schema, argset){
-    schema$dplyr_tbl() \%>\%
-      mandatory_db_filter(
-        granularity_time = "season",
-        granularity_geo = NULL,
-        age = "total",
-        sex = "total"
-      ) \%>\%
-      dplyr::filter(location_code == !!argset$location_code) \%>\%
-      dplyr::filter(year>=2020) \%>\%
-      dplyr::collect() \%>\%
-      as.data.table()
+    results_normomo_attrib_irr = function(schema, argset) {
+      schema$dplyr_tbl() \%>\%
+        mandatory_db_filter(
+          granularity_time = "season",
+          granularity_geo = NULL,
+          age = "total",
+          sex = "total"
+        ) \%>\%
+        dplyr::filter(location_code == !!argset$location_code) \%>\%
+        dplyr::filter(year >= 2020) \%>\%
+        dplyr::collect() \%>\%
+        as.data.table()
     }
   )
 )

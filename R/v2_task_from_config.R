@@ -1,4 +1,4 @@
-generic_data_function_factory <- function(schema, argset, fn){
+generic_data_function_factory <- function(schema, argset, fn) {
   force(schema)
   force(argset)
   force(fn)
@@ -49,7 +49,7 @@ generic_data_function_factory <- function(schema, argset, fn){
 #'     "results_normomo_attrib_irr" = sc::config$schemas$results_normomo_attrib_irr
 #'   ),
 #'   # for each plan, this is the default for how the data will be extracted for each of the database tables listed above
-#'   data_selector_fn_default = function(schema, argset){
+#'   data_selector_fn_default = function(schema, argset) {
 #'     schema$dplyr_tbl() %>%
 #'       mandatory_db_filter(
 #'         granularity_time = "week",
@@ -58,62 +58,59 @@ generic_data_function_factory <- function(schema, argset, fn){
 #'         sex = "total"
 #'       ) %>%
 #'       dplyr::filter(location_code == !!argset$location_code) %>%
-#'       dplyr::filter(year>=2020) %>%
+#'       dplyr::filter(year >= 2020) %>%
 #'       dplyr::collect() %>%
 #'       as.data.table()
 #'   },
 #'   # for each plan, specific data extractor functions can be given for each database tables listed above
 #'   data_selector_fn_specific = list(
-#'   results_normomo_attrib_irr = function(schema, argset){
-#'     schema$dplyr_tbl() %>%
-#'       mandatory_db_filter(
-#'         granularity_time = "season",
-#'         granularity_geo = NULL,
-#'         age = "total",
-#'         sex = "total"
-#'       ) %>%
-#'       dplyr::filter(location_code == !!argset$location_code) %>%
-#'       dplyr::filter(year>=2020) %>%
-#'       dplyr::collect() %>%
-#'       as.data.table()
+#'     results_normomo_attrib_irr = function(schema, argset) {
+#'       schema$dplyr_tbl() %>%
+#'         mandatory_db_filter(
+#'           granularity_time = "season",
+#'           granularity_geo = NULL,
+#'           age = "total",
+#'           sex = "total"
+#'         ) %>%
+#'         dplyr::filter(location_code == !!argset$location_code) %>%
+#'         dplyr::filter(year >= 2020) %>%
+#'         dplyr::collect() %>%
+#'         as.data.table()
 #'     }
 #'   )
 #' )
 #' }
 #' @export
-task_from_config_v2 <- function(
-  name,
-  cores = 1,
-  for_each_plan,
-  for_each_argset = NULL,
-  universal_argset = NULL,
-  upsert_at_end_of_each_plan = FALSE,
-  insert_at_end_of_each_plan = FALSE,
-  action_name,
-  data_output_schemas = NULL,
-  data_selector_schemas = NULL,
-  data_selector_fn_default = NULL,
-  data_selector_fn_specific = NULL
-){
-
+task_from_config_v2 <- function(name,
+                                cores = 1,
+                                for_each_plan,
+                                for_each_argset = NULL,
+                                universal_argset = NULL,
+                                upsert_at_end_of_each_plan = FALSE,
+                                insert_at_end_of_each_plan = FALSE,
+                                action_name,
+                                data_output_schemas = NULL,
+                                data_selector_schemas = NULL,
+                                data_selector_fn_default = NULL,
+                                data_selector_fn_specific = NULL) {
   index <- 1
   list_plan <- list()
 
-  for(index_plan in seq_along(for_each_plan)){
+  for (index_plan in seq_along(for_each_plan)) {
     # create a new plan
-    list_plan[[length(list_plan)+1]] <- plnr::Plan$new()
+    list_plan[[length(list_plan) + 1]] <- plnr::Plan$new()
 
     # add data
-    for(index_data in seq_along(data_selector_schemas)){
+    for (index_data in seq_along(data_selector_schemas)) {
       schema_name <- names(data_selector_schemas)[[index_data]]
       schema <- data_selector_schemas[[index_data]]
       argset <- for_each_plan[[index_plan]]
       argset$today <- lubridate::today()
 
-      if(schema_name %in% names(data_selector_fn_specific)){
+      if (schema_name %in% names(data_selector_fn_specific)) {
         list_plan[[length(list_plan)]]$add_data(
           name = schema_name,
-          fn=generic_data_function_factory(
+          fn = generic_data_function_factory(
             schema = schema,
             argset = argset,
             fn = data_selector_fn_specific[[schema_name]]
@@ -122,7 +119,7 @@ task_from_config_v2 <- function(
       } else {
         list_plan[[length(list_plan)]]$add_data(
           name = schema_name,
-          fn=generic_data_function_factory(
+          fn = generic_data_function_factory(
             schema = schema,
             argset = argset,
             fn = data_selector_fn_default
@@ -132,10 +129,10 @@ task_from_config_v2 <- function(
     }
 
     # add analyses
-    if(is.null(for_each_argset)){
+    if (is.null(for_each_argset)) {
       for_each_argset <- list(NULL)
     }
-    for(index_analysis in seq_along(for_each_argset)){
+    for (index_analysis in seq_along(for_each_argset)) {
       # add analysis
       argset <- c(
         for_each_plan[[index_plan]],
@@ -169,6 +166,3 @@ task_from_config_v2 <- function(
 
   return(task)
 }
-
-
-

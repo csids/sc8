@@ -1,23 +1,20 @@
-generic_data_function_factory_v3 <- function(schema, argset, fn_name){
+generic_data_function_factory_v3 <- function(schema, argset, fn_name) {
   force(schema)
   force(argset)
   force(fn_name)
   function() {
-    for(i in schema) i$db_connect()
-    on.exit(for(i in schema) i$db_disconnect())
+    for (i in schema) i$db_connect()
+    on.exit(for (i in schema) i$db_disconnect())
     fn <- plnr::get_anything(fn_name)
     fn(argset, schema)
   }
 }
 
-generic_list_plan_function_factory_v3 <- function(
-  universal_argset,
-  schema,
-  plan_argset_fn_name,
-  action_fn_name,
-  data_selector_fn_name
-  ){
-
+generic_list_plan_function_factory_v3 <- function(universal_argset,
+                                                  schema,
+                                                  plan_argset_fn_name,
+                                                  action_fn_name,
+                                                  data_selector_fn_name) {
   force(universal_argset)
   force(schema)
   force(plan_argset_fn_name)
@@ -25,8 +22,8 @@ generic_list_plan_function_factory_v3 <- function(
   force(data_selector_fn_name)
 
   function() {
-    for(i in schema) i$db_connect()
-    on.exit(for(i in schema) i$db_disconnect())
+    for (i in schema) i$db_connect()
+    on.exit(for (i in schema) i$db_disconnect())
 
     fn <- plnr::get_anything(plan_argset_fn_name)
     plan_argset <- fn(universal_argset, schema)
@@ -42,36 +39,34 @@ generic_list_plan_function_factory_v3 <- function(
   }
 }
 
-task_from_config_v3_list_plan <- function(
-  for_each_plan,
-  for_each_argset = NULL,
-  universal_argset = NULL,
-  action_fn_name,
-  data_selector_fn_name,
-  schema
-){
+task_from_config_v3_list_plan <- function(for_each_plan,
+                                          for_each_argset = NULL,
+                                          universal_argset = NULL,
+                                          action_fn_name,
+                                          data_selector_fn_name,
+                                          schema) {
   index <- 1
   list_plan <- list()
 
-  for(index_plan in seq_along(for_each_plan)){
+  for (index_plan in seq_along(for_each_plan)) {
     # create a new plan
-    list_plan[[length(list_plan)+1]] <- plnr::Plan$new()
+    list_plan[[length(list_plan) + 1]] <- plnr::Plan$new()
 
     # add data
     argset <- c(
-      "**universal**"="*",
+      "**universal**" = "*",
       universal_argset,
-      "**plan**"="*",
+      "**plan**" = "*",
       for_each_plan[[index_plan]],
-      "**automatic**"="*",
+      "**automatic**" = "*",
       index = index
     )
     argset$today <- lubridate::today()
 
-    if(!is.null(data_selector_fn_name)){
+    if (!is.null(data_selector_fn_name)) {
       list_plan[[length(list_plan)]]$add_data(
         name = "data__________go_up_one_level",
-        fn=generic_data_function_factory_v3(
+        fn = generic_data_function_factory_v3(
           schema = schema,
           argset = argset,
           fn_name = data_selector_fn_name
@@ -80,19 +75,19 @@ task_from_config_v3_list_plan <- function(
     }
 
     # add analyses
-    if(is.null(for_each_argset)){
+    if (is.null(for_each_argset)) {
       for_each_argset <- list(NULL)
     }
-    for(index_analysis in seq_along(for_each_argset)){
+    for (index_analysis in seq_along(for_each_argset)) {
       # add analysis
       argset <- c(
-        "**universal**"="*",
+        "**universal**" = "*",
         universal_argset,
-        "**plan**"="*",
+        "**plan**" = "*",
         for_each_plan[[index_plan]],
-        "**analysis**"="*",
+        "**analysis**" = "*",
         for_each_argset[[index_analysis]],
-        "**automatic**"="*",
+        "**automatic**" = "*",
         index = index
       )
       argset$today <- lubridate::today()
@@ -129,27 +124,24 @@ task_from_config_v3_list_plan <- function(
 #' @param schema A named list that maps \code{sc::config$schemas} for use in \code{action_fn_name} and \code{data_selector_fn_name}
 #' @param info Information for documentation
 #' @export
-task_from_config_v3 <- function(
-  name = NULL,
-  name_grouping = NULL,
-  name_action= NULL,
-  name_variant = NULL,
-  cores = 1,
-  plan_argset_fn_name = NULL,
-  for_each_plan = NULL,
-  for_each_argset = NULL,
-  universal_argset = NULL,
-  upsert_at_end_of_each_plan = FALSE,
-  insert_at_end_of_each_plan = FALSE,
-  action_fn_name,
-  data_selector_fn_name = NULL,
-  schema = NULL,
-  info = NULL
-){
-
-  if(is.null(for_each_plan) & is.null(plan_argset_fn_name)) stop("You must provide at least one of for_each_plan or plan_argset_fn_name")
+task_from_config_v3 <- function(name = NULL,
+                                name_grouping = NULL,
+                                name_action = NULL,
+                                name_variant = NULL,
+                                cores = 1,
+                                plan_argset_fn_name = NULL,
+                                for_each_plan = NULL,
+                                for_each_argset = NULL,
+                                universal_argset = NULL,
+                                upsert_at_end_of_each_plan = FALSE,
+                                insert_at_end_of_each_plan = FALSE,
+                                action_fn_name,
+                                data_selector_fn_name = NULL,
+                                schema = NULL,
+                                info = NULL) {
+  if (is.null(for_each_plan) & is.null(plan_argset_fn_name)) stop("You must provide at least one of for_each_plan or plan_argset_fn_name")
   stopifnot(!(is.null(name) & is.null(name_grouping) & is.null(name_action) & is.null(name_variant)))
-  if(is.null(name_grouping) & is.null(name_action) & is.null(name_variant)){
+  if (is.null(name_grouping) & is.null(name_action) & is.null(name_variant)) {
     name_description <- NULL
   } else {
     name_description <- list(
@@ -159,7 +151,7 @@ task_from_config_v3 <- function(
     )
   }
 
-  if(!is.null(for_each_plan)){
+  if (!is.null(for_each_plan)) {
     stopifnot(is.list(for_each_plan))
     list_plan <- task_from_config_v3_list_plan(
       for_each_plan = for_each_plan,
@@ -170,7 +162,7 @@ task_from_config_v3 <- function(
       schema = schema
     )
     update_plans_fn <- NULL
-  } else if(!is.null(plan_argset_fn_name)){
+  } else if (!is.null(plan_argset_fn_name)) {
     list_plan <- NULL
     update_plans_fn <- generic_list_plan_function_factory_v3(
       universal_argset = universal_argset,
@@ -196,5 +188,3 @@ task_from_config_v3 <- function(
 
   return(task)
 }
-
-

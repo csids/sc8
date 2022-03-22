@@ -23,7 +23,7 @@ task_inline_v1(
   # name of the task
   name = "ui_normomo_attrib_excel",
   # inline function that will run
-  action_fn = function(data, argset, schema){
+  action_fn = function(data, argset, schema) {
     print(1)
   }
 )

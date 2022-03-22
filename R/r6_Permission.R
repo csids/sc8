@@ -2,7 +2,7 @@
 #' @param name the name of the permission
 #' @param permission a Permission R6 class
 #' @export
-add_permission <- function(name, permission){
+add_permission <- function(name, permission) {
   config$permissions[[name]] <- permission
 }
 
@@ -19,11 +19,9 @@ Permission <- R6::R6Class(
     dev_always_performs = FALSE,
     production_days = c(1:7),
     db_schema = NULL,
-    initialize = function(
-      key,
-      value,
-      production_days = c(1:7)
-      ) {
+    initialize = function(key,
+                          value,
+                          production_days = c(1:7)) {
       value <<- as.character(value)
       production_days <<- production_days
 
@@ -92,7 +90,7 @@ Permission <- R6::R6Class(
       return(today %in% production_days)
     },
     current_value = function() {
-      if(!"permission" %in% list_tables()){
+      if (!"permission" %in% list_tables()) {
         db_schema$connect()
         db_schema$disconnect()
       }

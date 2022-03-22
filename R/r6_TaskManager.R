@@ -1,6 +1,6 @@
 #' shortcut to get available task names
 #' @export
-tm_get_task_names <- function(){
+tm_get_task_names <- function() {
   names(config$tasks$list_task)
 }
 
@@ -38,24 +38,22 @@ tm_update_plans <- function(task_name, index_plan = NULL, index_analysis = NULL,
 #' @param index_argset Deprecated
 #' @param run_as_rstudio_job_loading_from_devtools Run the task as an rstudio job, loading from devtools
 #' @export
-tm_run_task <- function(
-  task_name,
-  index_plan = NULL,
-  index_analysis = NULL,
-  index_argset = NULL,
-  run_as_rstudio_job_loading_from_devtools = FALSE
-  ) {
+tm_run_task <- function(task_name,
+                        index_plan = NULL,
+                        index_analysis = NULL,
+                        index_argset = NULL,
+                        run_as_rstudio_job_loading_from_devtools = FALSE) {
   # message(glue::glue("spulscore {utils::packageVersion('sc')}"))
 
-  if(!run_as_rstudio_job_loading_from_devtools){
+  if (!run_as_rstudio_job_loading_from_devtools) {
     task <- tm_get_task(
       task_name = task_name,
       index_plan = index_plan,
       index_analysis = index_analysis
     )
-    task$run(log=FALSE)
+    task$run(log = FALSE)
   } else {
-    tempfile <- fs::path(tempdir(check = T), paste0(task_name,".r"))
+    tempfile <- fs::path(tempdir(check = T), paste0(task_name, ".r"))
     cat(glue::glue(
       "
         devtools::load_all('.')
@@ -101,7 +99,9 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
   # https://rstudio.github.io/rstudio-extensions/connections-contract.html?_ga=2.130285583.1223674375.1634876289-790799150.1584566635
   observer <- getOption("connectionObserver")
   # if no observer, or data is empty, just return the data
-  if (is.null(observer) | length(data) == 0) return(data)
+  if (is.null(observer) | length(data) == 0) {
+    return(data)
+  }
 
   # close observer
   observer$connectionClosed(
@@ -124,15 +124,14 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
     # icon = icon,
 
     # connection code
-    connectCode = paste0('data <- sc::tm_get_data("',task_name,'", index_plan = ',index_plan,')'),
+    connectCode = paste0('data <- sc::tm_get_data("', task_name, '", index_plan = ', index_plan, ")"),
 
     # disconnection code
     disconnect = function() {
       rm("data")
       gc()
     },
-
-    listObjectTypes = function () {
+    listObjectTypes = function() {
       list(
         schema = list(
           # icon = "path/to/schema.png",
@@ -148,11 +147,11 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
     # table enumeration code
     listObjects = function(...) {
       retval <- data.frame(name = names(data), type = "table")
-      for(i in seq_len(nrow(retval))){
+      for (i in seq_len(nrow(retval))) {
         size <- pryr::object_size(data[[i]])
-        size <- size/(1000^2)
-        size <- formatC(round(size,1), digits = 1, format = "f")
-        retval[i,1] <- paste0(retval[i,1], " (", size, " MB / n = ", nrow(data[[i]]),")")
+        size <- size / (1000^2)
+        size <- formatC(round(size, 1), digits = 1, format = "f")
+        retval[i, 1] <- paste0(retval[i, 1], " (", size, " MB / n = ", nrow(data[[i]]), ")")
       }
       return(retval)
     },
@@ -160,11 +159,11 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
     # column enumeration code
     listColumns = function(table) {
       x_table <- stringr::str_remove(table, " \\(.*$")
-      x <- data.frame(name = names(data[[x_table]]), type=sapply(data[[x_table]],class))
-      for(i in seq_len(nrow(x))){
+      x <- data.frame(name = names(data[[x_table]]), type = sapply(data[[x_table]], class))
+      for (i in seq_len(nrow(x))) {
         var <- x$name[i]
-        if(x$name[i] %in% c("granularity_geo")){
-          unique_vals <- data[[x_table]][,.(N=.N),keyby=var]
+        if (x$name[i] %in% c("granularity_geo")) {
+          unique_vals <- data[[x_table]][, .(N = .N), keyby = var]
           setnames(unique_vals, c("val", "N"))
           ordering <- unique(c(
             "nation",
@@ -188,24 +187,23 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
             "faregion",
             unique_vals$val
           ))
-          unique_vals[, val := factor(val, levels=ordering)]
+          unique_vals[, val := factor(val, levels = ordering)]
           setorder(unique_vals, val)
-          unique_vals[, lab := paste0(val," (",N,")")]
+          unique_vals[, lab := paste0(val, " (", N, ")")]
           x$type[i] <- paste0(unique_vals$lab, collapse = " / ")
-        } else if(
+        } else if (
           x$name[i] %in% c("granularity_time", "border", "age", "sex", "isoyear", "season") |
-          (x$type[i] %in% c("character") & length(unique(data[[x_table]][[i]])) <= 10)
-        ){
-          unique_vals <- data[[x_table]][,.(N=.N),keyby=var]
+            (x$type[i] %in% c("character") & length(unique(data[[x_table]][[i]])) <= 10)
+        ) {
+          unique_vals <- data[[x_table]][, .(N = .N), keyby = var]
           setnames(unique_vals, c("val", "N"))
 
-          unique_vals[, lab := paste0(val," (",N,")")]
+          unique_vals[, lab := paste0(val, " (", N, ")")]
           x$type[i] <- paste0(unique_vals$lab, collapse = " / ")
-
-        } else if(x$type[i] %in% c("character", "integer", "Date")){
-          x$type[i] <- paste0(min(data[[x_table]][[i]], na.rm=T), " to ", max(data[[x_table]][[i]], na.rm=T))
-        } else if(x$type[i] %in% c("numeric")){
-          x$type[i] <- paste0(round(min(data[[x_table]][[i]], na.rm=T),3), " to ", round(max(data[[x_table]][[i]], na.rm=T),3))
+        } else if (x$type[i] %in% c("character", "integer", "Date")) {
+          x$type[i] <- paste0(min(data[[x_table]][[i]], na.rm = T), " to ", max(data[[x_table]][[i]], na.rm = T))
+        } else if (x$type[i] %in% c("numeric")) {
+          x$type[i] <- paste0(round(min(data[[x_table]][[i]], na.rm = T), 3), " to ", round(max(data[[x_table]][[i]], na.rm = T), 3))
         }
       }
       x
@@ -214,7 +212,7 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
     # table preview code
     previewObject = function(rowLimit, table, ...) {
       x_table <- stringr::str_remove(table, " \\(.*$")
-      data[[x_table]][1:rowLimit,]
+      data[[x_table]][1:rowLimit, ]
     },
 
     # other actions that can be executed on this connection
@@ -258,23 +256,23 @@ tm_get_schema <- function(task_name, index_plan = NULL, index_analysis = NULL, i
   schema <- tm_get_task(
     task_name = task_name
   )$schema
-  for(s in schema) s$connect()
+  for (s in schema) s$connect()
   return(schema)
 }
 
-analyses_to_dt <- function(analyses){
-  retval <- lapply(analyses, function(x){
+analyses_to_dt <- function(analyses) {
+  retval <- lapply(analyses, function(x) {
     data.table(t(x$argset))
   })
   retval <- rbindlist(retval)
-  retval[,index_analysis := 1:.N]
+  retval[, index_analysis := 1:.N]
 
   return(retval)
 }
 
-plans_to_dt <- function(plans){
+plans_to_dt <- function(plans) {
   retval <- lapply(plans, function(x) analyses_to_dt(x$analyses))
-  for(i in seq_along(retval)) retval[[i]][, index_plan := i]
+  for (i in seq_along(retval)) retval[[i]][, index_plan := i]
   retval <- rbindlist(retval)
   setcolorder(retval, c("index_plan", "index_analysis"))
   retval
@@ -286,7 +284,7 @@ plans_to_dt <- function(plans){
 #' @param index_analysis Not used
 #' @param index_argset Deprecated
 #' @export
-tm_get_plans_argsets_as_dt <- function(task_name, index_plan = NULL, index_analysis = NULL, index_argset = NULL){
+tm_get_plans_argsets_as_dt <- function(task_name, index_plan = NULL, index_analysis = NULL, index_argset = NULL) {
   p <- tm_get_plans(task_name)
   plans_to_dt(p)
 }
@@ -348,17 +346,14 @@ TaskManager <- R6::R6Class(
     ## },
 
 
-    run_all = function(log = TRUE){
-      for(task in list_task){
-        task_run(task$name, log=log)
-
+    run_all = function(log = TRUE) {
+      for (task in list_task) {
+        task_run(task$name, log = log)
       }
-
     },
     task_run = function(name, log = TRUE) {
       list_task[[name]]$run(log)
     },
-
     run = function() {
       stop("run must be implemented")
     }

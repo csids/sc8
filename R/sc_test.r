@@ -3,7 +3,7 @@
 # sc:::set_test_task()
 # sc::tm_run_task("sc_test")
 # Rscript -e '.libPaths("~/R"); sc:::set_test_task(); sc::tm_run_task("sc_test")'
-set_test_task <- function(){
+set_test_task <- function() {
   # tm_run_task("sc_test")
   add_task_from_config_v8(
     name_grouping = "sc_test",
@@ -20,14 +20,15 @@ set_test_task <- function(){
     insert_at_end_of_each_plan = FALSE,
     action_fn_name = "sc::sc_test_action",
     data_selector_fn_name = "sc::sc_test_data_selector",
-    schema = list(
-    ),
+    schema = list(),
     info = "This task does..."
   )
 
-  p <- plnr::Plan$new(use_foreach=T)
-  for(i in 1:1){
-    p$add_analysis(fn = function(data, argset, schema){Sys.sleep(1)})
+  p <- plnr::Plan$new(use_foreach = T)
+  for (i in 1:1) {
+    p$add_analysis(fn = function(data, argset, schema) {
+      Sys.sleep(1)
+    })
   }
   sc::add_task(
     sc::Task$new(
@@ -38,7 +39,6 @@ set_test_task <- function(){
       cores = 2
     )
   )
-
 }
 
 # **** action **** ----
@@ -50,7 +50,7 @@ set_test_task <- function(){
 sc_test_action <- function(data, argset, schema) {
   # tm_run_task("sc_test")
 
-  if(plnr::is_run_directly()){
+  if (plnr::is_run_directly()) {
     # sc::tm_get_plans_argsets_as_dt("sc_test")
 
     index_plan <- 1
@@ -63,11 +63,11 @@ sc_test_action <- function(data, argset, schema) {
 
   # code goes here
   # special case that runs before everything
-  if(argset$first_argset == TRUE){
+  if (argset$first_argset == TRUE) {
 
   }
 
-  if(argset$index == 5) stop("this is my error")
+  if (argset$index == 5) stop("this is my error")
 
   Sys.sleep(1)
 
@@ -79,7 +79,7 @@ sc_test_action <- function(data, argset, schema) {
 
   # special case that runs after everything
   # copy to anon_web?
-  if(argset$last_argset == TRUE){
+  if (argset$last_argset == TRUE) {
     # sc::copy_into_new_table_where(
     #   table_from = "anon_X",
     #   table_to = "anon_webkht"
@@ -94,8 +94,8 @@ sc_test_action <- function(data, argset, schema) {
 #' @param argset Argset
 #' @param schema DB Schema
 #' @export
-sc_test_data_selector = function(argset, schema){
-  if(plnr::is_run_directly()){
+sc_test_data_selector <- function(argset, schema) {
+  if (plnr::is_run_directly()) {
     # sc::tm_get_plans_argsets_as_dt("sc_test")
 
     index_plan <- 1
@@ -161,7 +161,7 @@ sc_test_data_selector = function(argset, schema){
 #' @param schema schema
 #' @export
 sc_test_plan_analysis <- function(argset, schema) {
-  if(plnr::is_run_directly()){
+  if (plnr::is_run_directly()) {
     argset <- sc::tm_get_argset("sc_test")
     schema <- sc::tm_get_schema("sc_test")
   }
@@ -180,7 +180,3 @@ sc_test_plan_analysis <- function(argset, schema) {
 }
 
 # **** functions **** ----
-
-
-
-

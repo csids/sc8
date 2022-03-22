@@ -1,10 +1,10 @@
-addin_load_production <- function(){
+addin_load_production <- function() {
   rstudioapi::insertText(
     'rstudioapi::restartSession("Sys.setenv(SYKDOMSPULSEN_PRODUCTION=1);devtools::load_all(\\".\\");Sys.setenv(SYKDOMSPULSEN_PRODUCTION=0)")'
   )
 }
 
-addin_task_inline_v1_copy_to_db <- function(){
+addin_task_inline_v1_copy_to_db <- function() {
   rstudioapi::insertText(
     '
 # TASK_NAME ----
@@ -24,7 +24,7 @@ sc::add_task(
   )
 }
 
-addin_add_task_from_config_v8_basic <- function(){
+addin_add_task_from_config_v8_basic <- function() {
   rstudioapi::insertText(
     '
 # TASK_NAME ----
@@ -58,7 +58,7 @@ sc::add_task_from_config_v8(
   )
 }
 
-addin_db_schema_v8_anon <- function(){
+addin_db_schema_v8_anon <- function() {
   rstudioapi::insertText(
     '
 # anon_GROUPING_VARIANT ----
@@ -115,7 +115,7 @@ sc::add_schema_v8(
   )
 }
 
-addin_db_schema_v8_restr_anon <- function(){
+addin_db_schema_v8_restr_anon <- function() {
   rstudioapi::insertText(
     '
 # redirect_GROUPING_VARIANT ----
@@ -178,7 +178,7 @@ sc::add_schema_v8(
   )
 }
 
-addin_action_and_data_selector <- function(){
+addin_action_and_data_selector <- function() {
   rstudioapi::insertText(
     '
 # **** action **** ----
@@ -319,4 +319,3 @@ TASK_NAME_plan_analysis <- function(argset, schema) {
 '
   )
 }
-

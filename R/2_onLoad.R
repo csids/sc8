@@ -9,12 +9,12 @@
   set_plnr()
 
   # we need to implement lazy loading when we have more time
-  try(set_db(), silent=T)
+  try(set_db(), silent = T)
 
   invisible()
 }
 
-check_env_vars <- function(){
+check_env_vars <- function() {
   needed <- c(
     "SYKDOMSPULSEN_DB_DRIVER",
     "SYKDOMSPULSEN_DB_SERVER",
@@ -23,9 +23,7 @@ check_env_vars <- function(){
     "SYKDOMSPULSEN_DB_PASSWORD",
     "SYKDOMSPULSEN_DB_DB",
     "SYKDOMSPULSEN_DB_TRUSTED_CONNECTION",
-
     "SYKDOMSPULSEN_PRODUCTION",
-
     "SYKDOMSPULSEN_PATH_INPUT",
     "SYKDOMSPULSEN_PATH_OUTPUT"
   )
@@ -40,7 +38,6 @@ check_env_vars <- function(){
   #   }
   # }
   # packageStartupMessage(glue::glue("spulscore: {utils::packageVersion('sc')}"))
-
 }
 
 set_computer_type <- function() {
@@ -49,7 +46,7 @@ set_computer_type <- function() {
   }
 }
 
-set_progressr <- function(){
+set_progressr <- function() {
   options("progressr.enable" = TRUE)
   progressr::handlers(
     progressr::handler_progress(
@@ -59,12 +56,11 @@ set_progressr <- function(){
   )
 }
 
-set_path <- function(){
+set_path <- function() {
   config$path_input <- Sys.getenv("SYKDOMSPULSEN_PATH_INPUT")
   config$path_output <- Sys.getenv("SYKDOMSPULSEN_PATH_OUTPUT")
 }
 
-set_plnr <- function(){
+set_plnr <- function() {
   plnr::set_opts(force_verbose = TRUE)
 }
-

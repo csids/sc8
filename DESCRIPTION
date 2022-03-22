@@ -43,6 +43,7 @@ Imports:
   R6,
   rlang,
   rstudioapi,
+  spltidy,
   stringr,
   tidyr,
   uuid

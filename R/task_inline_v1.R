@@ -11,18 +11,16 @@
 #'   # name of the task
 #'   name = "ui_normomo_attrib_excel",
 #'   # inline function that will run
-#'   action_fn = function(data, argset, schema){
+#'   action_fn = function(data, argset, schema) {
 #'     print(1)
 #'   }
 #' )
 #' }
 #' @export
-task_inline_v1 <- function(
-  name,
-  action_fn = function(data, argset, schema){
-    print(1)
-  }
-){
+task_inline_v1 <- function(name,
+                           action_fn = function(data, argset, schema) {
+                             print(1)
+                           }) {
   index <- 1
   list_plan <- list()
   list_plan[[1]] <- plnr::Plan$new()
@@ -44,6 +42,3 @@ task_inline_v1 <- function(
 
   return(task)
 }
-
-
-

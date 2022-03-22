@@ -1,17 +1,17 @@
-update_config_last_updated_internal <- function(type, tag, date = NULL, datetime = NULL){
-  stopifnot(type %in% c("task","data"))
-  if(is.null(config$schemas$config_last_updated$conn)) config$schemas$config_last_updated$connect()
+update_config_last_updated_internal <- function(type, tag, date = NULL, datetime = NULL) {
+  stopifnot(type %in% c("task", "data"))
+  if (is.null(config$schemas$config_last_updated$conn)) config$schemas$config_last_updated$connect()
 
-  if(!is.null(datetime)) datetime <- as.character(datetime)
+  if (!is.null(datetime)) datetime <- as.character(datetime)
 
-  if(is.null(date) & is.null(datetime)){
+  if (is.null(date) & is.null(datetime)) {
     date <- lubridate::today()
     datetime <- as.character(lubridate::now())
   }
-  if(is.null(date) & !is.null(datetime)){
-    date <- stringr::str_sub(datetime, 1,10)
+  if (is.null(date) & !is.null(datetime)) {
+    date <- stringr::str_sub(datetime, 1, 10)
   }
-  if(!is.null(date) & is.null(datetime)){
+  if (!is.null(date) & is.null(datetime)) {
     datetime <- paste0(date, " 00:01:00")
   }
   to_upload <- data.table(
@@ -30,8 +30,8 @@ update_config_last_updated_internal <- function(type, tag, date = NULL, datetime
 #' @param date Date to set in config_last_updated
 #' @param datetime Datetime to set in config_last_updated
 #' @export
-update_config_last_updated <- function(type, tag, date = NULL, datetime = NULL){
-  if(!stringr::str_detect(tag, "^tmp") & !tag %in% c("config_datetime", "config_last_updated", "permission", "rundate")) update_config_last_updated_internal(type = type, tag = tag)
+update_config_last_updated <- function(type, tag, date = NULL, datetime = NULL) {
+  if (!stringr::str_detect(tag, "^tmp") & !tag %in% c("config_datetime", "config_last_updated", "permission", "rundate")) update_config_last_updated_internal(type = type, tag = tag)
 }
 
 #' get_config_last_updated
@@ -39,23 +39,22 @@ update_config_last_updated <- function(type, tag, date = NULL, datetime = NULL){
 #' @param type a
 #' @param tag a
 #' @export
-get_config_last_updated <- function(type=NULL, tag=NULL) {
-  if(is.null(config$schemas$config_last_updated$conn)) config$schemas$config_last_updated$connect()
+get_config_last_updated <- function(type = NULL, tag = NULL) {
+  if (is.null(config$schemas$config_last_updated$conn)) config$schemas$config_last_updated$connect()
 
-  if(!is.null(tag)){
+  if (!is.null(tag)) {
     temp <- config$schemas$config_last_updated$tbl() %>%
       dplyr::filter(tag == !!tag) %>%
       dplyr::collect() %>%
       as.data.table()
-  } else{
+  } else {
     temp <- config$schemas$config_last_updated$tbl() %>%
       dplyr::collect() %>%
       as.data.table()
   }
-  if(!is.null(type)){
+  if (!is.null(type)) {
     x_type <- type
-    temp <- temp[type==x_type]
+    temp <- temp[type == x_type]
   }
   return(temp)
 }
-

@@ -1,8 +1,8 @@
 #' Describe all available schemas
 #' @export
-describe_schemas <- function(){
+describe_schemas <- function() {
   retval <- vector("list", length = length(config$schemas))
-  for(i in seq_along(config$schemas)){
+  for (i in seq_along(config$schemas)) {
     schema <- config$schemas[[i]]
 
     tab <- data.frame(schema$db_field_types)
@@ -11,7 +11,7 @@ describe_schemas <- function(){
     tab[, key := ""]
     tab[variable %in% schema$keys, key := "*"]
     setcolorder(tab, c("variable", "key", "schema.db_field_types"))
-    setnames(tab, c("Variable","Key", "Type"))
+    setnames(tab, c("Variable", "Key", "Type"))
     tab[, Info := ""]
 
     retval[[i]] <- list(
@@ -25,9 +25,9 @@ describe_schemas <- function(){
 
 #' Describe all available tasks
 #' @export
-describe_tasks <- function(){
+describe_tasks <- function() {
   retval <- vector("list", length = length(sc::config$tasks$list_task))
-  for(i in seq_along(config$tasks$list_task)){
+  for (i in seq_along(config$tasks$list_task)) {
     task <- config$tasks$list_task[[i]]
     name <- config$tasks$list_task$name[[i]]
     name_description <- config$tasks$list_task[[i]]$name_description

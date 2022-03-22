@@ -1,3 +1,9 @@
+#' Hashing data structure (SchemaRedirect_v8)
+#'
+#' An implementation of spltidy::hash_data_structure for SchemaRedirect_v8
+#' @param x A SchemaRedirect_v8 object
+#' @param col The column to be hashed
+#' @param ... Unused
 #' @export
 hash_data_structure.SchemaRedirect_v8 <- function(x, col, ...) {
   spltidy::hash_data_structure(x$tbl(), col)
@@ -405,9 +411,6 @@ SchemaRedirect_v8 <- R6Class(
     },
     print_dplyr_select = function() {
       self$schemas[[self$preferred_table_name]]$print_dplyr_select()
-    },
-    list_indexes_db = function() {
-      self$schemas[[self$preferred_table_name]]$list_indexes_db()
     },
     add_indexes = function() {
       for (i in self$table_names) self$schemas[[i]]$add_indexes()

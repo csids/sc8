@@ -1,9 +1,11 @@
-create_pool_connection <- function(db_config, use_db = TRUE){
-  if(db_config$id %in% names(pools) & use_db == TRUE) return()
+create_pool_connection <- function(db_config, use_db = TRUE) {
+  if (db_config$id %in% names(pools) & use_db == TRUE) {
+    return()
+  }
   use_trusted <- FALSE
-  if(!is.null(db_config$trusted_connection)) if(db_config$trusted_connection=="yes") use_trusted <- TRUE
+  if (!is.null(db_config$trusted_connection)) if (db_config$trusted_connection == "yes") use_trusted <- TRUE
 
-  if(use_trusted & db_config$driver %in% c("ODBC Driver 17 for SQL Server")){
+  if (use_trusted & db_config$driver %in% c("ODBC Driver 17 for SQL Server")) {
     pool <- pool::dbPool(
       odbc::odbc(),
       driver = db_config$driver,
@@ -11,7 +13,7 @@ create_pool_connection <- function(db_config, use_db = TRUE){
       port = db_config$port,
       trusted_connection = "yes"
     )
-  } else if(db_config$driver %in% c("ODBC Driver 17 for SQL Server")){
+  } else if (db_config$driver %in% c("ODBC Driver 17 for SQL Server")) {
     pool <- pool::dbPool(
       odbc::odbc(),
       driver = db_config$driver,
@@ -32,7 +34,7 @@ create_pool_connection <- function(db_config, use_db = TRUE){
       encoding = "utf8"
     )
   }
-  if(use_db){
+  if (use_db) {
     use_db(pool, db_config$db)
     pools[[db_config$id]] <- pool
   } else {
@@ -40,12 +42,12 @@ create_pool_connection <- function(db_config, use_db = TRUE){
   }
 }
 
-get_pool_id <- function(x){
+get_pool_id <- function(x) {
   prefix <- stringr::str_extract(x, "^[A-Za-z]+_") |>
     stringr::str_remove("_")
-  if(is.na(prefix)) prefix <- stringr::str_extract(x, "^[A-Za-z]+")
+  if (is.na(prefix)) prefix <- stringr::str_extract(x, "^[A-Za-z]+")
 
-  if(prefix %in% names(config$db_configs)){
+  if (prefix %in% names(config$db_configs)) {
     id <- config$db_configs[[prefix]]$id
   } else {
     id <- config$db_configs[["anon"]]$id
@@ -53,17 +55,17 @@ get_pool_id <- function(x){
   return(id)
 }
 
-get_access_levels_from_id <- function(id){
+get_access_levels_from_id <- function(id) {
   access_levels <- c()
-  for(i in config$db_configs){
-    if(id == i$id){
+  for (i in config$db_configs) {
+    if (id == i$id) {
       access_levels <- c(access_levels, i$access)
     }
   }
   return(access_levels)
 }
 
-get_db_and_schema_from_id <- function(id){
+get_db_and_schema_from_id <- function(id) {
   x <- id |>
     stringr::str_split("\\.") |>
     unlist() |>
@@ -76,13 +78,12 @@ get_db_and_schema_from_id <- function(id){
       schema = x[2]
     )
   )
-
 }
 
 
-get_db_and_schema_from_access_level <- function(access_level){
-  for(i in config$db_configs){
-    if(access_level == i$access){
+get_db_and_schema_from_access_level <- function(access_level) {
+  for (i in config$db_configs) {
+    if (access_level == i$access) {
       return(
         list(
           db = i$db,
@@ -93,41 +94,45 @@ get_db_and_schema_from_access_level <- function(access_level){
   }
 }
 
-get_access_level_from_table_name <- function(table_name){
+get_access_level_from_table_name <- function(table_name) {
   access_levels <- lapply(config$db_configs, function(x) x$access) |>
     unique() |>
     unlist()
 
   retval <- stringr::str_extract(table_name, "^[A-Za-zA-Za-z]+_") |>
     stringr::str_remove("_")
-  if(is.na(retval)) return("anon")
+  if (is.na(retval)) {
+    return("anon")
+  }
 
-  if(retval=="specific"){
+  if (retval == "specific") {
     retval <- stringr::str_extract(table_name, "^[A-Za-zA-Za-z]+_[A-Za-zA-Za-z]+") |>
       stringr::str_sub(1, -1)
   }
 
-  if(!retval %in% access_levels) return("anon")
+  if (!retval %in% access_levels) {
+    return("anon")
+  }
   return(retval)
 }
 
-get_fully_specified_table_name <- function(table_name){
+get_fully_specified_table_name <- function(table_name) {
   db_schema <- table_name |>
     get_access_level_from_table_name() |>
     get_db_and_schema_from_access_level()
 
-  x_table <- paste0("[", paste(db_schema$db, db_schema$schema, table_name,sep="].["), "]") |>
+  x_table <- paste0("[", paste(db_schema$db, db_schema$schema, table_name, sep = "].["), "]") |>
     stringr::str_remove_all("\\[]\\.")
 
   return(x_table)
 }
 
-get_table_name_info <- function(table_name){
+get_table_name_info <- function(table_name) {
   db_schema <- table_name |>
     get_access_level_from_table_name() |>
     get_db_and_schema_from_access_level()
 
-  x_table <- paste0("[", paste(db_schema$db, db_schema$schema, table_name,sep="].["), "]") |>
+  x_table <- paste0("[", paste(db_schema$db, db_schema$schema, table_name, sep = "].["), "]") |>
     stringr::str_remove_all("\\[]\\.")
 
   return(list(
@@ -138,7 +143,6 @@ get_table_name_info <- function(table_name){
     table_name = table_name,
     pool = pools[[get_pool_id(table_name)]]
   ))
-
 }
 
 list_tables_int <- function(id) {
@@ -147,7 +151,9 @@ list_tables_int <- function(id) {
   retval <- DBI::dbGetQuery(pools$no_db, sql) |> setDT()
   retval <- retval[TABLE_SCHEMA == get_db_and_schema_from_id(id)$schema]
   retval <- retval$TABLE_NAME
-  if(length(retval)==0) return()
+  if (length(retval) == 0) {
+    return()
+  }
 
   # remove airflow tables
   retval <- retval[
@@ -189,13 +195,13 @@ get_tables <- function(access_level = NULL) {
     unlist()
 
   retval <- list()
-  for(id in ids){
+  for (id in ids) {
     access_levels <- get_access_levels_from_id(id)
-    for(a in access_levels){
+    for (a in access_levels) {
       retval[[a]] <- list_tables_int(id)
     }
   }
-  if(!is.null(access_level)) retval <- retval[[access_level]]
+  if (!is.null(access_level)) retval <- retval[[access_level]]
   return(invisible(retval))
 }
 
@@ -216,13 +222,13 @@ print_tables <- function() {
     unique() |>
     unlist()
 
-  for(id in ids){
+  for (id in ids) {
     access_levels <- get_access_levels_from_id(id)
     cat("\n----------\n")
     cat(paste0("ID: ", id, "\n"))
 
     cat("Access level: \n")
-    for(i in access_levels) cat(paste0("* ",i),"\n")
+    for (i in access_levels) cat(paste0("* ", i), "\n")
     cat("----------\n")
 
     cat("DB Tables:\n")

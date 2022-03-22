@@ -11,20 +11,17 @@
 #' @param validator_field_contents a
 #' @param info a
 #' @export
-add_schema_v8 <- function(
-  name_access = NULL,
-  name_grouping = NULL,
-  name_variant = NULL,
-  db_configs = NULL,
-  field_types,
-  keys,
-  censors = NULL,
-  indexes = NULL,
-  validator_field_types = validator_field_types_blank,
-  validator_field_contents = validator_field_contents_blank,
-  info = NULL
-  ){
-
+add_schema_v8 <- function(name_access = NULL,
+                          name_grouping = NULL,
+                          name_variant = NULL,
+                          db_configs = NULL,
+                          field_types,
+                          keys,
+                          censors = NULL,
+                          indexes = NULL,
+                          validator_field_types = validator_field_types_blank,
+                          validator_field_contents = validator_field_contents_blank,
+                          info = NULL) {
   force(name_access)
   force(name_grouping)
   force(name_variant)
@@ -50,10 +47,8 @@ add_schema_v8 <- function(
     validator_field_contents = validator_field_contents,
     info = info
   )
-  if(length(name_access)>1){
+  if (length(name_access) > 1) {
     table_name <- paste0(c("redirect", name_grouping, name_variant), collapse = "_")
     config$schemas[[table_name]] <- redirect
   }
 }
-
-

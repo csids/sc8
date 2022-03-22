@@ -1,4 +1,4 @@
-get_db_acess_from_env <- function(){
+get_db_acess_from_env <- function() {
   retval <- Sys.getenv("SYKDOMSPULSEN_DB_CONFIG_ACCESS") |>
     stringr::str_split("/") |>
     unlist()
@@ -6,8 +6,8 @@ get_db_acess_from_env <- function(){
   return(retval)
 }
 
-get_db_from_env <- function(access = NULL){
-  if(is.null(access)){
+get_db_from_env <- function(access = NULL) {
+  if (is.null(access)) {
     retval <- list(
       access = "anon",
       driver = Sys.getenv("SYKDOMSPULSEN_DB_DRIVER"),
@@ -35,28 +35,28 @@ get_db_from_env <- function(access = NULL){
   # retval <- config$db_config
   retval$schema <- gsub("\\\\", "\\\\", retval$schema)
 
-  retval$id <- paste0("[",retval$db,"].[",retval$schema,"]")
+  retval$id <- paste0("[", retval$db, "].[", retval$schema, "]")
 
   return(retval)
 }
 
-set_db <- function(){
+set_db <- function() {
   config$db_config <- get_db_from_env()
 
   config$db_configs <- list()
-  for(i in get_db_acess_from_env()){
+  for (i in get_db_acess_from_env()) {
     config$db_configs[[i]] <- get_db_from_env(i)
   }
-  if(is.null(config$db_configs$config) & !is.null(config$db_configs$anon)){
+  if (is.null(config$db_configs$config) & !is.null(config$db_configs$anon)) {
     config$db_configs$config <- config$db_configs$anon
     config$db_configs$config$access <- "config"
   }
-  if(is.null(config$db_configs$restr)){
+  if (is.null(config$db_configs$restr)) {
     config$db_configs$restr <- config$db_config
     config$db_configs$restr$access <- "restr"
   }
-  if(is.null(config$db_configs$anon)) config$db_configs$anon <- config$db_config
-  if(is.null(config$db_configs$config)){
+  if (is.null(config$db_configs$anon)) config$db_configs$anon <- config$db_config
+  if (is.null(config$db_configs$config)) {
     config$db_configs$config <- config$db_config
     config$db_configs$config$access <- "config"
   }
@@ -70,15 +70,15 @@ set_db <- function(){
   sql <- glue::glue("SELECT name, has_dbaccess(name) FROM sys.databases")
   db_names <- DBI::dbGetQuery(pools$no_db, sql)
   names(db_names) <- c("name", "access")
-  db_names <- db_names$name[db_names$access==1]
-  if(config$db_configs$restr$db %in% db_names){
+  db_names <- db_names$name[db_names$access == 1]
+  if (config$db_configs$restr$db %in% db_names) {
     config$db_config_preferred <- "restr"
   } else {
     config$db_config_preferred <- "anon"
   }
 
   # create pool connections for all dbs
-  for(i in config$db_configs) try(create_pool_connection(i, use_db = TRUE), silent=T)
+  for (i in config$db_configs) try(create_pool_connection(i, use_db = TRUE), silent = T)
 
   packageStartupMessage("Preferred sc database access level: ", config$db_config_preferred)
 
@@ -88,7 +88,7 @@ set_db <- function(){
     name_grouping = "last_updated",
     name_variant = NULL,
     db_configs = config$db_configs,
-    field_types =  c(
+    field_types = c(
       "type" = "TEXT",
       "tag" = "TEXT",
       "date" = "DATE",
@@ -117,12 +117,11 @@ set_db <- function(){
         "isoyearweek" = "TEXT",
         "date" = "DATE"
       ),
-      db_load_folder = tempdir(check=T),
+      db_load_folder = tempdir(check = T),
       keys = c(
         "type",
         "tag"
       )
     )
   )
-
 }
