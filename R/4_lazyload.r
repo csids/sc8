@@ -125,41 +125,4 @@ set_db <- function(){
     )
   )
 
-  # rundate ----
-  add_schema(
-    name = "rundate",
-    schema = Schema$new(
-      db_config = config$db_config,
-      db_table = "rundate",
-      db_field_types = c(
-        "task" = "TEXT",
-        "date" = "DATE",
-        "datetime" = "DATETIME"
-      ),
-      db_load_folder = tempdir(check=T),
-      keys = c(
-        "task"
-      )
-    )
-  )
-
-  # config_datetime ----
-  add_schema(
-    name = "config_datetime",
-    schema = Schema$new(
-      db_config = config$db_config,
-      db_table = "config_datetime",
-      db_field_types = c(
-        "type" = "TEXT",
-        "tag" = "TEXT",
-        "date" = "DATE",
-        "datetime" = "DATETIME"
-      ),
-      db_load_folder = tempdir(check=T),
-      keys = c(
-        "type",
-        "tag"
-      )
-    )
-  )
 }

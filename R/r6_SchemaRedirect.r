@@ -1,3 +1,8 @@
+#' @export
+hash_data_structure.SchemaRedirect_v8 <- function(x, col, ...) {
+  spltidy::hash_data_structure(x$tbl(), col)
+}
+
 #' censor 0-4 function factory
 #' If you use granularity_geo\* and granularity_time\* together, then they
 #' will be treated as AND
@@ -204,6 +209,7 @@ censor_list_function_factory <- function(list_of_censors) {
 
 #' SchemaRedirect class description
 #'
+#' @describeIn Schema_v8
 #' @import data.table
 #' @import R6
 #' @export SchemaRedirect_v8

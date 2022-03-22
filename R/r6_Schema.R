@@ -1,3 +1,8 @@
+#' @export
+hash_data_structure.Schema_v8 <- function(x, col, ...) {
+  spltidy::hash_data_structure(x$tbl(), col)
+}
+
 #' shortcut to get available schema names
 #' @export
 tm_get_schema_names <- function(){
@@ -193,7 +198,15 @@ validator_field_contents_sykdomspulsen <- function(data){
 }
 
 # schema_v8 ----
-#' schema class description
+#' R6 Class representing a DB schema/table
+#'
+#' @description
+#' The fundamental way to communicate with database tables.
+#'
+#' @details
+#' This class is a representation of a database table. It is the way that you can
+#' access data (e.g. `tbl()`), manipulate data (e.g. `insert_data`, `upsert_data`),
+#' and manipulate structural aspects of the database table (e.g. `add_indexes`, `drop_indexes`).
 #'
 #' @import data.table
 #' @import R6
@@ -203,27 +216,48 @@ Schema_v8 <- R6Class(
 
   # public ----
   public = list(
-    #' @field conn db connection
+    #' @field conn Database connection.
     conn = NULL,
+    #' @field db_config Configuration details of the database.
     db_config = NULL,
+    #' @field table_name Name of the table in the database.
     table_name = NULL,
+    #' @field table_name_fully_specified Fully specified name of the table in the database (e.g. [db].[dbo].[table_name]).
     table_name_fully_specified = NULL,
+    #' @field field_types The types of each column in the database table (INTEGER, DOUBLE, TEXT, BOOLEAN, DATE, DATETIME).
     field_types = NULL,
+    #' @field field_types_with_length The same as \code{field_types} but with \code{(100)} added to the end of all TEXT fields.
     field_types_with_length = NULL,
+    #' @field keys The combination of variables that uniquely identify each row in the database.
     keys = NULL,
+    #' @field keys_with_length The same as \code{keys} but with \code{(100)} added to the end of all TEXT fields.
     keys_with_length = NULL,
+    #' @field indexes A named list of vectors (generally "ind1", "ind2", etc.) that improves the speed of data retrieval operations on a database table.
     indexes = NULL,
+    #' @field validator_field_contents A function that validates the data before it is inserted into the database.
     validator_field_contents = NULL,
+    #' @field info Free text information about the DB schema.
     info = "No information given in schema definition",
+    #' @field load_folder A temporary folder that is used to write data to before inserting into the database.
     load_folder = tempdir(check=T),
+    #' @field load_folder_fn A function that generates \code{load_folder}.
     load_folder_fn = function() tempdir(check=T),
+    #' @field censors A named list of censors.
     censors = NULL,
 
     #' @description
-    #' Create a new Schema_v3 object.
-    #' @param conn Name.
-    #' @param db_config Hair color.
-    #' @return A new `Schema_v3` object.
+    #' Create a new Schema_v8 object.
+    #'
+    #' This function is not used directly. You should use \code{\link{add_schema_v8}} instead.
+    #' @param conn Database connection (generally leave empty).
+    #' @param db_config Configuration details of the database.
+    #' @param table_name Name of the table in the database.
+    #' @param field_types The types of each column in the database table (INTEGER, DOUBLE, TEXT, BOOLEAN, DATE, DATETIME).
+    #' @param censors censors A named list of censors.
+    #' @param indexes A named list of vectors (generally "ind1", "ind2", etc.) that improves the speed of data retrieval operations on a database table.
+    #' @param validator_field_types A function that validates the \code{field_types} before the DB schema is created.
+    #' @param validator_field_contents A function that validates the data before it is inserted into the database.
+    #' @return A new `Schema_v8` object.
     initialize = function(
       conn = NULL,
       db_config = NULL,
@@ -291,6 +325,8 @@ Schema_v8 <- R6Class(
       if (!is.null(self$conn)) self$create_table()
     },
 
+    #' @description
+    #' Class-specific print function.
     print = function(...) {
       needs_to_connect <- FALSE
       if(is.null(self$conn)){
@@ -392,6 +428,8 @@ Schema_v8 <- R6Class(
       invisible(self)
     },
 
+    #' @description
+    #' Displays the status (connected/disconnected)
     cat_status = function(){
       if(self$is_connected()){
         cat(self$table_name_fully_specified, " ", crayon::bgRed(crayon::white("(disconnected)")))
@@ -400,6 +438,9 @@ Schema_v8 <- R6Class(
       }
     },
 
+    #' @description
+    #' Is the DB schema connected?
+    #' @return TRUE/FALSE
     is_connected = function(){
       is_connected <- FALSE
       if(is.null(self$conn)){
@@ -411,7 +452,7 @@ Schema_v8 <- R6Class(
     },
 
     #' @description
-    #' Connect to a db
+    #' Connect to the database
     #' @param db_config db_config
     connect = function(db_config = self$db_config) {
       needs_to_connect <- FALSE
@@ -428,7 +469,7 @@ Schema_v8 <- R6Class(
     },
 
     #' @description
-    #' Disconnect from a db
+    #' Disconnect from the database
     disconnect = function() {
       if (!is.null(self$conn)) if(DBI::dbIsValid(self$conn)){
         DBI::dbDisconnect(self$conn)
@@ -436,7 +477,7 @@ Schema_v8 <- R6Class(
     },
 
     #' @description
-    #' Create db table
+    #' Create the database table
     create_table = function() {
       self$connect()
       create_tab <- TRUE
@@ -455,6 +496,8 @@ Schema_v8 <- R6Class(
       }
     },
 
+    #' @description
+    #' Drop the database table
     drop_table = function() {
       self$connect()
       if (DBI::dbExistsTable(self$conn, self$table_name)) {
@@ -464,7 +507,9 @@ Schema_v8 <- R6Class(
     },
 
     #' @description
-    #' Inserts data into db table
+    #' @param newdata The data to insert.
+    #' @param verbose Boolean.
+    #' Inserts data into the database table
     insert_data = function(newdata, verbose = TRUE) {
       self$connect()
       if(is.null(newdata)) return()
@@ -490,7 +535,10 @@ Schema_v8 <- R6Class(
     },
 
     #' @description
-    #' Upserts data into db table
+    #' Upserts data into the database table
+    #' @param newdata The data to insert.
+    #' @param drop_indexes A vector containing the indexes to be dropped before upserting (can increase performance).
+    #' @param verbose Boolean.
     upsert_data = function(newdata, drop_indexes = names(self$indexes), verbose = TRUE) {
       self$connect()
       if(is.null(newdata)) return()
@@ -517,22 +565,35 @@ Schema_v8 <- R6Class(
       )
     },
 
+    #' @description
+    #' Drops all rows in the database table
     drop_all_rows = function() {
       self$connect()
       drop_all_rows(self$conn, self$table_name_fully_specified)
     },
 
+    #' @description
+    #' Drops rows in the database table according to the SQL condition.
+    #' @param condition SQL text condition.
     drop_rows_where = function(condition){
       self$connect()
       drop_rows_where(self$conn, self$table_name, condition)
     },
 
+    #' @description
+    #' Keeps rows in the database table according to the SQL condition.
+    #' @param condition SQL text condition.
     keep_rows_where = function(condition){
       self$connect()
       keep_rows_where(self$conn, self$table_name, condition)
       private$add_constraint()
     },
 
+    #' @description
+    #' Drops all rows in the database table and then upserts data.
+    #' @param newdata The data to insert.
+    #' @param drop_indexes A vector containing the indexes to be dropped before upserting (can increase performance).
+    #' @param verbose Boolean.
     drop_all_rows_and_then_upsert_data =  function(newdata, drop_indexes = names(self$indexes), verbose = TRUE) {
       self$drop_all_rows()
       self$upsert_data(
@@ -542,6 +603,10 @@ Schema_v8 <- R6Class(
       )
     },
 
+    #' @description
+    #' Drops all rows in the database table and then inserts data.
+    #' @param newdata The data to insert.
+    #' @param verbose Boolean.
     drop_all_rows_and_then_insert_data =  function(newdata, verbose = TRUE) {
       self$drop_all_rows()
       self$insert_data(
@@ -550,6 +615,8 @@ Schema_v8 <- R6Class(
       )
     },
 
+    #' @description
+    #' Provides access to the database table via dplyr::tbl.
     tbl = function() {
       self$connect()
       retval <- self$conn %>%
@@ -557,19 +624,22 @@ Schema_v8 <- R6Class(
       return(retval)
     },
 
+    #' @description
+    #' Prints a template dplyr::select call that you can easily copy/paste for all your variables.
     print_dplyr_select = function() {
       x <- self$tbl() %>% head() %>% dplyr::collect() %>% names() %>% paste0(., collapse=",\n  ")
       x <- paste0("dplyr::select(\n  ",x,"\n) %>%")
       cat(x)
     },
 
-    list_indexes_db = function(){
-      list_indexes(
-        conn = self$conn,
-        table = self$table_name
-      )
+    #' @description
+    #' Extracts the corresponding row of data from \code{\link{get_config_last_updated}}.
+    get_config_last_updated = function(){
+      get_config_last_updated(type = "data", tag = self$table_name)
     },
 
+    #' @description
+    #' Adds indexes to the database table from `self$indexes`
     add_indexes = function() {
       self$connect()
       for(i in names(self$indexes)){
@@ -584,6 +654,8 @@ Schema_v8 <- R6Class(
       }
     },
 
+    #' @description
+    #' Drops all indees from the database table
     drop_indexes = function() {
       self$connect()
       for(i in names(self$indexes)){

@@ -51,6 +51,6 @@ Suggests: testthat,
     usethis
 License: GPL-3 + file LICENSE
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 VignetteBuilder: knitr
 Encoding: UTF-8

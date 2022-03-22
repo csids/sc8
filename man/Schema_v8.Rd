@@ -2,16 +2,52 @@
 % Please edit documentation in R/r6_Schema.R
 \name{Schema_v8}
 \alias{Schema_v8}
-\title{schema class description}
+\title{R6 Class representing a DB schema/table}
 \description{
-schema class description
-
-schema class description
+The fundamental way to communicate with database tables.
+}
+\details{
+This class is a representation of a database table. It is the way that you can
+access data (e.g. `tbl()`), manipulate data (e.g. `insert_data`, `upsert_data`),
+and manipulate structural aspects of the database table (e.g. `add_indexes`, `drop_indexes`).
 }
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{conn}}{db connection}
+\item{\code{conn}}{Database connection.}
+
+\item{\code{db_config}}{Configuration details of the database.}
+
+\item{\code{table_name}}{Name of the table in the database.}
+
+\item{\code{table_name_fully_specified}}{Fully specified name of the table in the database (e.g. [db].[dbo].[table_name]).}
+
+\item{\code{field_types}}{The types of each column in the database table (INTEGER, DOUBLE, TEXT, BOOLEAN, DATE, DATETIME).}
+
+\item{\code{field_types_with_length}}{The same as \code{field_types} but with \code{(100)} added to the end of all TEXT fields.}
+
+\item{\code{keys}}{The combination of variables that uniquely identify each row in the database.}
+
+\item{\code{keys_with_length}}{The same as \code{keys} but with \code{(100)} added to the end of all TEXT fields.}
+
+\item{\code{indexes}}{A named list of vectors (generally "ind1", "ind2", etc.) that improves the speed of data retrieval operations on a database table.}
+
+\item{\code{validator_field_contents}}{A function that validates the data before it is inserted into the database.}
+
+\item{\code{info}}{Free text information about the DB schema.}
+
+\item{\code{load_folder}}{A temporary folder that is used to write data to before inserting into the database.}
+
+\item{\code{load_folder_fn}}{A function that generates \code{load_folder}.}
+
+\item{\code{censors}}{A named list of censors.}
+}
+\if{html}{\out{</div>}}
+}
+\section{Active bindings}{
+\if{html}{\out{<div class="r6-active-bindings">}}
+\describe{
+\item{\code{load_folder_fn}}{A function that generates \code{load_folder}.}
 }
 \if{html}{\out{</div>}}
 }
@@ -36,7 +72,7 @@ schema class description
 \item \href{#method-drop_all_rows_and_then_insert_data}{\code{Schema_v8$drop_all_rows_and_then_insert_data()}}
 \item \href{#method-tbl}{\code{Schema_v8$tbl()}}
 \item \href{#method-print_dplyr_select}{\code{Schema_v8$print_dplyr_select()}}
-\item \href{#method-list_indexes_db}{\code{Schema_v8$list_indexes_db()}}
+\item \href{#method-get_config_last_updated}{\code{Schema_v8$get_config_last_updated()}}
 \item \href{#method-add_indexes}{\code{Schema_v8$add_indexes()}}
 \item \href{#method-drop_indexes}{\code{Schema_v8$drop_indexes()}}
 \item \href{#method-db_connect}{\code{Schema_v8$db_connect()}}
@@ -57,7 +93,9 @@ schema class description
 \if{html}{\out{<a id="method-new"></a>}}
 \if{latex}{\out{\hypertarget{method-new}{}}}
 \subsection{Method \code{new()}}{
-Create a new Schema_v3 object.
+Create a new Schema_v8 object.
+
+This function is not used directly. You should use \code{\link{add_schema_v8}} instead.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$new(
   conn = NULL,
@@ -76,20 +114,33 @@ Create a new Schema_v3 object.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{conn}}{Name.}
+\item{\code{conn}}{Database connection (generally leave empty).}
 
-\item{\code{db_config}}{Hair color.}
+\item{\code{db_config}}{Configuration details of the database.}
+
+\item{\code{table_name}}{Name of the table in the database.}
+
+\item{\code{field_types}}{The types of each column in the database table (INTEGER, DOUBLE, TEXT, BOOLEAN, DATE, DATETIME).}
+
+\item{\code{censors}}{censors A named list of censors.}
+
+\item{\code{indexes}}{A named list of vectors (generally "ind1", "ind2", etc.) that improves the speed of data retrieval operations on a database table.}
+
+\item{\code{validator_field_types}}{A function that validates the \code{field_types} before the DB schema is created.}
+
+\item{\code{validator_field_contents}}{A function that validates the data before it is inserted into the database.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-A new `Schema_v3` object.
+A new `Schema_v8` object.
 }
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-print"></a>}}
 \if{latex}{\out{\hypertarget{method-print}{}}}
 \subsection{Method \code{print()}}{
+Class-specific print function.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$print(...)}\if{html}{\out{</div>}}
 }
@@ -99,6 +150,7 @@ A new `Schema_v3` object.
 \if{html}{\out{<a id="method-cat_status"></a>}}
 \if{latex}{\out{\hypertarget{method-cat_status}{}}}
 \subsection{Method \code{cat_status()}}{
+Displays the status (connected/disconnected)
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$cat_status()}\if{html}{\out{</div>}}
 }
@@ -108,16 +160,20 @@ A new `Schema_v3` object.
 \if{html}{\out{<a id="method-is_connected"></a>}}
 \if{latex}{\out{\hypertarget{method-is_connected}{}}}
 \subsection{Method \code{is_connected()}}{
+Is the DB schema connected?
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$is_connected()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+TRUE/FALSE
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-connect"></a>}}
 \if{latex}{\out{\hypertarget{method-connect}{}}}
 \subsection{Method \code{connect()}}{
-Connect to a db
+Connect to the database
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$connect(db_config = self$db_config)}\if{html}{\out{</div>}}
 }
@@ -134,7 +190,7 @@ Connect to a db
 \if{html}{\out{<a id="method-disconnect"></a>}}
 \if{latex}{\out{\hypertarget{method-disconnect}{}}}
 \subsection{Method \code{disconnect()}}{
-Disconnect from a db
+Disconnect from the database
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$disconnect()}\if{html}{\out{</div>}}
 }
@@ -144,7 +200,7 @@ Disconnect from a db
 \if{html}{\out{<a id="method-create_table"></a>}}
 \if{latex}{\out{\hypertarget{method-create_table}{}}}
 \subsection{Method \code{create_table()}}{
-Create db table
+Create the database table
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$create_table()}\if{html}{\out{</div>}}
 }
@@ -154,6 +210,7 @@ Create db table
 \if{html}{\out{<a id="method-drop_table"></a>}}
 \if{latex}{\out{\hypertarget{method-drop_table}{}}}
 \subsection{Method \code{drop_table()}}{
+Drop the database table
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$drop_table()}\if{html}{\out{</div>}}
 }
@@ -163,17 +220,26 @@ Create db table
 \if{html}{\out{<a id="method-insert_data"></a>}}
 \if{latex}{\out{\hypertarget{method-insert_data}{}}}
 \subsection{Method \code{insert_data()}}{
-Inserts data into db table
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$insert_data(newdata, verbose = TRUE)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{newdata}}{The data to insert.}
+
+\item{\code{verbose}}{Boolean.
+Inserts data into the database table}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-upsert_data"></a>}}
 \if{latex}{\out{\hypertarget{method-upsert_data}{}}}
 \subsection{Method \code{upsert_data()}}{
-Upserts data into db table
+Upserts data into the database table
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$upsert_data(
   newdata,
@@ -182,11 +248,23 @@ Upserts data into db table
 )}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{newdata}}{The data to insert.}
+
+\item{\code{drop_indexes}}{A vector containing the indexes to be dropped before upserting (can increase performance).}
+
+\item{\code{verbose}}{Boolean.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-drop_all_rows"></a>}}
 \if{latex}{\out{\hypertarget{method-drop_all_rows}{}}}
 \subsection{Method \code{drop_all_rows()}}{
+Drops all rows in the database table
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$drop_all_rows()}\if{html}{\out{</div>}}
 }
@@ -196,24 +274,41 @@ Upserts data into db table
 \if{html}{\out{<a id="method-drop_rows_where"></a>}}
 \if{latex}{\out{\hypertarget{method-drop_rows_where}{}}}
 \subsection{Method \code{drop_rows_where()}}{
+Drops rows in the database table according to the SQL condition.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$drop_rows_where(condition)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{condition}}{SQL text condition.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-keep_rows_where"></a>}}
 \if{latex}{\out{\hypertarget{method-keep_rows_where}{}}}
 \subsection{Method \code{keep_rows_where()}}{
+Keeps rows in the database table according to the SQL condition.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$keep_rows_where(condition)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{condition}}{SQL text condition.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-drop_all_rows_and_then_upsert_data"></a>}}
 \if{latex}{\out{\hypertarget{method-drop_all_rows_and_then_upsert_data}{}}}
 \subsection{Method \code{drop_all_rows_and_then_upsert_data()}}{
+Drops all rows in the database table and then upserts data.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$drop_all_rows_and_then_upsert_data(
   newdata,
@@ -222,20 +317,42 @@ Upserts data into db table
 )}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{newdata}}{The data to insert.}
+
+\item{\code{drop_indexes}}{A vector containing the indexes to be dropped before upserting (can increase performance).}
+
+\item{\code{verbose}}{Boolean.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-drop_all_rows_and_then_insert_data"></a>}}
 \if{latex}{\out{\hypertarget{method-drop_all_rows_and_then_insert_data}{}}}
 \subsection{Method \code{drop_all_rows_and_then_insert_data()}}{
+Drops all rows in the database table and then inserts data.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$drop_all_rows_and_then_insert_data(newdata, verbose = TRUE)}\if{html}{\out{</div>}}
 }
 
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{newdata}}{The data to insert.}
+
+\item{\code{verbose}}{Boolean.}
+}
+\if{html}{\out{</div>}}
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-tbl"></a>}}
 \if{latex}{\out{\hypertarget{method-tbl}{}}}
 \subsection{Method \code{tbl()}}{
+Provides access to the database table via dplyr::tbl.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$tbl()}\if{html}{\out{</div>}}
 }
@@ -245,17 +362,19 @@ Upserts data into db table
 \if{html}{\out{<a id="method-print_dplyr_select"></a>}}
 \if{latex}{\out{\hypertarget{method-print_dplyr_select}{}}}
 \subsection{Method \code{print_dplyr_select()}}{
+Prints a template dplyr::select call that you can easily copy/paste for all your variables.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$print_dplyr_select()}\if{html}{\out{</div>}}
 }
 
 }
 \if{html}{\out{<hr>}}
-\if{html}{\out{<a id="method-list_indexes_db"></a>}}
-\if{latex}{\out{\hypertarget{method-list_indexes_db}{}}}
-\subsection{Method \code{list_indexes_db()}}{
+\if{html}{\out{<a id="method-get_config_last_updated"></a>}}
+\if{latex}{\out{\hypertarget{method-get_config_last_updated}{}}}
+\subsection{Method \code{get_config_last_updated()}}{
+Extracts the corresponding row of data from \code{\link{get_config_last_updated}}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Schema_v8$list_indexes_db()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Schema_v8$get_config_last_updated()}\if{html}{\out{</div>}}
 }
 
 }
@@ -263,6 +382,7 @@ Upserts data into db table
 \if{html}{\out{<a id="method-add_indexes"></a>}}
 \if{latex}{\out{\hypertarget{method-add_indexes}{}}}
 \subsection{Method \code{add_indexes()}}{
+Adds indexes to the database table from `self$indexes`
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$add_indexes()}\if{html}{\out{</div>}}
 }
@@ -272,6 +392,7 @@ Upserts data into db table
 \if{html}{\out{<a id="method-drop_indexes"></a>}}
 \if{latex}{\out{\hypertarget{method-drop_indexes}{}}}
 \subsection{Method \code{drop_indexes()}}{
+Drops all indees from the database table
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Schema_v8$drop_indexes()}\if{html}{\out{</div>}}
 }

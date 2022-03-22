@@ -23,6 +23,8 @@ sc::add_schema_v8(
   info = "This db table is used for..."
 )
 
+sc::config$schemas$anon_test$get_config_last_updated()
+
 d = data.table(uuid = 1:10000)
 d$n = 1
 d[, n:=as.character(n)]

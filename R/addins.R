@@ -28,7 +28,7 @@ addin_add_task_from_config_v8_basic <- function(){
   rstudioapi::insertText(
     '
 # TASK_NAME ----
-# tm_run_task("TASK_NAME")
+# sc::tm_run_task("TASK_NAME", run_as_rstudio_job_loading_from_devtools = TRUE)
 sc::add_task_from_config_v8(
   name_grouping = "TASK_GROUPING",
   name_action = "TASK_ACTION",
@@ -188,7 +188,7 @@ addin_action_and_data_selector <- function(){
 #\' @param schema DB Schema
 #\' @export
 TASK_NAME_action <- function(data, argset, schema) {
-  # tm_run_task("TASK_NAME")
+  # sc::tm_run_task("TASK_NAME", run_as_rstudio_job_loading_from_devtools = TRUE)
 
   if(plnr::is_run_directly()){
     # sc::tm_get_plans_argsets_as_dt("TASK_NAME")
