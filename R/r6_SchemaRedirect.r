@@ -4,6 +4,7 @@
 #' @param x A SchemaRedirect_v8 object
 #' @param col The column to be hashed
 #' @param ... Unused
+#' @importFrom spltidy hash_data_structure
 #' @method hash_data_structure SchemaRedirect_v8
 #' @export
 hash_data_structure.SchemaRedirect_v8 <- function(x, col, ...) {
