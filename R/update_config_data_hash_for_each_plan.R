@@ -31,7 +31,7 @@ update_config_data_hash_for_each_plan <- function(task, index_plan, data, date =
 get_config_data_hash_for_each_plan <- function(task = NULL, index_plan = NULL) {
   if (is.null(config$schemas$config_data_hash_for_each_plan$conn)) config$schemas$config_data_hash_for_each_plan$connect()
 
-  if (!is.null(tag)) {
+  if (!is.null(task)) {
     temp <- config$schemas$config_data_hash_for_each_plan$tbl() %>%
       dplyr::filter(task == !!task) %>%
       dplyr::collect() %>%
