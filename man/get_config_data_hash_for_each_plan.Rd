@@ -8,9 +8,9 @@ Gets the config_data_hash_for_each_plan db table}
 get_config_data_hash_for_each_plan(task = NULL, index_plan = NULL)
 }
 \arguments{
-\item{type}{a}
+\item{task}{a}
 
-\item{tag}{a}
+\item{index_plan}{a}
 }
 \description{
 get_config_data_hash_for_each_plan

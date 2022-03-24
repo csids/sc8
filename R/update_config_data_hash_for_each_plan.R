@@ -31,8 +31,8 @@ update_config_data_hash_for_each_plan <- function(task, index_plan, data, date =
 
 #' get_config_data_hash_for_each_plan
 #' Gets the config_data_hash_for_each_plan db table
-#' @param type a
-#' @param tag a
+#' @param task a
+#' @param index_plan a
 #' @export
 get_config_data_hash_for_each_plan <- function(task = NULL, index_plan = NULL) {
   if (is.null(config$schemas$config_data_hash_for_each_plan$conn)) config$schemas$config_data_hash_for_each_plan$connect()
