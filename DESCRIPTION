@@ -20,6 +20,7 @@ Imports:
   data.table,
   crayon,
   DBI,
+  digest,
   dplyr,
   fhidata,
   fhiplot,

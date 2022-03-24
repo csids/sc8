@@ -79,7 +79,7 @@ Task <- R6::R6Class(
       self$info_data_selector_fn_name <- info_data_selector_fn_name
       self$info_version <- info_version
     },
-    insert_first_last_argset = function() {
+    insert_first_last_analysis = function() {
       if (is.null(self$plans)) {
         return()
       }
@@ -102,20 +102,31 @@ Task <- R6::R6Class(
       for (i in seq_along(self$plans)) {
         for (j in seq_along(self$plans[[i]]$analyses)) {
           self$plans[[i]]$use_foreach <- FALSE
+          self$plans[[i]]$analyses[[j]]$argset$index_plan <- i
+          self$plans[[i]]$analyses[[j]]$argset$index_analysis <- j
+
           if (i == 1 & j == 1) {
             self$plans[[i]]$analyses[[j]]$argset$first_analysis <- TRUE
-            self$plans[[i]]$analyses[[j]]$argset$first_argset <- TRUE
           } else {
             self$plans[[i]]$analyses[[j]]$argset$first_analysis <- FALSE
-            self$plans[[i]]$analyses[[j]]$argset$first_argset <- FALSE
           }
 
           if (i == length(self$plans) & j == length(self$plans[[i]]$analyses)) {
             self$plans[[i]]$analyses[[j]]$argset$last_analysis <- TRUE
-            self$plans[[i]]$analyses[[j]]$argset$last_argset <- TRUE
           } else {
             self$plans[[i]]$analyses[[j]]$argset$last_analysis <- FALSE
-            self$plans[[i]]$analyses[[j]]$argset$last_argset <- FALSE
+          }
+
+          if(j == 1){
+            self$plans[[i]]$analyses[[j]]$argset$within_plan_first_analysis <- TRUE
+          } else {
+            self$plans[[i]]$analyses[[j]]$argset$within_plan_first_analysis <- FALSE
+          }
+
+          if(j == length(self$plans[[i]]$analyses)){
+            self$plans[[i]]$analyses[[j]]$argset$within_plan_last_analysis <- TRUE
+          } else {
+            self$plans[[i]]$analyses[[j]]$argset$within_plan_last_analysis <- FALSE
           }
         }
       }
@@ -126,7 +137,7 @@ Task <- R6::R6Class(
         self$plans <- self$update_plans_fn()
         self$update_plans_fn <- NULL
       }
-      self$insert_first_last_argset()
+      self$insert_first_last_analysis()
     },
     num_argsets = function() {
       retval <- 0
@@ -325,7 +336,8 @@ Task <- R6::R6Class(
         }
 
         # self$plans[plans_index][[i]]$set_verbose(FALSE)
-        retval <- self$plans[plans_index][[i]]$run_all(schema = schema)
+        data <- self$plans[plans_index][[i]]$get_data()
+        retval <- self$plans[plans_index][[i]]$run_all_with_data(data = data, schema = schema)
 
         if (upsert_at_end_of_each_plan) {
           retval <- rbindlist(retval, use.names = T, fill = T)
@@ -336,8 +348,10 @@ Task <- R6::R6Class(
           retval <- rbindlist(retval, use.names = T, fill = T)
           schema$output$insert_data(retval, verbose = verbose)
         }
-
         rm("retval")
+
+        update_config_data_hash_for_each_plan(task = self$name, index_plan = i, data = data)
+        rm("data")
       }
       for (s in schema) s$disconnect()
     },
@@ -356,7 +370,8 @@ Task <- R6::R6Class(
             catch_result <- tryCatch(
               {
                 for (s in schema) s$connect()
-                retval <- x$run_all(schema = schema)
+                data <- x$get_data()
+                retval <- x$run_all_with_data(data = data, schema = schema)
 
                 if (upsert_at_end_of_each_plan) {
                   retval <- rbindlist(retval, use.names = T, fill = T)
@@ -368,6 +383,10 @@ Task <- R6::R6Class(
                   schema$output$insert_data(retval, verbose = F)
                 }
                 rm("retval")
+
+                # this might break things!!!!!!
+                update_config_data_hash_for_each_plan(task = self$name, index_plan = x$get_argset(1)$index_plan, data = data)
+                rm("data")
 
                 return(list(
                   error = FALSE,

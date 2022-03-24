@@ -124,4 +124,31 @@ set_db <- function() {
       )
     )
   )
+
+  # config_data_hash_for_each_plan ----
+  add_schema_v8(
+    name_access = c("config"),
+    name_grouping = "data_hash",
+    name_variant = "for_each_plan",
+    db_configs = config$db_configs,
+    field_types = c(
+      "task" = "TEXT",
+      "index_plan" = "INTEGER",
+      "date" = "DATE",
+      "datetime" = "DATETIME",
+      "hash" = "TEXT"
+    ),
+    keys = c(
+      "task",
+      "index_plan",
+      "date",
+      "datetime"
+    ),
+    censors = list(
+      config = list()
+    ),
+    validator_field_types = validator_field_types_blank,
+    validator_field_contents = validator_field_contents_blank,
+    info = "This db table is used for..."
+  )
 }
