@@ -18,7 +18,7 @@ update_config_data_hash_for_each_plan <- function(task, index_plan, data, date =
   if(is.list(data) & "hash" %in% names(data)){
     data <- data[-which(names(data)=="hash")]
   }
-print(data)
+
   to_upload <- data.table(
     "task" = task,
     "index_plan" = index_plan,
