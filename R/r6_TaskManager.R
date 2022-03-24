@@ -266,14 +266,14 @@ analyses_to_dt <- function(analyses) {
     data.table(t(x$argset))
   })
   retval <- rbindlist(retval)
-  retval[, index_analysis := 1:.N]
+  # retval[, index_analysis := 1:.N]
 
   return(retval)
 }
 
 plans_to_dt <- function(plans) {
   retval <- lapply(plans, function(x) analyses_to_dt(x$analyses))
-  for (i in seq_along(retval)) retval[[i]][, index_plan := i]
+  # for (i in seq_along(retval)) retval[[i]][, index_plan := i]
   retval <- rbindlist(retval)
   setcolorder(retval, c("index_plan", "index_analysis"))
   retval
