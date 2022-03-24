@@ -95,7 +95,7 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
     task_name = task_name,
     index_plan = index_plan
   )$get_data()
-  data$hash_last_run <- get_config_data_hash_for_each_plan(task = task_name, index_plan = index_plan)
+  data$hash_last_run <- get_config_data_hash_for_each_plan(task = task_name, index_plan = index_plan)[datetime==max(datetime)]$hash
 
   # https://rstudio.github.io/rstudio-extensions/connections-contract.html?_ga=2.130285583.1223674375.1634876289-790799150.1584566635
   observer <- getOption("connectionObserver")
