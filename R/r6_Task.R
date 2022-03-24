@@ -337,6 +337,7 @@ Task <- R6::R6Class(
 
         # self$plans[plans_index][[i]]$set_verbose(FALSE)
         data <- self$plans[plans_index][[i]]$get_data()
+        data$hash_last_run <- get_config_data_hash_for_each_plan(task = self$name, index_plan = i)
         retval <- self$plans[plans_index][[i]]$run_all_with_data(data = data, schema = schema)
 
         if (upsert_at_end_of_each_plan) {
@@ -371,6 +372,7 @@ Task <- R6::R6Class(
               {
                 for (s in schema) s$connect()
                 data <- x$get_data()
+                data$hash_last_run <- get_config_data_hash_for_each_plan(task = self$name, index_plan = x$get_argset(1)$index_plan)
                 retval <- x$run_all_with_data(data = data, schema = schema)
 
                 if (upsert_at_end_of_each_plan) {

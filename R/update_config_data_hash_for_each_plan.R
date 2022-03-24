@@ -13,6 +13,15 @@ update_config_data_hash_for_each_plan <- function(task, index_plan, data, date =
   if (!is.null(date) & is.null(datetime)) {
     datetime <- paste0(date, " 00:01:00")
   }
+
+  # remove things that aren't really the data (i.e. artifacts from sc)
+  if(is.list(data) & "hash_current" %in% names(data)){
+    data <- digest::sha1(data[[-which(names(data)=="hash_current")]])
+  }
+  if(is.list(data) & "hash_last_run" %in% names(data)){
+    data <- digest::sha1(data[[-which(names(data)=="hash_last_run")]])
+  }
+
   to_upload <- data.table(
     "task" = task,
     "index_plan" = index_plan,
