@@ -28,7 +28,7 @@ update_config_data_hash_for_each_plan <- function(task, index_plan, data, date =
     "index_plan" = index_plan,
     "date" = date,
     "datetime" = datetime,
-    "hash" = digest::digest(data, algo = "spookyhash")
+    "hash" = hash
   )
   config$schemas$config_data_hash_for_each_plan$upsert_data(to_upload)
 }
