@@ -1,5 +1,7 @@
 update_config_data_hash_for_each_plan <- function(task, index_plan, data, date = NULL, datetime = NULL) {
-  if (is.null(config$schemas$config_data_hash_for_each_plan$conn)) config$schemas$config_data_hash_for_each_plan$connect()
+  config$schemas$config_data_hash_for_each_plan$disconnect()
+  config$schemas$config_data_hash_for_each_plan$connect()
+  on.exit(config$schemas$config_data_hash_for_each_plan$disconnect())
 
   if (!is.null(datetime)) datetime <- as.character(datetime)
 
@@ -35,7 +37,9 @@ update_config_data_hash_for_each_plan <- function(task, index_plan, data, date =
 #' @param index_plan a
 #' @export
 get_config_data_hash_for_each_plan <- function(task = NULL, index_plan = NULL) {
-  if (is.null(config$schemas$config_data_hash_for_each_plan$conn)) config$schemas$config_data_hash_for_each_plan$connect()
+  config$schemas$config_data_hash_for_each_plan$disconnect()
+  config$schemas$config_data_hash_for_each_plan$connect()
+  on.exit(config$schemas$config_data_hash_for_each_plan$disconnect())
 
   if (!is.null(task)) {
     temp <- config$schemas$config_data_hash_for_each_plan$tbl() %>%
