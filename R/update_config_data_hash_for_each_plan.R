@@ -18,7 +18,9 @@ update_config_data_hash_for_each_plan <- function(task, index_plan, data, date =
 
   # remove things that aren't really the data (i.e. artifacts from sc)
   if(is.list(data) & "hash" %in% names(data)){
-    data <- data[-which(names(data)=="hash")]
+    hash <- digest::digest(data[-which(names(data)=="hash")], algo = "spookyhash")
+  } else {
+    hash <- digest::digest(data, algo = "spookyhash")
   }
 
   to_upload <- data.table(
@@ -26,7 +28,7 @@ update_config_data_hash_for_each_plan <- function(task, index_plan, data, date =
     "index_plan" = index_plan,
     "date" = date,
     "datetime" = datetime,
-    "hash" = digest::sha1(data)
+    "hash" = digest::digest(data, algo = "spookyhash")
   )
   config$schemas$config_data_hash_for_each_plan$upsert_data(to_upload)
 }
