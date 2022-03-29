@@ -351,7 +351,7 @@ Task <- R6::R6Class(
         }
         rm("retval")
 
-        update_config_data_hash_for_each_plan(task = self$name, index_plan = i, data = data)
+        update_config_data_hash_for_each_plan(task = self$name, index_plan = i, hash = data$hash$current)
         rm("data")
       }
       for (s in schema) s$disconnect()
@@ -387,7 +387,7 @@ Task <- R6::R6Class(
                 rm("retval")
 
                 # this might break things!!!!!!
-                update_config_data_hash_for_each_plan(task = self$name, index_plan = x$get_argset(1)$index_plan, data = data)
+                update_config_data_hash_for_each_plan(task = self$name, index_plan = x$get_argset(1)$index_plan, hash = data$hash$current)
                 rm("data")
 
                 return(list(

@@ -1,4 +1,4 @@
-update_config_data_hash_for_each_plan <- function(task, index_plan, data, date = NULL, datetime = NULL) {
+update_config_data_hash_for_each_plan <- function(task, index_plan, hash, date = NULL, datetime = NULL) {
   config$schemas$config_data_hash_for_each_plan$disconnect()
   config$schemas$config_data_hash_for_each_plan$connect()
   on.exit(config$schemas$config_data_hash_for_each_plan$disconnect())
@@ -14,13 +14,6 @@ update_config_data_hash_for_each_plan <- function(task, index_plan, data, date =
   }
   if (!is.null(date) & is.null(datetime)) {
     datetime <- paste0(date, " 00:01:00")
-  }
-
-  # remove things that aren't really the data (i.e. artifacts from sc)
-  if(is.list(data) & "hash" %in% names(data)){
-    hash <- digest::digest(data[-which(names(data)=="hash")], algo = "spookyhash")
-  } else {
-    hash <- digest::digest(data, algo = "spookyhash")
   }
 
   to_upload <- data.table(
