@@ -354,13 +354,13 @@ Drops all rows in the database table and then inserts data.
 \subsection{Method \code{tbl()}}{
 Provides access to the database table via dplyr::tbl.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Schema_v8$tbl(order_by_keys = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Schema_v8$tbl()}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{order_by_keys}}{Boolean. Should the table be ordered by keys?}
+\item{\code{order_by_keys}}{Boolean. Should the table be ordered by keys when using sc::collect?}
 }
 \if{html}{\out{</div>}}
 }

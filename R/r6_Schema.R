@@ -637,16 +637,13 @@ Schema_v8 <- R6Class(
 
     #' @description
     #' Provides access to the database table via dplyr::tbl.
-    #' @param order_by_keys Boolean. Should the table be ordered by keys?
-    tbl = function(order_by_keys = TRUE) {
+    #' @param order_by_keys Boolean. Should the table be ordered by keys when using sc::collect?
+    tbl = function() {
       self$connect()
       retval <- self$conn %>%
         dplyr::tbl(self$table_name)
-
-      if(order_by_keys){
-        retval <- retval %>%
-          dbplyr::window_order(dplyr::across(!!self$keys))
-      }
+      class(retval) <- unique(c("sc_tbl_v8", class(retval)))
+      attr(retval, "sc_keys") <- self$keys
 
       return(retval)
     },
