@@ -637,12 +637,16 @@ Schema_v8 <- R6Class(
 
     #' @description
     #' Provides access to the database table via dplyr::tbl.
-    tbl = function() {
-      x_keys <- force(self$keys)
+    #' @param order_by_keys Boolean. Should the table be ordered by keys?
+    tbl = function(order_by_keys = TRUE) {
       self$connect()
       retval <- self$conn %>%
-        dplyr::tbl(self$table_name) %>%
-        dplyr::arrange(dplyr::across(!!self$keys))
+        dplyr::tbl(self$table_name)
+
+      if(order_by_keys){
+        retval <- retval %>%
+          dplyr::arrange(dplyr::across(!!self$keys))
+      }
 
       return(retval)
     },
