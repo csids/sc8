@@ -642,7 +642,7 @@ Schema_v8 <- R6Class(
       self$connect()
       retval <- self$conn %>%
         dplyr::tbl(self$table_name) %>%
-        dplyr::arrange(dplyr::across(x_keys))
+        dplyr::arrange(dplyr::across(!!self$keys))
 
       return(retval)
     },
