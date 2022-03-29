@@ -640,7 +640,9 @@ Schema_v8 <- R6Class(
     tbl = function() {
       self$connect()
       retval <- self$conn %>%
-        dplyr::tbl(self$table_name)
+        dplyr::tbl(self$table_name) %>%
+        dplyr::arrange(dplyr::across(self$keys))
+
       return(retval)
     },
 
