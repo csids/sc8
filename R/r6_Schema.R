@@ -637,7 +637,6 @@ Schema_v8 <- R6Class(
 
     #' @description
     #' Provides access to the database table via dplyr::tbl.
-    #' @param order_by_keys Boolean. Should the table be ordered by keys when using sc::collect?
     tbl = function() {
       self$connect()
       retval <- self$conn %>%
