@@ -645,7 +645,7 @@ Schema_v8 <- R6Class(
 
       if(order_by_keys){
         retval <- retval %>%
-          dplyr::arrange(dplyr::across(!!self$keys))
+          dbplyr::window_order(dplyr::across(!!self$keys))
       }
 
       return(retval)
