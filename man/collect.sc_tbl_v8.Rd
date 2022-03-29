@@ -4,10 +4,12 @@
 \alias{collect.sc_tbl_v8}
 \title{collect}
 \usage{
-\method{collect}{sc_tbl_v8}(x, order_by_keys = TRUE)
+\method{collect}{sc_tbl_v8}(x, ...)
 }
 \arguments{
 \item{x}{tbl object}
+
+\item{...}{dots}
 }
 \description{
 collect
