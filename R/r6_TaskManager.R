@@ -151,9 +151,9 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
       for (i in seq_len(nrow(retval))) {
         if(retval$name[i] == "hash"){
           if(data$hash$current == data$hash$last_run){
-            retval[i, 1] <- crayon::blue("hash: current = last_run")
+            retval[i, 1] <- "hash: current == last_run"
           } else {
-            retval[i, 1] <- crayon::red("hash: current != last_run")
+            retval[i, 1] <- "hash: current != last_run"
           }
         } else {
           size <- pryr::object_size(data[[i]])
