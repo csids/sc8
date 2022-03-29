@@ -149,10 +149,14 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
     listObjects = function(...) {
       retval <- data.frame(name = names(data), type = "table")
       for (i in seq_len(nrow(retval))) {
-        size <- pryr::object_size(data[[i]])
-        size <- size / (1000^2)
-        size <- formatC(round(size, 1), digits = 1, format = "f")
-        retval[i, 1] <- paste0(retval[i, 1], " (", size, " MB / n = ", nrow(data[[i]]), ")")
+        if(retval$name[i] == "hash"){
+          retval[i, 1] <- paste0("hash current: ", data$hash$current, "/ hash last run: ", data$hash$last_run)
+        } else {
+          size <- pryr::object_size(data[[i]])
+          size <- size / (1000^2)
+          size <- formatC(round(size, 1), digits = 1, format = "f")
+          retval[i, 1] <- paste0(retval[i, 1], " (", size, " MB / n = ", nrow(data[[i]]), ")")
+        }
       }
       return(retval)
     },
