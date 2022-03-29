@@ -13,7 +13,7 @@ collect.sc_tbl_v8 <- function(x, ...){
   retval <- NextMethod() %>%
     collect() %>%
     as.data.table() %>%
-    setorderv(arrange_order)
+    setkeyv(arrange_order)
 }
 
 
