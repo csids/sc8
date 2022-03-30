@@ -150,10 +150,12 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
       retval <- data.frame(name = names(data), type = "table")
       for (i in seq_len(nrow(retval))) {
         if(retval$name[i] == "hash"){
-          if(data$hash$current == data$hash$last_run){
-            retval[i, 1] <- "hash: current == last_run"
-          } else {
-            retval[i, 1] <- "hash: current != last_run"
+          if("current" %in% names(data$hash) & "last_run" %in% names(data$hash)){
+            if(data$hash$current == data$hash$last_run){
+              retval[i, 1] <- "hash: current == last_run"
+            } else {
+              retval[i, 1] <- "hash: current != last_run"
+            }
           }
         } else {
           size <- pryr::object_size(data[[i]])

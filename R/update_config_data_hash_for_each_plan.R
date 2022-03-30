@@ -1,4 +1,4 @@
-update_config_data_hash_for_each_plan <- function(task, index_plan, hash, date = NULL, datetime = NULL) {
+update_config_data_hash_for_each_plan <- function(task, index_plan, hash = NULL, date = NULL, datetime = NULL) {
   config$schemas$config_data_hash_for_each_plan$disconnect()
   config$schemas$config_data_hash_for_each_plan$connect()
   on.exit(config$schemas$config_data_hash_for_each_plan$disconnect())
@@ -15,6 +15,8 @@ update_config_data_hash_for_each_plan <- function(task, index_plan, hash, date =
   if (!is.null(date) & is.null(datetime)) {
     datetime <- paste0(date, " 00:01:00")
   }
+
+  if(is.null(hash)) hash <- "NULL"
 
   to_upload <- data.table(
     "task" = task,
