@@ -67,7 +67,7 @@ get_config_data_hash_for_each_plan <- function(task = NULL, index_plan = NULL, e
 # this uses get_config_data_hash_for_each_plan to put it into plnr format
 # i.e. hash$last_run and hash$last_run_elements$blah
 get_last_run_data_hash_split_into_plnr_format <- function(task, index_plan){
-  hash <- get_config_data_hash_for_each_plan(task = task_name, index_plan = index_plan)
+  hash <- get_config_data_hash_for_each_plan(task = task, index_plan = index_plan)
   retval <- list()
   if(nrow(hash)==0){
     retval$last_run <- as.character(runif(1))
