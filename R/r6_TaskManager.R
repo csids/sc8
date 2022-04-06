@@ -89,6 +89,14 @@ tm_get_plan <- function(task_name, index_plan = 1, index_analysis = NULL, index_
 #' @param index_plan Plan within task
 #' @param index_analysis Not used
 #' @param index_argset Deprecated
+#' @return
+#' Named list, where most elements come from the data_selector_fn.
+#' One extra named element is called 'hash'. 'hash' contains the data hashes of particular datasets/variables, as calculated from the method 'get_data' inside plnr::Plan.
+#' 'hash' contains four named elements, each of which have been :
+#' - current (the hash of the named list returned from data_selector_fn)
+#' - current_elements (the hash of the named elements within the named list returned from data_selector_fn)
+#' - last_run (the same as 'current', except for the last successful run)
+#' - last_run_elements (the same as 'current_elements', except for the last successful run)
 #' @export
 tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_argset = NULL) {
   data <- tm_get_plan(

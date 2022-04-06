@@ -20,6 +20,17 @@ tm_get_data(
 
 \item{index_argset}{Deprecated}
 }
+\value{
+Named list, where most elements come from the data_selector_fn.
+One extra named element is called 'hash'. 'hash' contains the data hashes of particular datasets/variables, as calculated from the method 'get_data' inside plnr::Plan.
+'hash' contains four named elements, each of which have been :
+\itemize{
+\item current (the hash of the named list returned from data_selector_fn)
+\item current_elements (the hash of the named elements within the named list returned from data_selector_fn)
+\item last_run (the same as 'current', except for the last successful run)
+\item last_run_elements (the same as 'current_elements', except for the last successful run)
+}
+}
 \description{
 Shortcut to data within plan within task
 }
