@@ -66,7 +66,7 @@ get_config_data_hash_for_each_plan <- function(task = NULL, index_plan = NULL, e
 
 # this uses get_config_data_hash_for_each_plan to put it into plnr format
 # i.e. hash$last_run and hash$last_run_elements$blah
-get_last_run_data_hash_split_into_plnr_format <- function(task, index_plan){
+get_last_run_data_hash_split_into_plnr_format <- function(task, index_plan, expected_element_tags = NULL){
   hash <- get_config_data_hash_for_each_plan(task = task, index_plan = index_plan)
   retval <- list()
   if(nrow(hash)==0){
@@ -76,9 +76,18 @@ get_last_run_data_hash_split_into_plnr_format <- function(task, index_plan){
     hash <- hash[datetime==max(datetime)]
     retval$last_run <- hash$all_hash[1]
     retval$last_run_elements <- list()
-    for(i in seq_len(nrow(hash$all_hash))){
+    for(i in seq_len(nrow(hash))){
       retval$last_run_elements[[hash$element_tag[i]]] <- hash$element_hash[i]
     }
   }
+  # if provided element names that we expect, check to make sure that they exist
+  # if they don't exist, set to random
+  for(i in seq_along(expected_element_tags)){
+    if(!i %in% names(retval$last_run_elements)){
+      retval$last_run_elements[[i]] <- as.character(runif(1))
+    }
+  }
+
   return(retval)
 }
+

@@ -338,7 +338,7 @@ Task <- R6::R6Class(
         # self$plans[plans_index][[i]]$set_verbose(FALSE)
         data <- self$plans[plans_index][[i]]$get_data()
         hashes <- data$hash
-        last_run_hashes <- get_last_run_data_hash_split_into_plnr_format(task = self$name, index_plan = i)
+        last_run_hashes <- get_last_run_data_hash_split_into_plnr_format(task = self$name, index_plan = i, expected_element_tags = names(data$hash$current_elements))
         data$hash$last_run <- last_run_hashes$last_run
         data$hash$last_run_elements <- last_run_hashes$last_run_elements
 
@@ -383,7 +383,7 @@ Task <- R6::R6Class(
                 for (s in schema) s$connect()
                 data <- x$get_data()
                 hashes <- data$hash
-                last_run_hashes <- get_last_run_data_hash_split_into_plnr_format(task = self$name, index_plan = x$get_argset(1)$index_plan)
+                last_run_hashes <- get_last_run_data_hash_split_into_plnr_format(task = self$name, index_plan = x$get_argset(1)$index_plan, expected_element_tags = names(data$hash$current_elements))
                 data$hash$last_run <- last_run_hashes$last_run
                 data$hash$last_run_elements <- last_run_hashes$last_run_elements
 

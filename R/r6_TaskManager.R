@@ -95,7 +95,7 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
     task_name = task_name,
     index_plan = index_plan
   )$get_data()
-  last_run_hashes <- get_last_run_data_hash_split_into_plnr_format(task = task_name, index_plan = index_plan)
+  last_run_hashes <- get_last_run_data_hash_split_into_plnr_format(task = task_name, index_plan = index_plan, expected_element_tags = names(data$hash$current_elements))
   data$hash$last_run <- last_run_hashes$last_run
   data$hash$last_run_elements <- last_run_hashes$last_run_elements
 
