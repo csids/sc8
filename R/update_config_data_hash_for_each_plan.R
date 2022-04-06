@@ -82,7 +82,7 @@ get_last_run_data_hash_split_into_plnr_format <- function(task, index_plan, expe
   }
   # if provided element names that we expect, check to make sure that they exist
   # if they don't exist, set to random
-  for(i in seq_along(expected_element_tags)){
+  for(i in expected_element_tags){
     if(!i %in% names(retval$last_run_elements)){
       retval$last_run_elements[[i]] <- as.character(runif(1))
     }
