@@ -137,8 +137,8 @@ set_db <- function() {
       "element_tag" = "TEXT",
       "date" = "DATE",
       "datetime" = "DATETIME",
-      "all_hash" = "TEXT",
-      "element_hash" = "TEXT"
+      "element_hash" = "TEXT",
+      "all_hash" = "TEXT"
     ),
     keys = c(
       "task",

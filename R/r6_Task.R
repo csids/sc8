@@ -359,8 +359,8 @@ Task <- R6::R6Class(
           task = self$name,
           index_plan = i,
           element_tag = names(hashes$current_elements),
-          hash_all = hashes$current,
-          hash_element = unlist(hashes$current_elements)
+          element_hash = unlist(hashes$current_elements),
+          all_hash = hashes$current
         )
         rm("data")
       }
@@ -405,8 +405,8 @@ Task <- R6::R6Class(
                   task = self$name,
                   index_plan = x$get_argset(1)$index_plan,
                   element_tag = names(hashes$current_elements),
-                  hash_all = hashes$current,
-                  hash_element = unlist(hashes$current_elements)
+                  element_hash = unlist(hashes$current_elements),
+                  all_hash = hashes$current
                 )
                 rm("data")
 

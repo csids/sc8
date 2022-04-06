@@ -1,4 +1,4 @@
-update_config_data_hash_for_each_plan <- function(task, index_plan, element_tag, all_hash = NULL, element_hash = NULL, date = NULL, datetime = NULL) {
+update_config_data_hash_for_each_plan <- function(task, index_plan, element_tag, element_hash = NULL, all_hash = NULL, date = NULL, datetime = NULL) {
   config$schemas$config_data_hash_for_each_plan$disconnect()
   config$schemas$config_data_hash_for_each_plan$connect()
   on.exit(config$schemas$config_data_hash_for_each_plan$disconnect())
@@ -25,8 +25,8 @@ update_config_data_hash_for_each_plan <- function(task, index_plan, element_tag,
     "element_tag" = element_tag,
     "date" = date,
     "datetime" = datetime,
-    "all_hash" = all_hash,
-    "element_hash" = element_hash
+    "element_hash" = element_hash,
+    "all_hash" = all_hash
   )
   config$schemas$config_data_hash_for_each_plan$upsert_data(to_upload)
 }
