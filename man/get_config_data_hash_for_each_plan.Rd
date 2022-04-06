@@ -5,12 +5,18 @@
 \title{get_config_data_hash_for_each_plan
 Gets the config_data_hash_for_each_plan db table}
 \usage{
-get_config_data_hash_for_each_plan(task = NULL, index_plan = NULL)
+get_config_data_hash_for_each_plan(
+  task = NULL,
+  index_plan = NULL,
+  element_tag = NULL
+)
 }
 \arguments{
 \item{task}{a}
 
 \item{index_plan}{a}
+
+\item{element_tag}{a}
 }
 \description{
 get_config_data_hash_for_each_plan

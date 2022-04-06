@@ -337,7 +337,11 @@ Task <- R6::R6Class(
 
         # self$plans[plans_index][[i]]$set_verbose(FALSE)
         data <- self$plans[plans_index][[i]]$get_data()
-        data$hash$last_run <- get_config_data_hash_for_each_plan(task = self$name, index_plan = i)[datetime==max(datetime)]$hash
+        hashes <- data$hash
+        last_run_hashes <- get_last_run_data_hash_split_into_plnr_format(task = self$name, index_plan = i)
+        data$hash$last_run <- last_run_hashes$last_run
+        data$hash$last_run_elements <- last_run_hashes$last_run_elements
+
         retval <- self$plans[plans_index][[i]]$run_all_with_data(data = data, schema = schema)
 
         if (upsert_at_end_of_each_plan) {
@@ -351,7 +355,13 @@ Task <- R6::R6Class(
         }
         rm("retval")
 
-        update_config_data_hash_for_each_plan(task = self$name, index_plan = i, hash = data$hash$current)
+        update_config_data_hash_for_each_plan(
+          task = self$name,
+          index_plan = i,
+          element_tag = names(hashes$current_elements),
+          hash_all = hashes$current,
+          hash_element = unlist(hashes$current_elements)
+        )
         rm("data")
       }
       for (s in schema) s$disconnect()
@@ -372,7 +382,11 @@ Task <- R6::R6Class(
               {
                 for (s in schema) s$connect()
                 data <- x$get_data()
-                data$hash$last_run <- get_config_data_hash_for_each_plan(task = self$name, index_plan = x$get_argset(1)$index_plan)[datetime==max(datetime)]$hash
+                hashes <- data$hash
+                last_run_hashes <- get_last_run_data_hash_split_into_plnr_format(task = self$name, index_plan = x$get_argset(1)$index_plan)
+                data$hash$last_run <- last_run_hashes$last_run
+                data$hash$last_run_elements <- last_run_hashes$last_run_elements
+
                 retval <- x$run_all_with_data(data = data, schema = schema)
 
                 if (upsert_at_end_of_each_plan) {
@@ -387,7 +401,13 @@ Task <- R6::R6Class(
                 rm("retval")
 
                 # this might break things!!!!!!
-                update_config_data_hash_for_each_plan(task = self$name, index_plan = x$get_argset(1)$index_plan, hash = data$hash$current)
+                update_config_data_hash_for_each_plan(
+                  task = self$name,
+                  index_plan = x$get_argset(1)$index_plan,
+                  element_tag = names(hashes$current_elements),
+                  hash_all = hashes$current,
+                  hash_element = unlist(hashes$current_elements)
+                )
                 rm("data")
 
                 return(list(

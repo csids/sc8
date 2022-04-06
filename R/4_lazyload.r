@@ -134,13 +134,16 @@ set_db <- function() {
     field_types = c(
       "task" = "TEXT",
       "index_plan" = "INTEGER",
+      "element_tag" = "TEXT",
       "date" = "DATE",
       "datetime" = "DATETIME",
-      "hash" = "TEXT"
+      "all_hash" = "TEXT",
+      "element_hash" = "TEXT"
     ),
     keys = c(
       "task",
       "index_plan",
+      "element_tag",
       "date",
       "datetime"
     ),

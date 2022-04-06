@@ -273,12 +273,7 @@ TASK_NAME_data_selector = function(argset, schema){
       calmonth,
       calyearmonth
     ) %>%
-    dplyr::collect() %>%
-    as.data.table() %>%
-    setorder(
-      location_code,
-      date
-    )
+    dplyr::collect()
 
   # The variable returned must be a named list
   retval <- list(
