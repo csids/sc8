@@ -1,14 +1,14 @@
 #' Hashing data structure (Schema_v8)
 #'
-#' An implementation of spltidy::hash_data_structure for Schema_v8
+#' An implementation of spltidy::identify_data_structure for Schema_v8
 #' @param x A Schema_v8 object
 #' @param col The column to be hashed
 #' @param ... Unused
-#' @importFrom spltidy hash_data_structure
-#' @method hash_data_structure Schema_v8
+#' @importFrom spltidy identify_data_structure
+#' @method identify_data_structure Schema_v8
 #' @export
-hash_data_structure.Schema_v8 <- function(x, col, ...) {
-  spltidy::hash_data_structure(x$tbl(), col)
+identify_data_structure.Schema_v8 <- function(x, col, ...) {
+  spltidy::identify_data_structure(x$tbl(), col)
 }
 
 #' shortcut to get available schema names
