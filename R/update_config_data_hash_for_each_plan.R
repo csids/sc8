@@ -16,8 +16,9 @@ update_config_data_hash_for_each_plan <- function(task, index_plan, element_tag,
     datetime <- paste0(date, " 00:01:00")
   }
 
-  if(is.null(all_hash)) all_hash <- "NULL"
+  if(is.null(element_tag)) element_tag <- "NULL"
   if(is.null(element_hash)) element_hash <- "NULL"
+  if(is.null(all_hash)) all_hash <- "NULL"
 
   to_upload <- data.table(
     "task" = task,
