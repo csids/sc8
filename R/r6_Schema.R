@@ -374,7 +374,9 @@ Schema_v8 <- R6Class(
               "type"
             ) |
               stringr::str_detect(var, "^tag_") |
-              stringr::str_detect(var, "^_status$")
+            stringr::str_detect(var, "^_tag$") |
+            stringr::str_detect(var, "^_status$") |
+            stringr::str_detect(var, "^_forecast$")
           ) {
             # config$schemas$config_last_updated$connect(); var <- "tag";  details <- dplyr::tbl(config$schemas$config_last_updated$conn, config$schemas$config_last_updated$table_name) |>  dplyr::select(val = !!var) |> dplyr::group_by(val) |> dplyr::summarize(n = n()) |>  dplyr::distinct() |> dplyr::collect() |> setDT() |> setorder(val)
             # library(sykdomspulsen); sc::config$schemas$anon_covid19_autoreport_vaccination_by_time_age_sex_location_data$connect(); sc::config$schemas$anon_covid19_autoreport_vaccination_by_time_age_sex_location_data
