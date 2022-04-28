@@ -1,10 +1,12 @@
 # sc 8.0.2
 
-- Allows for multiple databases to be used for different access levels
-- copy_into_new_table_where now also copies indexes
-- V8 schemas now have a nice print function
-- V8 redirects now have a nice print function
-- copy_into_new_table_where uses tablock
+- Allows for multiple databases to be used for different access levels.
+- copy_into_new_table_where now also copies indexes.
+- V8 schemas now have a nice print function.
+- V8 redirects now have a nice print function.
+- copy_into_new_table_where uses tablock.
+- upsert_at_end_of_each_plan and insert_at_end_of_each_plan can now take named lists as the return value from the action_fn.
+- Custom progressr handler.
 
 # sc 8.0.1
 

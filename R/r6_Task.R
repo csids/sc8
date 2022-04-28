@@ -247,15 +247,19 @@ Task <- R6::R6Class(
               cores = cores
             )
           },
-          handlers = progressr::handler_progress(
-            format = ifelse(
-              interactive(),
-              "[:bar] :current/:total (:percent) in :elapsedfull, eta: :eta",
-              "[:bar] :current/:total (:percent) in :elapsedfull, eta: :eta\n"
-            ),
-            interval = 10.0,
-            clear = FALSE
-          ),
+          handlers = progressr_handler(),
+          # handlers = progressr::handler_progress(
+          #   format = ifelse(
+          #     interactive(),
+          #     "[:bar] :current/:total (:percent) in :elapsedfull, eta: :eta",
+          #     "[:bar] :current/:total (:percent) in :elapsedfull, eta: :eta\n"
+          #   ),
+          #   interval = 10.0,
+          #   clear = FALSE
+          # ),
+          # handlers = progressr::handler_rstudio(
+          #   title = self$name
+          # ),
           interval = 10,
           delay_stdout = FALSE,
           delay_conditions = ""
@@ -344,14 +348,67 @@ Task <- R6::R6Class(
 
         retval <- self$plans[plans_index][[i]]$run_all_with_data(data = data, schema = schema)
 
-        if (upsert_at_end_of_each_plan) {
-          retval <- rbindlist(retval, use.names = T, fill = T)
-          schema$output$upsert_data(retval, verbose = verbose)
-        }
+        if(upsert_at_end_of_each_plan | insert_at_end_of_each_plan){
+          all_list_elements_null_or_df <- lapply(retval, function(x) !inherits(x, c("data.frame", "NULL"))) %>% unlist() %>% sum() %>% {. == 0}
+          all_list_elements_null_or_list <- lapply(retval, function(x) !inherits(x, c("list", "NULL"))) %>% unlist() %>% sum() %>% {. == 0}
+          are_lists_unnamed <- lapply(retval, function(x){
+            if(inherits(x, "list")){
+              n <- names(x)
+              n <- n[n!=""]
+              if(length(n)==length(x)){
+                return(FALSE)
+              } else {
+                return(TRUE)
+              }
+            } else {
+              return(FALSE)
+            }
+          }) %>% unlist() %>% sum() %>% {. != 0}
+          are_lists_named <- !are_lists_unnamed
+          all_list_elements_null_or_named_list <- all_list_elements_null_or_list & are_lists_named
 
-        if (insert_at_end_of_each_plan) {
-          retval <- rbindlist(retval, use.names = T, fill = T)
-          schema$output$insert_data(retval, verbose = verbose)
+          if(!all_list_elements_null_or_df & all_list_elements_null_or_named_list){
+            list_names <- lapply(retval, function(x) names(x)) %>%
+              unique()
+            list_names <- list_names[lapply(list_names, function(x) !is.null(x)) %>% unlist() %>% which()]
+            if(length(list_names) > 1){
+              stop("return values from action fn are named lists with varying names (names must be consistent)")
+            }
+          } else {
+            list_names <- NULL
+          }
+
+          if(upsert_at_end_of_each_plan){
+            if(all_list_elements_null_or_df){
+              # single output, gets uploaded to schema$output
+              retval <- rbindlist(retval, use.names = T, fill = T)
+              schema$output$upsert_data(retval, verbose = verbose)
+            } else if(all_list_elements_null_or_named_list){
+              # gets uploaded to names in the list
+              for(df_name in list_names){
+                data_to_db <- lapply(retval, function(x) x[[df_name]])
+                data_to_db <- rbindlist(data_to_db, use.names = T, fill = T)
+                schema[[df_name]]$upsert_data(data_to_db, verbose = verbose)
+              }
+            } else {
+              stop("return values from action fn have mixed classes (must be either all data.frame or all named lists")
+            }
+          } else if (insert_at_end_of_each_plan) {
+            if(all_list_elements_null_or_df){
+              # single output, gets uploaded to schema$output
+              retval <- rbindlist(retval, use.names = T, fill = T)
+              schema$output$insert_data(retval, verbose = verbose)
+            } else if(all_list_elements_null_or_named_list){
+              # gets uploaded to names in the list
+              for(df_name in list_names){
+                data_to_db <- lapply(retval, function(x) x[[df_name]])
+                data_to_db <- rbindlist(data_to_db, use.names = T, fill = T)
+                schema[[df_name]]$insert_data(data_to_db, verbose = verbose)
+              }
+            } else {
+              stop("return values from action fn have mixed classes (must be either all data.frame or all named lists")
+            }
+          }
         }
         rm("retval")
 

@@ -53,6 +53,28 @@ tm_run_task <- function(task_name,
     )
     task$run(log = FALSE)
   } else {
+    # get num_analyses
+    # tempfile <- fs::path(tempdir(check = T), paste0(task_name, ".r"))
+    # cat(glue::glue(
+    #   "
+    #     devtools::load_all('.')
+    #     num_analyses <- sc::tm_get_plans_argsets_as_dt('{task_name}') %>%
+    #       nrow()
+    #     cat('RETVAL:',num_analyses,'\n')
+    #   "
+    # ), file = tempfile)
+    #
+    #
+    # x <- system2("Rscript",tempfile, stdout=TRUE, stderr = NULL)
+    # x <- stringr::str_extract(x,"RETVAL: [0-9]+")
+    # x <- stringr::str_extract(x,"[0-9]+")
+    # num_analyses <- as.numeric()
+    #
+    # rstudioapi::jobAdd(
+    #   name = task_name,
+    #   progressUnits = num_analyses
+    # )
+
     tempfile <- fs::path(tempdir(check = T), paste0(task_name, ".r"))
     cat(glue::glue(
       "
@@ -60,7 +82,11 @@ tm_run_task <- function(task_name,
         tm_run_task('{task_name}')
       "
     ), file = tempfile)
-    rstudioapi::jobRunScript(tempfile, workingDir = getwd())
+    rstudioapi::jobRunScript(
+      path = tempfile,
+      name = task_name,
+      workingDir = getwd(),
+    )
   }
 }
 
