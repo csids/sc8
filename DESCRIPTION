@@ -45,6 +45,7 @@ Imports:
   rlang,
   rstudioapi,
   spltidy,
+  splutil,
   stringr,
   tidyr,
   uuid

@@ -349,23 +349,8 @@ Task <- R6::R6Class(
         retval <- self$plans[plans_index][[i]]$run_all_with_data(data = data, schema = schema)
 
         if(upsert_at_end_of_each_plan | insert_at_end_of_each_plan){
-          all_list_elements_null_or_df <- lapply(retval, function(x) !inherits(x, c("data.frame", "NULL"))) %>% unlist() %>% sum() %>% {. == 0}
-          all_list_elements_null_or_list <- lapply(retval, function(x) !inherits(x, c("list", "NULL"))) %>% unlist() %>% sum() %>% {. == 0}
-          are_lists_unnamed <- lapply(retval, function(x){
-            if(inherits(x, "list")){
-              n <- names(x)
-              n <- n[n!=""]
-              if(length(n)==length(x)){
-                return(FALSE)
-              } else {
-                return(TRUE)
-              }
-            } else {
-              return(FALSE)
-            }
-          }) %>% unlist() %>% sum() %>% {. != 0}
-          are_lists_named <- !are_lists_unnamed
-          all_list_elements_null_or_named_list <- all_list_elements_null_or_list & are_lists_named
+          all_list_elements_null_or_df <- splutil::all_list_elements_null_or_df(retval)
+          all_list_elements_null_or_named_list <- splutil::all_list_elements_null_or_fully_named_list(retval)
 
           if(!all_list_elements_null_or_df & all_list_elements_null_or_named_list){
             list_names <- lapply(retval, function(x) names(x)) %>%
