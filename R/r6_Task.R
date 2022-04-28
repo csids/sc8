@@ -348,53 +348,19 @@ Task <- R6::R6Class(
 
         retval <- self$plans[plans_index][[i]]$run_all_with_data(data = data, schema = schema)
 
-        if(upsert_at_end_of_each_plan | insert_at_end_of_each_plan){
-          all_list_elements_null_or_df <- splutil::all_list_elements_null_or_df(retval)
-          all_list_elements_null_or_named_list <- splutil::all_list_elements_null_or_fully_named_list(retval)
-
-          if(!all_list_elements_null_or_df & all_list_elements_null_or_named_list){
-            list_names <- lapply(retval, function(x) names(x)) %>%
-              unique()
-            list_names <- list_names[lapply(list_names, function(x) !is.null(x)) %>% unlist() %>% which()]
-            if(length(list_names) > 1){
-              stop("return values from action fn are named lists with varying names (names must be consistent)")
-            }
-          } else {
-            list_names <- NULL
-          }
-
-          if(upsert_at_end_of_each_plan){
-            if(all_list_elements_null_or_df){
-              # single output, gets uploaded to schema$output
-              retval <- rbindlist(retval, use.names = T, fill = T)
-              schema$output$upsert_data(retval, verbose = verbose)
-            } else if(all_list_elements_null_or_named_list){
-              # gets uploaded to names in the list
-              for(df_name in list_names){
-                data_to_db <- lapply(retval, function(x) x[[df_name]])
-                data_to_db <- rbindlist(data_to_db, use.names = T, fill = T)
-                schema[[df_name]]$upsert_data(data_to_db, verbose = verbose)
-              }
-            } else {
-              stop("return values from action fn have mixed classes (must be either all data.frame or all named lists")
-            }
-          } else if (insert_at_end_of_each_plan) {
-            if(all_list_elements_null_or_df){
-              # single output, gets uploaded to schema$output
-              retval <- rbindlist(retval, use.names = T, fill = T)
-              schema$output$insert_data(retval, verbose = verbose)
-            } else if(all_list_elements_null_or_named_list){
-              # gets uploaded to names in the list
-              for(df_name in list_names){
-                data_to_db <- lapply(retval, function(x) x[[df_name]])
-                data_to_db <- rbindlist(data_to_db, use.names = T, fill = T)
-                schema[[df_name]]$insert_data(data_to_db, verbose = verbose)
-              }
-            } else {
-              stop("return values from action fn have mixed classes (must be either all data.frame or all named lists")
-            }
+        if(upsert_at_end_of_each_plan){
+          retval <- splutil::unnest_dfs_within_list_of_fully_named_lists(retval, returned_name_when_dfs_are_not_nested = "output", use.names = T, fill = T)
+          for(df_name in names(retval)){
+            schema[[df_name]]$upsert_data(retval[[df_name]], verbose = verbose)
           }
         }
+        if (insert_at_end_of_each_plan) {
+          retval <- splutil::unnest_dfs_within_list_of_fully_named_lists(retval, returned_name_when_dfs_are_not_nested = "output", use.names = T, fill = T)
+          for(df_name in names(retval)){
+            schema[[df_name]]$insert_data(retval[[df_name]], verbose = verbose)
+          }
+        }
+
         rm("retval")
 
         update_config_data_hash_for_each_plan(
@@ -431,15 +397,19 @@ Task <- R6::R6Class(
 
                 retval <- x$run_all_with_data(data = data, schema = schema)
 
-                if (upsert_at_end_of_each_plan) {
-                  retval <- rbindlist(retval, use.names = T, fill = T)
-                  schema$output$upsert_data(retval, verbose = F)
+                if(upsert_at_end_of_each_plan){
+                  retval <- splutil::unnest_dfs_within_list_of_fully_named_lists(retval, returned_name_when_dfs_are_not_nested = "output", use.names = T, fill = T)
+                  for(df_name in names(retval)){
+                    schema[[df_name]]$upsert_data(retval[[df_name]], verbose = F)
+                  }
+                }
+                if (insert_at_end_of_each_plan) {
+                  retval <- splutil::unnest_dfs_within_list_of_fully_named_lists(retval, returned_name_when_dfs_are_not_nested = "output", use.names = T, fill = T)
+                  for(df_name in names(retval)){
+                    schema[[df_name]]$insert_data(retval[[df_name]], verbose = F)
+                  }
                 }
 
-                if (insert_at_end_of_each_plan) {
-                  retval <- rbindlist(retval, use.names = T, fill = T)
-                  schema$output$insert_data(retval, verbose = F)
-                }
                 rm("retval")
 
                 # this might break things!!!!!!
