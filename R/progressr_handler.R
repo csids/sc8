@@ -24,7 +24,7 @@ progressr_handler <- function(interval = 10, clear = FALSE, ...) {
       },
 
       finish = function(...) {
-        cat("done")
+        # cat("done")
       }
     )
   })
