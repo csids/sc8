@@ -79,6 +79,7 @@ tm_run_task <- function(task_name,
     cat(glue::glue(
       "
         devtools::load_all('.')
+        sc::config$tasks$list_task[[{task_name}}]$cores <- 1
         tm_run_task('{task_name}')
       "
     ), file = tempfile)
