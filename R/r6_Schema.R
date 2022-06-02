@@ -472,6 +472,17 @@ Schema_v8 <- R6Class(
         needs_to_connect <- TRUE
       } else if (!DBI::dbIsValid(self$conn)) {
         needs_to_connect <- TRUE
+      } else {
+        tryCatch({
+          z <- self$conn %>%
+            dplyr::tbl(self$table_name) %>%
+            head(1) %>%
+            dplyr::collect()
+        }, error = function(e){
+          needs_to_connect <<- TRUE
+        }, warning = function(e){
+          needs_to_connect <<- TRUE
+        })
       }
       if (needs_to_connect) {
         self$conn <- get_db_connection(db_config = db_config)
