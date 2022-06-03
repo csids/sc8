@@ -16,11 +16,9 @@ BugReports: https://github.com/sykdomspulsen-org/sc/issues
 Depends:
   R (>= 4.1.0)
 Imports:
-  doFuture,
   data.table,
   crayon,
   DBI,
-  digest,
   dplyr,
   fhidata,
   fhiplot,
