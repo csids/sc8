@@ -71,7 +71,7 @@ get_last_run_data_hash_split_into_plnr_format <- function(task, index_plan, expe
   hash <- get_config_data_hash_for_each_plan(task = task, index_plan = index_plan)
   retval <- list()
   if(nrow(hash)==0){
-    retval$last_run <- as.character(runif(1))
+    retval$last_run <- as.character(stats::runif(1))
     retval$last_run_elements <- list()
   } else {
     hash <- hash[datetime==max(datetime)]
@@ -85,7 +85,7 @@ get_last_run_data_hash_split_into_plnr_format <- function(task, index_plan, expe
   # if they don't exist, set to random
   for(i in expected_element_tags){
     if(!i %in% names(retval$last_run_elements)){
-      retval$last_run_elements[[i]] <- as.character(runif(1))
+      retval$last_run_elements[[i]] <- as.character(stats::runif(1))
     }
   }
 
