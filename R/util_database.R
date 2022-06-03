@@ -696,7 +696,7 @@ drop_rows_where <- function(conn = NULL, table, condition) {
   num_delete_calls <- ceiling(numrows / num_deleting)
   message("We will need to perform ", num_delete_calls, " delete calls of ", num_deleting_character, " rows each.")
 
-  indexes <- plnr::easy_split(1:num_delete_calls, number_of_groups = 10)
+  indexes <- splutil::easy_split(1:num_delete_calls, number_of_groups = 10)
   notify_indexes <- unlist(lapply(indexes, max))
 
   i <- 0
