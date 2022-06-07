@@ -142,14 +142,14 @@ Task <- R6::R6Class(
     num_argsets = function() {
       retval <- 0
       for (i in seq_along(plans)) {
-        retval <- retval + plans[[i]]$len()
+        retval <- retval + plans[[i]]$x_length()
       }
       return(retval)
     },
     num_analyses = function() {
       retval <- 0
       for (i in seq_along(plans)) {
-        retval <- retval + plans[[i]]$len()
+        retval <- retval + plans[[i]]$x_length()
       }
       return(retval)
     },
@@ -272,7 +272,7 @@ Task <- R6::R6Class(
         message("*****")
         message("*****")
         message("***** Running plan 1 sequentially at ", lubridate::now(), " *****")
-        # pb <- progressr::progressor(steps = self$plans[[1]]$len())
+        # pb <- progressr::progressor(steps = self$plans[[1]]$x_length())
         private$run_sequential(
           plans_index = 1,
           schema = self$schema,
