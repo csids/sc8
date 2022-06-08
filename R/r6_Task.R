@@ -101,7 +101,7 @@ Task <- R6::R6Class(
 
       for (i in seq_along(self$plans)) {
         for (j in seq_along(self$plans[[i]]$analyses)) {
-          self$plans[[i]]$use_foreach <- FALSE
+          self$plans[[i]]$set_use_foreach(FALSE)
           self$plans[[i]]$analyses[[j]]$argset$index_plan <- i
           self$plans[[i]]$analyses[[j]]$argset$index_analysis <- j
 
