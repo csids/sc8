@@ -513,7 +513,7 @@ Schema_v8 <- R6Class(
       if (DBI::dbExistsTable(self$conn, self$table_name)) {
         if (!private$check_fields_match()) {
           message(glue::glue("Dropping table {self$table_name} because fields dont match"))
-          self$drop_table()
+          self$drop_table(check_connection = FALSE)
         } else {
           create_tab <- FALSE
         }
@@ -527,8 +527,10 @@ Schema_v8 <- R6Class(
 
     #' @description
     #' Drop the database table
-    drop_table = function() {
-      self$connect()
+    drop_table = function(check_connection = TRUE) {
+      # self$connect calls self$create_table.
+      # cannot have infinite loop
+      if(check_connection) self$connect()
       if (DBI::dbExistsTable(self$conn, self$table_name)) {
         message(glue::glue("Dropping table {self$table_name}"))
         DBI::dbRemoveTable(self$conn, self$table_name)
