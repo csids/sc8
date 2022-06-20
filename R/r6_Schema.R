@@ -476,10 +476,16 @@ Schema_v8 <- R6Class(
         tryCatch({
           z <- self$conn %<%
             DBI::dbListTables()
-          # z <- self$conn %>%
-          #   dplyr::tbl(self$table_name) %>%
-          #   head(1) %>%
-          #   dplyr::collect()
+          if(self$table_name %in% z){
+            z <- self$conn %>%
+              dplyr::tbl(self$table_name) %>%
+              head(1) %>%
+              dplyr::collect()
+          } else {
+            message("DB table ", self$table_name, " doesn't eist")
+            use_db(self$conn, db_config$db)
+            self$create_table(check_connection = FALSE)
+          }
         }, error = function(e){
           needs_to_connect <<- TRUE
         }, warning = function(e){
