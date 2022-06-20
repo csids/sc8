@@ -506,6 +506,8 @@ Schema_v8 <- R6Class(
     #' @description
     #' Create the database table
     create_table = function(check_connection = TRUE) {
+      # self$connect calls self$create_table.
+      # cannot have infinite loop
       if(check_connection) self$connect()
       create_tab <- TRUE
       if (DBI::dbExistsTable(self$conn, self$table_name)) {
