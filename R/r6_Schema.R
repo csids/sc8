@@ -489,7 +489,7 @@ Schema_v8 <- R6Class(
       if (needs_to_connect) {
         self$conn <- get_db_connection(db_config = db_config)
         use_db(self$conn, db_config$db)
-        self$create_table()
+        self$create_table(check_connection = FALSE)
       }
     },
 
@@ -505,8 +505,8 @@ Schema_v8 <- R6Class(
 
     #' @description
     #' Create the database table
-    create_table = function() {
-      self$connect()
+    create_table = function(check_connection = TRUE) {
+      if(check_connection) self$connect()
       create_tab <- TRUE
       if (DBI::dbExistsTable(self$conn, self$table_name)) {
         if (!private$check_fields_match()) {
