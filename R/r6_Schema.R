@@ -474,10 +474,12 @@ Schema_v8 <- R6Class(
         needs_to_connect <- TRUE
       } else {
         tryCatch({
-          z <- self$conn %>%
-            dplyr::tbl(self$table_name) %>%
-            head(1) %>%
-            dplyr::collect()
+          z <- self$conn %<%
+            DBI::dbListTables()
+          # z <- self$conn %>%
+          #   dplyr::tbl(self$table_name) %>%
+          #   head(1) %>%
+          #   dplyr::collect()
         }, error = function(e){
           needs_to_connect <<- TRUE
         }, warning = function(e){
