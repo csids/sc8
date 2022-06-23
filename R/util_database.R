@@ -598,6 +598,12 @@ copy_into_new_table_where <- function(conn = NULL,
                                       table_to,
                                       condition = "1=1",
                                       columns = "*") {
+
+  # conn = NULL
+  # table_from = "anon_webkht_skuhr"
+  # table_to = "xxxx"
+  # condition = "isoyear >= 2022"
+  # columns = "*"
   if (is.null(conn)) {
     conn <- get_db_connection()
     on.exit(DBI::dbDisconnect(conn))
@@ -616,13 +622,82 @@ copy_into_new_table_where <- function(conn = NULL,
   t0 <- Sys.time()
   temp_name <- paste0("[", info_to$db, "].[", info_to$schema, "].[tmp", random_uuid(), "]")
 
+
+  # find out how many rows to delete
+  numrows <- DBI::dbGetQuery(conn, glue::glue(
+    "SELECT COUNT(*) FROM {table_from} WHERE {condition};"
+  )) %>%
+    as.numeric()
+  message(numrows, " rows remaining to be copied")
+
+  nam <- conn %>%
+    dplyr::tbl(table_from) %>%
+    head(0) %>%
+    dplyr::collect() %>%
+    names()
+  if("xxxx12345_row_num_54321xxxx" %in% nam){
+    message("Dropping xxxx12345_row_num_54321xxxx")
+    sql <- glue::glue("ALTER TABLE {table_from} DROP COLUMN xxxx12345_row_num_54321xxxx")
+    DBI::dbExecute(info_from$pool, sql)
+  }
+
+  sql <- glue::glue("ALTER TABLE {table_from} ADD xxxx12345_row_num_54321xxxx INTEGER")
+  DBI::dbExecute(info_from$pool, sql)
+
+  sql <- glue::glue("UPDATE {table_from} WITH (tablock) SET xxxx12345_row_num_54321xxxx=FLOOR(RAND()*{numrows}) WHERE {condition}")
+  DBI::dbExecute(info_from$pool, sql)
+
+  # index the row num
+  `add_index.Microsoft SQL Server`(
+    conn = conn,
+    table = table_from,
+    index = "row_num",
+    keys = "xxxx12345_row_num_54321xxxx"
+  )
+
+  # split into multiple batches
+  batches <- splutil::easy_split(0:numrows, size_of_each_group = 100000)
+
   # create the table first (needs to be created or we cant use tablock)
   sql <- glue::glue("SELECT {columns} INTO {temp_name} FROM {table_from} WHERE 0=1")
   DBI::dbExecute(info_from$pool, sql)
-  # then insert (using tablock to make it faster)
-  sql <- glue::glue("INSERT INTO {temp_name} WITH (tablock) SELECT {columns} FROM {table_from} WHERE {condition}")
+
+  for(i in seq_along(batches)){
+  # for(i in 3:4){
+    message(Sys.time(), " Copying batch ", i, "/", length(batches), " of size ", length(batches[[i]]), " from ", table_from, " to ", table_to, " via ", temp_name)
+
+    row_num_min <- min(batches[[i]])
+    row_num_max <- max(batches[[i]])
+
+    # then insert (using tablock to make it faster)
+    sql <- glue::glue("INSERT INTO {temp_name} WITH (tablock) SELECT {columns} FROM {table_from} WHERE xxxx12345_row_num_54321xxxx>={row_num_min} AND xxxx12345_row_num_54321xxxx<={row_num_max}")
+    DBI::dbExecute(info_from$pool, sql)
+    Sys.sleep(1)
+  }
+
+  while(numrows > 0){
+    # find out how many rows to delete
+    numrows <- DBI::dbGetQuery(conn, glue::glue(
+      "SELECT COUNT(*) FROM {table_from} WHERE {condition};"
+    )) %>%
+      as.numeric()
+    message(numrows, " rows remaining to be copied")
+  }
+
+  # drop the row num index
+  `drop_index.Microsoft SQL Server`(
+    conn = conn,
+    table = table_from,
+    index = "row_num"
+  )
+  # drop the row num
+  sql <- glue::glue("ALTER TABLE {table_from} DROP COLUMN xxxx12345_row_num_54321xxxx")
   DBI::dbExecute(info_from$pool, sql)
 
+  sql <- glue::glue("ALTER TABLE {temp_name} DROP COLUMN xxxx12345_row_num_54321xxxx")
+  DBI::dbExecute(info_from$pool, sql)
+
+  # delete the final table
   try(DBI::dbRemoveTable(info_from$pool, name = table_to), TRUE)
 
   sql <- glue::glue("EXEC sp_rename '{temp_name}', '{table_to}'")
