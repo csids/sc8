@@ -739,7 +739,7 @@ drop_all_rows <- function(conn = NULL, table) {
 
   info <- get_table_name_info(table)
 
-  a <- DBI::dbExecute(info$pool, glue::glue({
+  a <- DBI::dbExecute(conn, glue::glue({
     "TRUNCATE TABLE {table};"
   }))
 
