@@ -4,7 +4,7 @@ Version: 8.0.0
 Authors@R: c(
   person(c("Richard","Aubrey"), "White", email = "hello@rwhite.no", role = c("aut", "cre"),
     comment = c(ORCID = "0000-0002-6747-1726")
-  )
+  ))
 Description: The generic infrastructure that can be used to implement new real-time analysis and disease surveillance systems.
 URL: https://docs.sykdomspulsen.no/sc, https://github.com/sykdomspulsen-org/sc
 BugReports: https://github.com/sykdomspulsen-org/sc/issues
