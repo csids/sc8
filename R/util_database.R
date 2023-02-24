@@ -632,15 +632,15 @@ copy_into_new_table_where <- function(conn = NULL,
   if (config$verbose) message(glue::glue("Copied rows in {dif} seconds from {table_from} to {table_to}"))
 
   # applying indexes if possible
-  if (table_from %in% names(sc::config$schemas)) {
-    for (i in names(sc::config$schemas[[table_from]]$indexes)) {
+  if (table_from %in% names(sc8::config$schemas)) {
+    for (i in names(sc8::config$schemas[[table_from]]$indexes)) {
       if (config$verbose) message(glue::glue("Adding index {i}"))
 
       add_index(
         conn = conn,
         table = table_to,
         index = i,
-        keys = sc::config$schemas[[table_from]]$indexes[[i]]
+        keys = sc8::config$schemas[[table_from]]$indexes[[i]]
       )
     }
   }
@@ -848,11 +848,11 @@ tbl <- function(table) {
   x <- get_table_name_info(table)
 
   if (!DBI::dbIsValid(x$pool) | config$in_parallel) {
-    # message("sc::tbl connection was not valid, or is being run in parallel. Recreating.")
+    # message("sc8::tbl connection was not valid, or is being run in parallel. Recreating.")
     create_pool_connection(config$db_configs[[x$access]], use_db = T)
     x <- get_table_name_info(table)
   } else {
-    # message("sc::tbl connection is valid.")
+    # message("sc8::tbl connection is valid.")
   }
 
   return(dplyr::tbl(x$pool, x$table_name))

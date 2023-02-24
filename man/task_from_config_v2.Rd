@@ -67,8 +67,8 @@ task_from_config_v2(
   data_output_schemas = NULL,
   # these are the database tables we are interested in
   data_selector_schemas = list(
-    "results_normomo_attrib_standard" = sc::config$schemas$results_normomo_attrib_standard,
-    "results_normomo_attrib_irr" = sc::config$schemas$results_normomo_attrib_irr
+    "results_normomo_attrib_standard" = sc8::config$schemas$results_normomo_attrib_standard,
+    "results_normomo_attrib_irr" = sc8::config$schemas$results_normomo_attrib_irr
   ),
   # for each plan, this is the default for how the data will be extracted for each of the database tables listed above
   data_selector_fn_default = function(schema, argset) {

@@ -1,8 +1,8 @@
 # 2 cores, x=1:80, 1800 MB, 51s
 # 2 cores, x=1:40, 630 MB, 24s
-# sc:::set_test_task()
-# sc::tm_run_task("sc_test")
-# Rscript -e '.libPaths("~/R"); sc:::set_test_task(); sc::tm_run_task("sc_test")'
+# sc8:::set_test_task()
+# sc8::tm_run_task("sc_test")
+# Rscript -e '.libPaths("~/R"); sc8:::set_test_task(); sc8::tm_run_task("sc_test")'
 set_test_task <- function() {
   # tm_run_task("sc_test")
   add_task_from_config_v8(
@@ -18,8 +18,8 @@ set_test_task <- function() {
     universal_argset = NULL,
     upsert_at_end_of_each_plan = FALSE,
     insert_at_end_of_each_plan = FALSE,
-    action_fn_name = "sc::sc_test_action",
-    data_selector_fn_name = "sc::sc_test_data_selector",
+    action_fn_name = "sc8::sc_test_action",
+    data_selector_fn_name = "sc8::sc_test_data_selector",
     schema = list(),
     info = "This task does..."
   )
@@ -30,12 +30,12 @@ set_test_task <- function() {
       Sys.sleep(1)
     })
   }
-  sc::add_task(
-    sc::Task$new(
+  sc8::add_task(
+    sc8::Task$new(
       name = "sc_test_2",
       type = "analysis",
       plans = list(p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p),
-      schema = c("output" = sc::config$schemas$results_normomo_standard),
+      schema = c("output" = sc8::config$schemas$results_normomo_standard),
       cores = 2
     )
   )
@@ -51,14 +51,14 @@ sc_test_action <- function(data, argset, schema) {
   # tm_run_task("sc_test")
 
   if (plnr::is_run_directly()) {
-    # sc::tm_get_plans_argsets_as_dt("sc_test")
+    # sc8::tm_get_plans_argsets_as_dt("sc_test")
 
     index_plan <- 1
     index_analysis <- 1
 
-    data <- sc::tm_get_data("sc_test", index_plan = index_plan)
-    argset <- sc::tm_get_argset("sc_test", index_plan = index_plan, index_analysis = index_analysis)
-    schema <- sc::tm_get_schema("sc_test")
+    data <- sc8::tm_get_data("sc_test", index_plan = index_plan)
+    argset <- sc8::tm_get_argset("sc_test", index_plan = index_plan, index_analysis = index_analysis)
+    schema <- sc8::tm_get_schema("sc_test")
   }
 
   # code goes here
@@ -72,7 +72,7 @@ sc_test_action <- function(data, argset, schema) {
   Sys.sleep(1)
 
   # put data in db table
-  # sc::fill_in_missing_v8(d, border = config$border)
+  # sc8::fill_in_missing_v8(d, border = config$border)
   # schema$SCHEMA_NAME$insert_data(d)
   # schema$SCHEMA_NAME$upsert_data(d)
   # schema$SCHEMA_NAME$drop_all_rows_and_then_upsert_data(d)
@@ -80,7 +80,7 @@ sc_test_action <- function(data, argset, schema) {
   # special case that runs after everything
   # copy to anon_web?
   if (argset$last_argset == TRUE) {
-    # sc::copy_into_new_table_where(
+    # sc8::copy_into_new_table_where(
     #   table_from = "anon_X",
     #   table_to = "anon_webkht"
     # )
@@ -96,12 +96,12 @@ sc_test_action <- function(data, argset, schema) {
 #' @export
 sc_test_data_selector <- function(argset, schema) {
   if (plnr::is_run_directly()) {
-    # sc::tm_get_plans_argsets_as_dt("sc_test")
+    # sc8::tm_get_plans_argsets_as_dt("sc_test")
 
     index_plan <- 1
 
-    argset <- sc::tm_get_argset("sc_test", index_plan = index_plan)
-    schema <- sc::tm_get_schema("sc_test")
+    argset <- sc8::tm_get_argset("sc_test", index_plan = index_plan)
+    schema <- sc8::tm_get_schema("sc_test")
   }
 
   # The database schemas can be accessed here
@@ -156,14 +156,14 @@ sc_test_data_selector <- function(argset, schema) {
 # **** plan_analysis **** ----
 #' sc_test (plan/analysis)
 #' This function can be deleted if you are not using "plan_analysis_fn_name"
-#' inside sc::task_from_config_v3
+#' inside sc8::task_from_config_v3
 #' @param argset argset
 #' @param schema schema
 #' @export
 sc_test_plan_analysis <- function(argset, schema) {
   if (plnr::is_run_directly()) {
-    argset <- sc::tm_get_argset("sc_test")
-    schema <- sc::tm_get_schema("sc_test")
+    argset <- sc8::tm_get_argset("sc_test")
+    schema <- sc8::tm_get_schema("sc_test")
   }
 
   # code goes here

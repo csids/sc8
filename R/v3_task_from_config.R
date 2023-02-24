@@ -121,7 +121,7 @@ task_from_config_v3_list_plan <- function(for_each_plan,
 #' @param insert_at_end_of_each_plan Do you want to insert your results automatically at the end of each plan?
 #' @param action_fn_name The name of the function that will be called for each analysis with arguments \code{data}, \code{argset}, \code{schema}
 #' @param data_selector_fn_name The name of a function that will be called to obtain the data for each analysis. The function must have the arguments \code{argset}, \code{schema} and must return a named list.
-#' @param schema A named list that maps \code{sc::config$schemas} for use in \code{action_fn_name} and \code{data_selector_fn_name}
+#' @param schema A named list that maps \code{sc8::config$schemas} for use in \code{action_fn_name} and \code{data_selector_fn_name}
 #' @param info Information for documentation
 #' @export
 task_from_config_v3 <- function(name = NULL,
@@ -173,7 +173,7 @@ task_from_config_v3 <- function(name = NULL,
     )
   }
 
-  task <- sc::Task$new(
+  task <- sc8::Task$new(
     name = name,
     name_description = name_description,
     type = "analysis",

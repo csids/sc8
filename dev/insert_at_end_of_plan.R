@@ -5,11 +5,11 @@ system("/bin/authenticate.sh")
 
 
 # anon_test ----
-sc::add_schema_v8(
+sc8::add_schema_v8(
   name_access = c("anon"),
   name_grouping = "test",
   name_variant = NULL,
-  db_configs = sc::config$db_configs,
+  db_configs = sc8::config$db_configs,
   field_types =  c(
     "uuid" = "INTEGER",
     "n" = "INTEGER"
@@ -27,7 +27,7 @@ sc::add_schema_v8(
 
 # TASK_NAME ----
 # tm_run_task("test")
-sc::add_task_from_config_v8(
+sc8::add_task_from_config_v8(
   name_grouping = "test",
   name_action = NULL,
   name_variant = NULL,
@@ -47,7 +47,7 @@ sc::add_task_from_config_v8(
     # input
 
     # output
-    "output" = sc::config$schemas$anon_test
+    "output" = sc8::config$schemas$anon_test
   ),
   info = "This task does..."
 )
@@ -60,12 +60,12 @@ sc::add_task_from_config_v8(
 #' @export
 test_data_selector = function(argset, schema){
   if(plnr::is_run_directly()){
-    # sc::tm_get_plans_argsets_as_dt("TASK_NAME")
+    # sc8::tm_get_plans_argsets_as_dt("TASK_NAME")
 
     index_plan <- 1
 
-    argset <- sc::tm_get_argset("test", index_plan = index_plan)
-    schema <- sc::tm_get_schema("test")
+    argset <- sc8::tm_get_argset("test", index_plan = index_plan)
+    schema <- sc8::tm_get_schema("test")
   }
 
   # The database schemas can be accessed here
@@ -90,14 +90,14 @@ test_action <- function(data, argset, schema) {
   # tm_run_task("TASK_NAME")
 
   if(plnr::is_run_directly()){
-    # sc::tm_get_plans_argsets_as_dt("TASK_NAME")
+    # sc8::tm_get_plans_argsets_as_dt("TASK_NAME")
 
     index_plan <- 1
     index_analysis <- 1
 
-    data <- sc::tm_get_data("test", index_plan = index_plan)
-    argset <- sc::tm_get_argset("test", index_plan = index_plan, index_analysis = index_analysis)
-    schema <- sc::tm_get_schema("test")
+    data <- sc8::tm_get_data("test", index_plan = index_plan)
+    argset <- sc8::tm_get_argset("test", index_plan = index_plan, index_analysis = index_analysis)
+    schema <- sc8::tm_get_schema("test")
   }
 
   # code goes here
@@ -109,7 +109,7 @@ test_action <- function(data, argset, schema) {
   return(data$data)
 }
 
-sc::tm_run_task("test")
+sc8::tm_run_task("test")
 
 
 
@@ -119,24 +119,24 @@ d$n = 1
 d[, n:=as.character(n)]
 d[10, n := "a"]
 
-sc::config$schemas$anon_test$tbl()
-sc::tbl("anon_test")
+sc8::config$schemas$anon_test$tbl()
+sc8::tbl("anon_test")
 # setkey(d, uuid)
 #setorder(d, -uuid)
 a <- Sys.time()
-sc::config$schemas$anon_test$drop_all_rows_and_then_insert_data(d)
+sc8::config$schemas$anon_test$drop_all_rows_and_then_insert_data(d)
 b <- Sys.time()
 
 b - a
 
-sc::config$schemas$anon_test$tbl() %>%dplyr::collect() |> setDT() -> f
+sc8::config$schemas$anon_test$tbl() %>%dplyr::collect() |> setDT() -> f
 
 
-sc::config$schemas$anon_test$tbl()
-sc::tbl("anon_test")
-sc::print_tables()
+sc8::config$schemas$anon_test$tbl()
+sc8::tbl("anon_test")
+sc8::print_tables()
 
-sc::config$schemas$anon_test$tbl() %>% dplyr::summarize(n()) %>% dplyr::collect()
+sc8::config$schemas$anon_test$tbl() %>% dplyr::summarize(n()) %>% dplyr::collect()
 
 
 
@@ -186,8 +186,8 @@ CREATE TABLE dbo.anon_persons (
     City varchar(255)
 );")
 DBI::dbExecute(pools$`dm-prod/sykdomspulsen_interactive_anon`, sql)
-sc::tbl("anon_persons")
-sc::print_tables()
+sc8::tbl("anon_persons")
+sc8::print_tables()
 
 sql <- glue::glue("
 CREATE TABLE [FHI\\AK_Sykdomspulsen].anon_persons (
@@ -198,8 +198,8 @@ CREATE TABLE [FHI\\AK_Sykdomspulsen].anon_persons (
     City varchar(255)
 );")
 DBI::dbExecute(pools$`dm-prod/sykdomspulsen_interactive_anon`, sql)
-sc::tbl("anon_persons")
-sc::print_tables()
+sc8::tbl("anon_persons")
+sc8::print_tables()
 
 
 sql <- glue::glue("SELECT SUSER_NAME() ")

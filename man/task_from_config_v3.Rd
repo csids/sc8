@@ -49,7 +49,7 @@ task_from_config_v3(
 
 \item{data_selector_fn_name}{The name of a function that will be called to obtain the data for each analysis. The function must have the arguments \code{argset}, \code{schema} and must return a named list.}
 
-\item{schema}{A named list that maps \code{sc::config$schemas} for use in \code{action_fn_name} and \code{data_selector_fn_name}}
+\item{schema}{A named list that maps \code{sc8::config$schemas} for use in \code{action_fn_name} and \code{data_selector_fn_name}}
 
 \item{info}{Information for documentation}
 }

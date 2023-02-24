@@ -58,7 +58,7 @@ tm_run_task <- function(task_name,
     # cat(glue::glue(
     #   "
     #     devtools::load_all('.')
-    #     num_analyses <- sc::tm_get_plans_argsets_as_dt('{task_name}') %>%
+    #     num_analyses <- sc8::tm_get_plans_argsets_as_dt('{task_name}') %>%
     #       nrow()
     #     cat('RETVAL:',num_analyses,'\n')
     #   "
@@ -79,7 +79,7 @@ tm_run_task <- function(task_name,
     cat(glue::glue(
       "
         devtools::load_all('.')
-        x <- sc::config
+        x <- sc8::config
         x$tasks$list_task[['{task_name}']]$cores <- 1
         tm_run_task('{task_name}')
       "
@@ -163,7 +163,7 @@ tm_get_data <- function(task_name, index_plan = 1, index_analysis = NULL, index_
     # icon = icon,
 
     # connection code
-    connectCode = paste0('data <- sc::tm_get_data("', task_name, '", index_plan = ', index_plan, ")"),
+    connectCode = paste0('data <- sc8::tm_get_data("', task_name, '", index_plan = ', index_plan, ")"),
 
     # disconnection code
     disconnect = function() {

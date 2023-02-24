@@ -3,11 +3,11 @@ library(magrittr)
 system("/bin/authenticate.sh")
 
 
-sc::add_schema_v8(
+sc8::add_schema_v8(
   name_access = c("restr", "anon"),
   name_grouping = "example",
   name_variant = NULL,
-  db_configs = sc::config$db_configs,
+  db_configs = sc8::config$db_configs,
   field_types =  c(
     "granularity_time" = "TEXT",
     "granularity_geo" = "TEXT",
@@ -42,37 +42,37 @@ sc::add_schema_v8(
   ),
   censors = list(
     restr = list(
-      "value_n" = sc::censor_function_factory_nothing("value_n"),
+      "value_n" = sc8::censor_function_factory_nothing("value_n"),
 
-      "value_pr100" = sc::censor_function_factory_values_0_4(column_name_to_be_censored = "value_pr100", column_name_value = "value_n"),
+      "value_pr100" = sc8::censor_function_factory_values_0_4(column_name_to_be_censored = "value_pr100", column_name_value = "value_n"),
 
-      "x_n" = sc::censor_list_function_factory(list(
-        sc::censor_function_factory_nothing(column_name_to_be_censored = "x_n", granularity_time = "day", granularity_geo = c("nation")),
-        sc::censor_function_factory_everything(column_name_to_be_censored = "x_n", granularity_time = "day", granularity_geo_not = c("nation")),
-        sc::censor_function_factory_nothing(column_name_to_be_censored = "x_n", granularity_time = "isoweek", granularity_geo = c("nation")),
-        sc::censor_function_factory_nothing(column_name_to_be_censored = "x_n", granularity_time = "isoweek", granularity_geo_not = c("nation"))
+      "x_n" = sc8::censor_list_function_factory(list(
+        sc8::censor_function_factory_nothing(column_name_to_be_censored = "x_n", granularity_time = "day", granularity_geo = c("nation")),
+        sc8::censor_function_factory_everything(column_name_to_be_censored = "x_n", granularity_time = "day", granularity_geo_not = c("nation")),
+        sc8::censor_function_factory_nothing(column_name_to_be_censored = "x_n", granularity_time = "isoweek", granularity_geo = c("nation")),
+        sc8::censor_function_factory_nothing(column_name_to_be_censored = "x_n", granularity_time = "isoweek", granularity_geo_not = c("nation"))
       ))
     ),
     anon = list(
-      value_n = sc::censor_function_factory_values_0_4("value_n"),
+      value_n = sc8::censor_function_factory_values_0_4("value_n"),
 
-      "value_pr100" = sc::censor_function_factory_values_0_4(column_name_to_be_censored = "value_pr100", column_name_value = "value_n"),
+      "value_pr100" = sc8::censor_function_factory_values_0_4(column_name_to_be_censored = "value_pr100", column_name_value = "value_n"),
 
-      "x_n" = sc::censor_list_function_factory(list(
-        sc::censor_function_factory_nothing(column_name_to_be_censored = "x_n", granularity_time = "day", granularity_geo = c("nation")),
-        sc::censor_function_factory_everything(column_name_to_be_censored = "x_n", granularity_time = "day", granularity_geo_not = c("nation")),
-        sc::censor_function_factory_nothing(column_name_to_be_censored = "x_n", granularity_time = "isoweek", granularity_geo = c("nation")),
-        sc::censor_function_factory_nothing(column_name_to_be_censored = "x_n", granularity_time = "isoweek", granularity_geo_not = c("nation"))
+      "x_n" = sc8::censor_list_function_factory(list(
+        sc8::censor_function_factory_nothing(column_name_to_be_censored = "x_n", granularity_time = "day", granularity_geo = c("nation")),
+        sc8::censor_function_factory_everything(column_name_to_be_censored = "x_n", granularity_time = "day", granularity_geo_not = c("nation")),
+        sc8::censor_function_factory_nothing(column_name_to_be_censored = "x_n", granularity_time = "isoweek", granularity_geo = c("nation")),
+        sc8::censor_function_factory_nothing(column_name_to_be_censored = "x_n", granularity_time = "isoweek", granularity_geo_not = c("nation"))
       ))
     )
   ),
-  validator_field_types = sc::validator_field_types_sykdomspulsen,
-  validator_field_contents = sc::validator_field_contents_sykdomspulsen,
+  validator_field_types = sc8::validator_field_types_sykdomspulsen,
+  validator_field_contents = sc8::validator_field_contents_sykdomspulsen,
   info = "This db table is used for..."
 )
 
-sc::drop_table("restr_example")
-sc::drop_table("anon_example")
+sc8::drop_table("restr_example")
+sc8::drop_table("anon_example")
 
 d <- data.table(
   granularity_time = c("day", "day", "isoweek", "isoweek"),
@@ -103,17 +103,17 @@ d[, x_n := value_n]
 # display the raw data
 d[]
 
-sc::fill_in_missing_v8(d)
+sc8::fill_in_missing_v8(d)
 
 # we have three options to get the data into the db table
 # remember that "keys" defines the uniquely identifying rows of data that are allowed in the db table!
 # - upsert means "update if data exists, otherwise append"
 # - insert means "append" (data cannot already exist)
 
-sc::config$schemas$redirect_example$upsert_data(d)
+sc8::config$schemas$redirect_example$upsert_data(d)
 
-sc::config$schemas$redirect_example$tbl() %>%
-  sc::mandatory_db_filter(
+sc8::config$schemas$redirect_example$tbl() %>%
+  sc8::mandatory_db_filter(
     granularity_time = NULL,
     granularity_time_not = NULL,
     granularity_geo = NULL,
@@ -136,8 +136,8 @@ sc::config$schemas$redirect_example$tbl() %>%
   as.data.table() %>%
   print()
 
-sc::config$schemas$restr_example$tbl() %>%
-  sc::mandatory_db_filter(
+sc8::config$schemas$restr_example$tbl() %>%
+  sc8::mandatory_db_filter(
     granularity_time = NULL,
     granularity_time_not = NULL,
     granularity_geo = NULL,
@@ -164,8 +164,8 @@ sc::config$schemas$restr_example$tbl() %>%
   as.data.table() %>%
   print()
 
-sc::config$schemas$anon_example$tbl() %>%
-  sc::mandatory_db_filter(
+sc8::config$schemas$anon_example$tbl() %>%
+  sc8::mandatory_db_filter(
     granularity_time = NULL,
     granularity_time_not = NULL,
     granularity_geo = NULL,

@@ -10,14 +10,14 @@
 
 # sc 8.0.1
 
-- When using `sc::add_task_from_config_v8` the schema list is checked to make sure they are actually schemas. This will solve the issue where people incorrectly add non-existent schemas to the task.
+- When using `sc8::add_task_from_config_v8` the schema list is checked to make sure they are actually schemas. This will solve the issue where people incorrectly add non-existent schemas to the task.
 - insert_data, upsert_data, drop_all_rows_and_then_insert_data are now the recommended ways of inserting data
 - addin_load_production
 - schemas now use load_folder_fn, which should dynamically check if a user has permission to write to a folder, solving permissions errors
 - Including tm_get_schema_names
 - Both granularity_time AND granularity_geo are now included in db censors
 - Requires R >= 4.1.0
-- sc::config\u0026plan_attempt_index now exists. When running plans in parallel, if a plan fails it is retried five times. This lets a user track which attempt they are on. This is mostly useful so that emails and smses are only sent when  sc::config$plan_attempt_index==1
+- sc8::config\u0026plan_attempt_index now exists. When running plans in parallel, if a plan fails it is retried five times. This lets a user track which attempt they are on. This is mostly useful so that emails and smses are only sent when  sc8::config$plan_attempt_index==1
 - (Disabled) TABLOCK is disabled right now due to issues where data would not be uploaded.
 - (Disabled) Data is sorted before sending it to bcp to speed up in/upserts.
 

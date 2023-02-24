@@ -379,7 +379,7 @@ Schema_v8 <- R6Class(
             stringr::str_detect(var, "_forecast$")
           ) {
             # config$schemas$config_last_updated$connect(); var <- "tag";  details <- dplyr::tbl(config$schemas$config_last_updated$conn, config$schemas$config_last_updated$table_name) |>  dplyr::select(val = !!var) |> dplyr::group_by(val) |> dplyr::summarize(n = n()) |>  dplyr::distinct() |> dplyr::collect() |> setDT() |> setorder(val)
-            # library(sykdomspulsen); sc::config$schemas$anon_covid19_autoreport_vaccination_by_time_age_sex_location_data$connect(); sc::config$schemas$anon_covid19_autoreport_vaccination_by_time_age_sex_location_data
+            # library(sykdomspulsen); sc8::config$schemas$anon_covid19_autoreport_vaccination_by_time_age_sex_location_data$connect(); sc8::config$schemas$anon_covid19_autoreport_vaccination_by_time_age_sex_location_data
             details <- dplyr::tbl(self$conn, self$table_name) |>
               dplyr::select(val = !!var) |>
               dplyr::group_by(val) |>

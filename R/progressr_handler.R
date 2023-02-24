@@ -29,5 +29,5 @@ progressr_handler <- function(interval = 10, clear = FALSE, ...) {
     )
   })
 
-  progressr::make_progression_handler("sc", reporter, intrusiveness = 1, target = "terminal", interval = interval, clear = clear, ...)
+  progressr::make_progression_handler("sc8", reporter, intrusiveness = 1, target = "terminal", interval = interval, clear = clear, ...)
 }

@@ -4,7 +4,7 @@
 \alias{sc_test_plan_analysis}
 \title{sc_test (plan/analysis)
 This function can be deleted if you are not using "plan_analysis_fn_name"
-inside sc::task_from_config_v3}
+inside sc8::task_from_config_v3}
 \usage{
 sc_test_plan_analysis(argset, schema)
 }
@@ -16,5 +16,5 @@ sc_test_plan_analysis(argset, schema)
 \description{
 sc_test (plan/analysis)
 This function can be deleted if you are not using "plan_analysis_fn_name"
-inside sc::task_from_config_v3
+inside sc8::task_from_config_v3
 }

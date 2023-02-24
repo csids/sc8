@@ -4,11 +4,11 @@ system("/bin/authenticate.sh")
 
 
 # anon_GROUPING_VARIANT ----
-sc::add_schema_v8(
+sc8::add_schema_v8(
   name_access = c("anon"),
   name_grouping = "test",
   name_variant = NULL,
-  db_configs = sc::config$db_configs,
+  db_configs = sc8::config$db_configs,
   field_types =  c(
     "uuid" = "INTEGER",
     "n" = "INTEGER"
@@ -23,31 +23,31 @@ sc::add_schema_v8(
   info = "This db table is used for..."
 )
 
-sc::config$schemas$anon_test$get_config_last_updated()
+sc8::config$schemas$anon_test$get_config_last_updated()
 
 d = data.table(uuid = 1:10000)
 d$n = 1
 d[, n:=as.character(n)]
 d[10, n := "a"]
 
-sc::config$schemas$anon_test$tbl()
-sc::tbl("anon_test")
+sc8::config$schemas$anon_test$tbl()
+sc8::tbl("anon_test")
 # setkey(d, uuid)
 #setorder(d, -uuid)
 a <- Sys.time()
-sc::config$schemas$anon_test$drop_all_rows_and_then_insert_data(d)
+sc8::config$schemas$anon_test$drop_all_rows_and_then_insert_data(d)
 b <- Sys.time()
 
 b - a
 
-sc::config$schemas$anon_test$tbl() %>%dplyr::collect() |> setDT() -> f
+sc8::config$schemas$anon_test$tbl() %>%dplyr::collect() |> setDT() -> f
 
 
-sc::config$schemas$anon_test$tbl()
-sc::tbl("anon_test")
-sc::print_tables()
+sc8::config$schemas$anon_test$tbl()
+sc8::tbl("anon_test")
+sc8::print_tables()
 
-sc::config$schemas$anon_test$tbl() %>% dplyr::summarize(n()) %>% dplyr::collect()
+sc8::config$schemas$anon_test$tbl() %>% dplyr::summarize(n()) %>% dplyr::collect()
 
 
 
@@ -97,8 +97,8 @@ CREATE TABLE dbo.anon_persons (
     City varchar(255)
 );")
 DBI::dbExecute(pools$`dm-prod/sykdomspulsen_interactive_anon`, sql)
-sc::tbl("anon_persons")
-sc::print_tables()
+sc8::tbl("anon_persons")
+sc8::print_tables()
 
 sql <- glue::glue("
 CREATE TABLE [FHI\\AK_Sykdomspulsen].anon_persons (
@@ -109,8 +109,8 @@ CREATE TABLE [FHI\\AK_Sykdomspulsen].anon_persons (
     City varchar(255)
 );")
 DBI::dbExecute(pools$`dm-prod/sykdomspulsen_interactive_anon`, sql)
-sc::tbl("anon_persons")
-sc::print_tables()
+sc8::tbl("anon_persons")
+sc8::print_tables()
 
 
 sql <- glue::glue("SELECT SUSER_NAME() ")
