@@ -80,7 +80,7 @@ set_db <- function() {
   # create pool connections for all dbs
   for (i in config$db_configs) try(create_pool_connection(i, use_db = TRUE), silent = T)
 
-  packageStartupMessage("Preferred sc database access level: ", config$db_config_preferred)
+  packageStartupMessage("Preferred sc8 database access level: ", config$db_config_preferred)
 
   # config_last_updated ----
   add_schema_v8(
