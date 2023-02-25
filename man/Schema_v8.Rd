@@ -202,7 +202,7 @@ Disconnect from the database
 \subsection{Method \code{create_table()}}{
 Create the database table
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Schema_v8$create_table()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Schema_v8$create_table(check_connection = TRUE)}\if{html}{\out{</div>}}
 }
 
 }
@@ -212,7 +212,7 @@ Create the database table
 \subsection{Method \code{drop_table()}}{
 Drop the database table
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Schema_v8$drop_table()}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Schema_v8$drop_table(check_connection = TRUE)}\if{html}{\out{</div>}}
 }
 
 }
