@@ -9,7 +9,7 @@
   set_plnr()
 
   # we need to implement lazy loading when we have more time
-  set_db()
+  try(set_db(), silent = T)
 
   invisible()
 }

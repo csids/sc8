@@ -106,25 +106,6 @@ set_db <- function() {
     info = "This db table is used for..."
   )
 
-  # config_structure_time ----
-  add_schema(
-    schema = Schema$new(
-      db_config = config$db_config,
-      db_table = "config_structure_time",
-      db_field_types = c(
-        "granularity_time" = "TEXT",
-        "isoyear" = "TEXT",
-        "isoyearweek" = "TEXT",
-        "date" = "DATE"
-      ),
-      db_load_folder = tempdir(check = T),
-      keys = c(
-        "type",
-        "tag"
-      )
-    )
-  )
-
   # config_data_hash_for_each_plan ----
   add_schema_v8(
     name_access = c("config"),
