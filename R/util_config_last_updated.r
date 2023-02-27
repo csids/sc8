@@ -14,9 +14,13 @@ update_config_last_updated_internal <- function(type, tag, date = NULL, datetime
   if (!is.null(date) & is.null(datetime)) {
     datetime <- paste0(date, " 00:01:00")
   }
+
+  tag_cleaned <- stringr::str_split(tag, "].\\[")[[1]]
+  tag_cleaned <- tag_cleaned[length(tag_cleaned)]
+
   to_upload <- data.table(
     type = type,
-    tag = tag,
+    tag = tag_cleaned,
     date = date,
     datetime = datetime
   )
