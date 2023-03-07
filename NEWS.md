@@ -1,3 +1,7 @@
+# sc 2023.7.23
+
+- Deprecated in favor of sc9.
+
 # sc 8.0.2
 
 - Allows for multiple databases to be used for different access levels.
