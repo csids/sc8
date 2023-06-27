@@ -1,4 +1,5 @@
 update_config_last_updated_internal <- function(type, tag, date = NULL, datetime = NULL) {
+  return(1)
   stopifnot(type %in% c("task", "data"))
   if (is.null(config$schemas$config_last_updated$conn)) config$schemas$config_last_updated$connect()
 
